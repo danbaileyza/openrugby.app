@@ -14,7 +14,7 @@
     ];
 @endphp
 
-<header class="chrome">
+<header class="chrome" x-data="{ navOpen: false }" x-on:keydown.escape="navOpen = false">
     <div class="chrome-inner">
         <a href="{{ route('dashboard') }}" class="chrome-brand">
             <svg class="chrome-ball" viewBox="0 0 32 20" fill="none" aria-hidden="true">
@@ -24,7 +24,7 @@
             <span class="chrome-wordmark">Open Rugby</span>
         </a>
 
-        <nav class="chrome-nav">
+        <nav class="chrome-nav" x-bind:class="{ 'is-open': navOpen }" x-on:click.outside="navOpen = false">
             @foreach($navLinks as $link)
                 <a href="{{ route($link['route']) }}" @class([
                     'chrome-link',
@@ -38,6 +38,18 @@
                 @endif
             @endauth
         </nav>
+
+        {{-- Mobile-only hamburger toggle (hidden ≥900px via .chrome-menu-btn CSS) --}}
+        <button
+            type="button"
+            class="chrome-icon-btn chrome-menu-btn"
+            x-on:click.stop="navOpen = !navOpen"
+            x-bind:aria-expanded="navOpen.toString()"
+            aria-label="Toggle navigation"
+        >
+            <x-lucide-menu x-show="!navOpen" class="chrome-theme-icon" />
+            <x-lucide-x    x-show="navOpen"  class="chrome-theme-icon" x-cloak />
+        </button>
 
         <div class="chrome-actions">
             {{-- Theme toggle --}}

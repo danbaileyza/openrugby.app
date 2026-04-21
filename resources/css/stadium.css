@@ -435,6 +435,14 @@
 }
 .player-table .pl-team { color: var(--color-ink-dim); }
 
+/* Mobile: keep Player / Position / Team on view, hide Nation / Age / Ht / Wt */
+@media (max-width: 700px) {
+  .player-table th, .player-table td { padding: 10px 8px; font-size: 12px; }
+  .player-table th:nth-child(n+4),
+  .player-table td:nth-child(n+4) { display: none; }
+  .player-table .pl-name { line-height: 1.2; }
+}
+
 /* ============================================================
    Detail pages (Competition / Team / Player)
    ============================================================ */
@@ -690,6 +698,23 @@
 .std tr:hover td { background: rgba(255, 255, 255, .02); }
 [data-theme="light"] .std tr:hover td { background: rgba(10, 20, 16, .02); }
 
+/* Mobile: shrink padding + hide low-priority columns so the table fits
+   in a single viewport width (no horizontal scroll needed). Assumes
+   the column order is: #, Team, P, W, D, L, PF, PA, PD, BP, Pts. */
+@media (max-width: 700px) {
+  .std { font-size: 12px; }
+  .std th, .std td { padding: 10px 6px; }
+  .std th:nth-child(5),   /* D  */
+  .std td:nth-child(5),
+  .std th:nth-child(7),   /* PF */
+  .std td:nth-child(7),
+  .std th:nth-child(8),   /* PA */
+  .std td:nth-child(8),
+  .std th:nth-child(10),  /* BP */
+  .std td:nth-child(10) { display: none; }
+  .std .team-name { line-height: 1.2; font-size: 12px; }
+}
+
 /* Form dots (W/L/D) */
 .form-row { display: inline-flex; gap: 3px; justify-content: center; }
 .form-dot {
@@ -738,6 +763,24 @@
 .fx-row .fx-meta { font-family: var(--font-mono); font-size: 11px; color: var(--color-muted); text-align: right; }
 .fx-row.is-live { background: linear-gradient(90deg, rgba(230, 57, 70, .1), var(--color-bg-2) 60%); border-left: 3px solid var(--color-live); }
 .fx-row.is-live .fx-date { color: var(--color-live); }
+
+/* Mobile: stack date/meta onto their own rows so team names have
+   the full width and don't wrap onto three lines. */
+@media (max-width: 700px) {
+  .fx-row {
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-areas:
+      "date  date  meta"
+      "home  score away";
+    gap: 6px 10px;
+    padding: 12px 14px;
+  }
+  .fx-row .fx-date { grid-area: date; font-size: 10px; letter-spacing: .08em; }
+  .fx-row .fx-meta { grid-area: meta; font-size: 10px; text-align: right; }
+  .fx-row .fx-home { grid-area: home; font-size: 13px; line-height: 1.2; }
+  .fx-row .fx-score { grid-area: score; font-size: 16px; min-width: 70px; }
+  .fx-row .fx-away { grid-area: away; font-size: 13px; line-height: 1.2; }
+}
 
 /* ============================================================
    Match scorecard — broadcast-style hero for match detail
@@ -1466,8 +1509,14 @@
   border-top: none;
   transition: .15s;
 }
+.stadium-tab { white-space: nowrap; }
 .stadium-tab.is-active { color: var(--color-brand-yellow); border-bottom-color: var(--color-brand-yellow); }
 .stadium-tab:hover:not(.is-active) { color: var(--color-ink); }
+@media (max-width: 700px) {
+  .stadium-tabs { overflow-x: auto; scrollbar-width: none; }
+  .stadium-tabs::-webkit-scrollbar { display: none; }
+  .stadium-tab { padding: 10px 12px; font-size: 12px; letter-spacing: .04em; }
+}
 
 /* ---------- Chips (filters) ---------- */
 .stadium-chips { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
@@ -1554,6 +1603,16 @@
   .result .r-date { display: none; }
 }
 
+@media (max-width: 700px) {
+  .result {
+    padding: 14px 16px;
+    gap: 6px 10px;
+  }
+  .result .r-home, .result .r-away { font-size: 13px; line-height: 1.2; }
+  .result .r-score { font-size: 22px; gap: 10px; }
+  .result .r-comp { font-size: 10px; letter-spacing: .08em; }
+}
+
 /* ---------- Fixture row (upcoming) ---------- */
 .fixture-list { display: flex; flex-direction: column; gap: 2px; }
 .fixture {
@@ -1589,6 +1648,18 @@
   padding: 4px 10px;
   border: 1px solid var(--color-line);
   border-radius: var(--r-xs);
+}
+@media (max-width: 700px) {
+  .fixture {
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-rows: auto auto;
+    gap: 6px 10px;
+    padding: 12px 14px;
+  }
+  .fixture > :first-child { grid-column: 1 / -1; display: flex; gap: 10px; align-items: baseline; }
+  .fixture .f-time, .fixture .f-comp { font-size: 10px; letter-spacing: .08em; }
+  .fixture .f-home, .fixture .f-away { font-size: 13px; line-height: 1.2; }
+  .fixture .f-vs { font-size: 11px; padding: 3px 8px; }
 }
 
 /* ---------- Side / widgets ---------- */

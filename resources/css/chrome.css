@@ -57,6 +57,41 @@
 }
 .chrome-nav::-webkit-scrollbar { display: none; }
 
+/* Hamburger button — shown only below the desktop breakpoint */
+.chrome-menu-btn { display: none; }
+
+/* Mobile: nav collapses into a dropdown revealed via hamburger */
+@media (max-width: 900px) {
+  .chrome-menu-btn { display: inline-flex; }
+  .chrome-nav {
+    position: absolute;
+    top: 52px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    overflow-x: hidden;
+    background: var(--color-bg-inset);
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
+    padding: 8px 0;
+    display: none;
+    z-index: 40;
+  }
+  .chrome-nav.is-open { display: flex; }
+  .chrome-nav .chrome-link {
+    padding: 12px var(--s-5);
+    font-size: 14px;
+    border-radius: 0;
+  }
+  .chrome-nav .chrome-link.is-active {
+    background: rgba(255, 209, 0, .12);
+    color: var(--color-brand-yellow);
+    box-shadow: inset 3px 0 0 var(--color-brand-yellow);
+  }
+}
+[x-cloak] { display: none !important; }
+
 .chrome-link {
   display: inline-flex;
   align-items: center;
@@ -128,6 +163,14 @@
   transition: transform .12s ease, box-shadow .12s ease;
 }
 .chrome-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(255, 209, 0, .25); }
+@media (max-width: 700px) {
+  .chrome-cta { padding: 6px 10px; font-size: 11px; letter-spacing: .03em; }
+  .chrome-wordmark { display: none; }   /* icon-only brand on mobile */
+  .chrome-actions { gap: var(--s-2); }
+  .chrome-actions .chrome-link-plain { padding: 4px 6px; font-size: 12px; }
+  .chrome-icon-btn { width: 28px; height: 28px; }
+  .chrome-ball { width: 30px; height: 18px; }
+}
 
 .chrome-icon-btn {
   display: inline-flex;
