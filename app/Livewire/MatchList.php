@@ -25,8 +25,15 @@ class MatchList extends Component
             $query->whereHas('season.competition', fn ($q) => $q->where('id', $this->competition));
         }
 
+        // Live → upcoming (soonest first) → past (most recent first).
+        $now = now();
+        $query
+            ->orderByRaw("CASE WHEN status = 'live' THEN 0 WHEN kickoff >= ? THEN 1 ELSE 2 END", [$now])
+            ->orderByRaw('CASE WHEN kickoff >= ? THEN kickoff END ASC', [$now])
+            ->orderByDesc('kickoff');
+
         return view('livewire.match-list', [
-            'matches' => $query->orderByDesc('kickoff')->paginate(20),
+            'matches' => $query->paginate(20),
             'competitions' => Competition::orderBy('name')->get(),
         ])->layout('layouts.app', ['title' => 'Matches']);
     }
