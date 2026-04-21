@@ -163,12 +163,10 @@
                     @foreach($featuredCompetitions->take(6) as $competition)
                         @php
                             $season = $competition->seasons->first();
-                            $pct = 0;
-                            if ($season) {
-                                $totalMatches = \App\Models\RugbyMatch::where('season_id', $season->id)->count();
-                                $finished = \App\Models\RugbyMatch::where('season_id', $season->id)->where('status', 'ft')->count();
-                                $pct = $totalMatches > 0 ? (int) round(($finished / $totalMatches) * 100) : 0;
-                            }
+                            // Match the Competitions list page: use the persisted
+                            // data-coverage audit score (coverage + teams + scores +
+                            // lineups + events + officials), not a live played/total.
+                            $pct = (int) ($season?->completeness_score ?? 0);
                         @endphp
                         <a href="{{ route('competitions.show', ['competition' => $competition, 'season' => $season?->id]) }}" class="comp-tile">
                             @if($pct >= 100)
@@ -177,7 +175,7 @@
                             <div class="ct-name">{{ $competition->name }}</div>
                             <div class="ct-season">{{ $season?->label ?? '—' }}</div>
                             <div class="ct-meter" style="--pct: {{ $pct }}%;"><span></span></div>
-                            <div class="ct-pct">{{ $pct }}% COMPLETE</div>
+                            <div class="ct-pct">{{ $pct }}% DATA COVERAGE</div>
                         </a>
                     @endforeach
                 </div>

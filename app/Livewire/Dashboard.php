@@ -45,9 +45,13 @@ class Dashboard extends Component
             ->limit(5)
             ->get();
 
-        // Featured competitions (those with data, ordered by most complete)
+        // Featured competitions (those with data, ordered by most complete).
+        // Preview the season whose data-coverage score is highest — same rule
+        // as the Competitions list page — so the % shown on each tile matches
+        // what the user will see when they click through. (The old code preferred
+        // the current season, which is often in-progress / empty and shows 0%.)
         $featuredCompetitions = Competition::whereHas('seasons.matches')
-            ->with(['seasons' => fn ($q) => $q->where('is_current', true)])
+            ->with(['seasons' => fn ($q) => $q->orderByDesc('completeness_score')->orderByDesc('label')->limit(1)])
             ->withCount(['seasons as match_count' => fn ($q) => $q->join('matches', 'matches.season_id', '=', 'seasons.id')])
             ->orderByDesc('match_count')
             ->limit(8)
