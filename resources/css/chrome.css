@@ -57,12 +57,21 @@
 }
 .chrome-nav::-webkit-scrollbar { display: none; }
 
-/* Hamburger button — shown only below the desktop breakpoint */
-.chrome-menu-btn { display: none; }
+/* Hamburger button — shown only below the desktop breakpoint.
+   Uses !important to win against .chrome-icon-btn (defined later, same specificity). */
+.chrome-menu-btn { display: none !important; }
+
+/* Auth slots — desktop default; mobile override comes inside the @media block below */
+.chrome-actions-auth {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+.chrome-nav-auth { display: none; }
 
 /* Mobile: nav collapses into a dropdown revealed via hamburger */
 @media (max-width: 900px) {
-  .chrome-menu-btn { display: inline-flex; }
+  .chrome-menu-btn { display: inline-flex !important; }
   .chrome-nav {
     position: absolute;
     top: 52px;
@@ -89,6 +98,40 @@
     color: var(--color-brand-yellow);
     box-shadow: inset 3px 0 0 var(--color-brand-yellow);
   }
+
+  /* Hide the desktop auth slot and reveal the in-drawer one */
+  .chrome-actions-auth { display: none; }
+  .chrome-nav-auth {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, .08);
+  }
+  .chrome-nav-user {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    padding: 10px var(--s-5) 4px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #7a8a82;
+  }
+  .chrome-nav-auth form { display: block; }
+  .chrome-nav-auth .chrome-link-plain {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 12px var(--s-5);
+    font-family: var(--font-display);
+    font-size: 14px;
+    color: #aab4ad;
+    border-radius: 0;
+  }
+  .chrome-nav-auth .chrome-link-plain:hover { color: #fff; background: rgba(255, 255, 255, .04); }
 }
 [x-cloak] { display: none !important; }
 
@@ -196,3 +239,186 @@
 .chrome-theme-moon { display: inline; }
 [data-theme="light"] .chrome-theme-sun  { display: inline; }
 [data-theme="light"] .chrome-theme-moon { display: none; }
+
+/* ============================================================
+   Global search — text input + dropdown, lives in the chrome
+   ============================================================ */
+.gs {
+  position: relative;
+  flex: 0 1 320px;
+  min-width: 0;
+}
+.gs-trigger { display: none; }   /* desktop: trigger hidden, field always visible */
+.gs-close-mobile { display: none; }
+.gs-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 10px;
+  background: rgba(255, 255, 255, .05);
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: var(--r-md);
+  transition: background .12s, border-color .12s;
+  color: #aab4ad;
+}
+.gs-field.is-focus {
+  background: rgba(255, 255, 255, .08);
+  border-color: rgba(255, 209, 0, .4);
+}
+.gs-icon { color: inherit; flex-shrink: 0; }
+.gs-field input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  color: #ecf3ee;
+  font-family: var(--font-display);
+  font-size: 13px;
+  outline: none;
+}
+.gs-field input::placeholder { color: #7a8a82; }
+.gs-field input::-webkit-search-cancel-button { display: none; }
+.gs-clear {
+  background: none;
+  border: 0;
+  color: #7a8a82;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  padding: 0 2px;
+}
+.gs-clear:hover { color: #ecf3ee; }
+
+.gs-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: #0a1410;
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-overlay);
+  max-height: 60vh;
+  overflow-y: auto;
+  z-index: 50;
+}
+[data-theme="light"] .gs-dropdown { background: #0a1410; }  /* chrome dropdown stays dark */
+
+.gs-group { padding: 6px 0; }
+.gs-group + .gs-group { border-top: 1px solid rgba(255, 255, 255, .06); }
+.gs-group-head {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--color-brand-yellow);
+  padding: 8px 14px 4px;
+}
+.gs-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  color: #ecf3ee;
+  text-decoration: none;
+  transition: background .08s;
+}
+.gs-item:hover, .gs-item:focus-visible { background: rgba(255, 255, 255, .05); outline: none; }
+.gs-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #1d2b23;
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.gs-badge-comp    { background: #3a2e0f; color: var(--color-brand-yellow); border-radius: 4px; font-size: 13px; }
+.gs-badge-player  { background: #0e2e1f; color: #6cd4a4; }
+.gs-item-body { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.gs-item-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gs-item-meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: #7a8a82;
+  letter-spacing: .05em;
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gs-empty {
+  padding: 20px 14px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #7a8a82;
+  letter-spacing: .08em;
+}
+
+/* Mobile: collapse to an icon-only trigger. Tapping it expands a
+   full-width overlay over the chrome bar so users on 375px screens
+   can actually search without the input being clipped. */
+@media (max-width: 900px) {
+  .gs { flex: 0 0 auto; position: static; }
+
+  .gs-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    border-radius: var(--r-md);
+    color: #aab4ad;
+    cursor: pointer;
+    transition: color .12s ease, background .12s ease;
+  }
+  .gs-trigger:hover, .gs-trigger:focus-visible { color: #fff; background: rgba(255, 255, 255, .06); outline: none; }
+  .gs.gs-active .gs-trigger { color: var(--color-brand-yellow); }
+
+  .gs-field { display: none; }   /* hidden until expanded */
+
+  .gs.gs-active .gs-field {
+    display: flex;
+    position: fixed;
+    top: 10px;
+    left: var(--s-5);
+    right: var(--s-5);
+    height: 36px;
+    padding: 0 12px;
+    background: var(--color-bg-inset);
+    border-color: var(--color-brand-yellow);
+    z-index: 60;
+  }
+  .gs.gs-active .gs-close-mobile { display: inline-flex; }
+
+  .gs-dropdown {
+    position: fixed;
+    top: 56px;
+    left: var(--s-5);
+    right: var(--s-5);
+    z-index: 60;
+    max-height: calc(100vh - 80px);
+  }
+}
+
+@media (max-width: 700px) {
+  .gs-trigger { width: 28px; height: 28px; }
+}
+[x-cloak] { display: none !important; }

@@ -33,7 +33,7 @@ class SyncLiveCommand extends Command
         'premiership' => 'premiership',
         'top14' => 'top-14',
         'pro_d2' => 'pro-d2',
-        'european_rugby_champions_cup' => 'champions-cup',
+        'european_rugby_champions_cup' => 'european-cup',
         'lions_tour' => 'british-irish-lions',
     ];
 
@@ -105,13 +105,22 @@ class SyncLiveCommand extends Command
         $rugby365LiveMatchIds = [];
 
         foreach ($fixtures as $fx) {
-            if (! in_array($fx['state'], ['LIVE', 'FT'])) { $stats['skipped']++; continue; }
+            // With --import-missing, also create scheduled (upcoming) fixtures so users can
+            // see the bracket ahead of time; live/FT will update them when played.
+            $isUpcoming = ! in_array($fx['state'], ['LIVE', 'FT']);
+            if ($isUpcoming && ! $this->option('import-missing')) { $stats['skipped']++; continue; }
 
             $match = $this->resolveMatch($season, $fx);
             if (! $match && $this->option('import-missing')) {
                 $match = $this->createMatchFromFixture($season, $fx);
             }
             if (! $match) { $stats['skipped']++; continue; }
+
+            if ($isUpcoming) {
+                // Leave scheduled matches alone for score/status; just ensure they exist.
+                $stats['skipped']++;
+                continue;
+            }
 
             $home = $match->matchTeams->firstWhere('side', 'home');
             $away = $match->matchTeams->firstWhere('side', 'away');

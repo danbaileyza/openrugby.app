@@ -1,70 +1,79 @@
 <div>
-    <h1 class="text-2xl font-bold text-white mb-6">Matches</h1>
+    {{-- ═══ Page head ═══ --}}
+    <section class="page-head">
+        <div class="crumb">← <a href="{{ route('dashboard') }}">back to dashboard</a></div>
+        <h1>Match<span class="yellow">es</span>.</h1>
+        <p class="sub">{{ number_format($matches->total()) }} {{ Str::plural('match', $matches->total()) }} across the competitions we track. Filter by competition or status, then click any row for the full breakdown.</p>
 
-    <div class="flex flex-wrap gap-3 mb-6">
-        <select wire:model.live="competition" class="rounded-lg bg-gray-800 border-gray-700 text-sm text-gray-300 px-3 py-2">
-            <option value="">All competitions</option>
-            @foreach($competitions as $comp)
-                <option value="{{ $comp->id }}">{{ $comp->name }}</option>
-            @endforeach
-        </select>
-        <select wire:model.live="status" class="rounded-lg bg-gray-800 border-gray-700 text-sm text-gray-300 px-3 py-2">
-            <option value="">All statuses</option>
-            <option value="scheduled">Scheduled</option>
-            <option value="live">Live</option>
-            <option value="ft">Full Time</option>
-            <option value="postponed">Postponed</option>
-        </select>
-    </div>
+        <div class="search-row">
+            <select wire:model.live="competition">
+                <option value="">All competitions</option>
+                @foreach($competitions as $comp)
+                    <option value="{{ $comp->id }}">{{ $comp->name }}</option>
+                @endforeach
+            </select>
+            <select wire:model.live="status">
+                <option value="">All statuses</option>
+                <option value="scheduled">Scheduled</option>
+                <option value="live">Live</option>
+                <option value="ft">Full Time</option>
+                <option value="postponed">Postponed</option>
+            </select>
+        </div>
+    </section>
 
-    <div class="rounded-xl bg-gray-900 border border-gray-800 divide-y divide-gray-800">
-        @forelse($matches as $match)
-            @php
-                $home = $match->matchTeams->firstWhere('side', 'home');
-                $away = $match->matchTeams->firstWhere('side', 'away');
-            @endphp
-            <a href="{{ route('matches.show', $match) }}" class="flex items-center justify-between px-5 py-4 hover:bg-gray-800/50 transition">
-                <div class="flex-1">
-                    <div class="text-xs text-gray-500 mb-1">
-                        {{ $match->season->competition->name }} &middot;
-                        @if($match->round) R{{ $match->round }} @endif
-                        @if($match->stage) &middot; {{ str($match->stage)->replace('_', ' ')->title() }} @endif
+    {{-- ═══ Body ═══ --}}
+    <div class="page-body">
+        <div class="result-list">
+            @forelse($matches as $match)
+                @php
+                    $home = $match->matchTeams->firstWhere('side', 'home');
+                    $away = $match->matchTeams->firstWhere('side', 'away');
+                    $isLive = $match->status === 'live';
+                    $isFinal = $match->status === 'ft';
+                    $homeWon = $isFinal && $home?->is_winner;
+                    $awayWon = $isFinal && $away?->is_winner;
+                    $rowClass = 'result';
+                    if ($isLive) $rowClass .= ' is-live';
+                    if ($homeWon) $rowClass .= ' home-won';
+                    if ($awayWon) $rowClass .= ' away-won';
+                @endphp
+                <a href="{{ route('matches.show', $match) }}" class="{{ $rowClass }}" wire:navigate>
+                    <div class="r-comp">
+                        @if($isLive)
+                            <span class="pulse-dot" style="width: 7px; height: 7px; margin-right: 6px; display:inline-block; vertical-align:middle;"></span>LIVE ·
+                        @endif
+                        {{ $match->season->competition->name }}@if($match->round) · R{{ $match->round }}@endif@if($match->stage) · {{ str($match->stage)->replace('_', ' ')->title() }}@endif
                     </div>
-                    <div class="flex items-center gap-4">
-                        <span class="w-40 text-right font-medium {{ $home?->is_winner ? 'text-white' : 'text-gray-400' }}">
-                            {{ $home?->team->name ?? 'TBD' }}
-                        </span>
-                        @if($match->status === 'ft')
-                            <span class="rounded bg-gray-800 px-3 py-1 text-sm font-mono font-bold text-emerald-400 min-w-[70px] text-center">
-                                {{ $home?->score ?? '-' }} - {{ $away?->score ?? '-' }}
-                            </span>
-                        @elseif($match->status === 'live')
-                            <span class="rounded bg-red-600/20 px-3 py-1 text-sm font-bold text-red-400 min-w-[70px] text-center animate-pulse">
-                                LIVE
-                            </span>
+                    <div class="r-home">{{ $home?->team->name ?? 'TBD' }}</div>
+                    <div class="r-score">
+                        @if($isFinal || $isLive)
+                            <span>{{ $home?->score ?? 0 }}</span>
+                            <span class="r-score-dash">—</span>
+                            <span>{{ $away?->score ?? 0 }}</span>
                         @else
-                            <span class="rounded bg-gray-800 px-3 py-1 text-xs text-gray-500 min-w-[70px] text-center">
+                            <span style="font-size: 14px; font-family: var(--font-mono); color: var(--color-muted); letter-spacing: .06em;">
                                 {{ $match->kickoff->format('H:i') }}
                             </span>
                         @endif
-                        <span class="w-40 font-medium {{ $away?->is_winner ? 'text-white' : 'text-gray-400' }}">
-                            {{ $away?->team->name ?? 'TBD' }}
-                        </span>
                     </div>
+                    <div class="r-away">{{ $away?->team->name ?? 'TBD' }}</div>
+                    <div class="r-date">
+                        {{ strtoupper($match->kickoff->format('d M Y')) }}
+                        @if($match->venue)
+                            <div style="font-size: 10px; margin-top: 2px;">{{ $match->venue->name }}</div>
+                        @endif
+                    </div>
+                </a>
+            @empty
+                <div style="padding: 40px 24px; text-align: center; color: var(--color-muted); background: var(--color-bg-2); font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em;">
+                    No matches found. Run <code style="color: var(--color-brand-yellow);">php artisan rugby:sync-daily</code> to pull data.
                 </div>
-                <div class="text-right ml-4">
-                    <div class="text-xs text-gray-500">{{ $match->kickoff->format('d M Y') }}</div>
-                    @if($match->venue)
-                        <div class="text-xs text-gray-600">{{ $match->venue->name }}</div>
-                    @endif
-                </div>
-            </a>
-        @empty
-            <div class="px-4 py-12 text-center text-gray-500">
-                No matches found. Run <code class="text-emerald-400">php artisan rugby:sync-daily</code> to pull data.
-            </div>
-        @endforelse
-    </div>
+            @endforelse
+        </div>
 
-    <div class="mt-6">{{ $matches->links() }}</div>
+        @if($matches->hasPages())
+            <div style="margin-top: 18px;">{{ $matches->links() }}</div>
+        @endif
+    </div>
 </div>

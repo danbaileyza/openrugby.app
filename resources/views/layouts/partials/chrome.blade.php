@@ -37,6 +37,24 @@
                     <a href="{{ route('admin.index') }}" @class(['chrome-link', 'is-active' => request()->routeIs('admin.*')])>Admin</a>
                 @endif
             @endauth
+
+            {{-- Mobile-only auth block — collapsed into the hamburger drawer below 900px --}}
+            <div class="chrome-nav-auth">
+                @auth
+                    <div class="chrome-nav-user">
+                        {{ auth()->user()->name }}
+                        @if(auth()->user()->isAdmin())
+                            <span class="chrome-role-tag">ADMIN</span>
+                        @endif
+                    </div>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="chrome-link chrome-link-plain">Sign Out</button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" class="chrome-link chrome-link-plain">Sign In</a>
+                @endauth
+            </div>
         </nav>
 
         {{-- Mobile-only hamburger toggle (hidden ≥900px via .chrome-menu-btn CSS) --}}
@@ -50,6 +68,9 @@
             <x-lucide-menu x-show="!navOpen" class="chrome-theme-icon" />
             <x-lucide-x    x-show="navOpen"  class="chrome-theme-icon" x-cloak />
         </button>
+
+        {{-- Global search --}}
+        <livewire:global-search />
 
         <div class="chrome-actions">
             {{-- Theme toggle --}}
@@ -69,20 +90,22 @@
                 <x-lucide-moon class="chrome-theme-icon chrome-theme-moon" />
             </button>
 
-            @auth
-                <span class="chrome-user">
-                    <span class="chrome-user-name">{{ auth()->user()->name }}</span>
-                    @if(auth()->user()->isAdmin())
-                        <span class="chrome-role-tag">ADMIN</span>
-                    @endif
-                </span>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="chrome-link chrome-link-plain">Sign Out</button>
-                </form>
-            @else
-                <a href="{{ route('login') }}" class="chrome-link chrome-link-plain">Sign In</a>
-            @endauth
+            <div class="chrome-actions-auth">
+                @auth
+                    <span class="chrome-user">
+                        <span class="chrome-user-name">{{ auth()->user()->name }}</span>
+                        @if(auth()->user()->isAdmin())
+                            <span class="chrome-role-tag">ADMIN</span>
+                        @endif
+                    </span>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="chrome-link chrome-link-plain">Sign Out</button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" class="chrome-link chrome-link-plain">Sign In</a>
+                @endauth
+            </div>
 
             <a href="{{ route('chat') }}" class="chrome-cta">Ask the Bot</a>
         </div>
