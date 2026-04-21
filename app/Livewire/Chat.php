@@ -10,6 +10,7 @@ use App\Models\Team;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 class Chat extends Component
@@ -112,11 +113,47 @@ class Chat extends Component
     /**
      * Try to answer simple questions directly from the DB.
      *
-     * Handles: counts, lookups, "show me X", "list X", "how many X"
+     * Handles: counts, lookups, "show me X", "list X", "how many X",
+     * "who does X play next" / "X next match"
      */
     private function tryDirectAnswer(string $question): ?string
     {
         $q = strtolower($question);
+
+        // --- Next match / upcoming fixture for a team ---
+        // Catches: "who does X play next", "X next match", "when do X play next",
+        // "next game for X", "what's next for X".
+        if (preg_match('/\b(next\s+(match|game|fixture|opponent)|play(s|ing)?\s+next|when\s+(do|does|are|is).+play|what.s\s+next)\b/i', $q)) {
+            $team = $this->resolveTeamFromQuestion($question);
+            if ($team) {
+                $next = RugbyMatch::whereHas('matchTeams', fn ($q) => $q->where('team_id', $team->id))
+                    ->where('kickoff', '>=', now())
+                    ->where('status', '!=', 'cancelled')
+                    ->orderBy('kickoff')
+                    ->limit(3)
+                    ->with(['matchTeams.team', 'season.competition', 'venue'])
+                    ->get();
+
+                if ($next->isEmpty()) {
+                    return "I don't have any upcoming fixtures for **{$team->name}** in the database. They may be between seasons, or we haven't yet imported their next round.";
+                }
+
+                $lines = ["**{$team->name}** — next ".Str::plural('fixture', $next->count()).":\n"];
+                foreach ($next as $m) {
+                    $home = $m->matchTeams->firstWhere('side', 'home');
+                    $away = $m->matchTeams->firstWhere('side', 'away');
+                    $isHome = $home?->team_id === $team->id;
+                    $opp = $isHome ? ($away?->team->name ?? 'TBD') : ($home?->team->name ?? 'TBD');
+                    $sideTag = $isHome ? '(home)' : '(away)';
+                    $when = $m->kickoff->format('D j M Y · H:i');
+                    $comp = $m->season->competition->name;
+                    $venue = $m->venue?->name ? " · {$m->venue->name}" : '';
+                    $lines[] = "• **{$when}** — vs {$opp} {$sideTag} · {$comp}{$venue}";
+                }
+
+                return implode("\n", $lines);
+            }
+        }
 
         // --- Counts / How many ---
         if (preg_match('/how many|count|total|number of/', $q)) {
@@ -263,6 +300,58 @@ class Chat extends Component
         }
 
         return null; // Not a direct-answer question
+    }
+
+    /**
+     * Pull a team name out of free text. Tries multi-word capitalised
+     * sequences first (e.g. "Grey High School"), then falls back to a
+     * lowercase substring scan over known team names.
+     */
+    private function resolveTeamFromQuestion(string $question): ?Team
+    {
+        // Strip the trigger words so they don't accidentally match team names.
+        $stripped = preg_replace(
+            '/\b(who|what|when|where|do|does|are|is|will|the|next|match|game|fixture|opponent|play|plays|playing|s)\b/i',
+            ' ',
+            $question
+        );
+        $stripped = trim(preg_replace('/[^\w\s]/', ' ', $stripped));
+
+        // Capitalised multi-word sequences from the original question.
+        preg_match_all('/\b([A-Z][a-zA-Z]+(?:\s+[A-Z][a-zA-Z]+)*)\b/', $question, $caps);
+        $candidates = collect($caps[1] ?? [])
+            ->filter(fn ($s) => strlen($s) >= 3)
+            ->sortByDesc(fn ($s) => strlen($s))
+            ->values();
+
+        foreach ($candidates as $candidate) {
+            $team = Team::where('name', 'like', "%{$candidate}%")
+                ->orWhere('short_name', 'like', "%{$candidate}%")
+                ->orderByRaw('LENGTH(name) ASC')
+                ->first();
+            if ($team) {
+                return $team;
+            }
+        }
+
+        // Lowercase fallback — try the longest remaining word phrase.
+        $words = collect(preg_split('/\s+/', strtolower($stripped), -1, PREG_SPLIT_NO_EMPTY))
+            ->filter(fn ($w) => strlen($w) >= 3)
+            ->values();
+
+        for ($len = $words->count(); $len >= 1; $len--) {
+            for ($start = 0; $start + $len <= $words->count(); $start++) {
+                $phrase = $words->slice($start, $len)->implode(' ');
+                $team = Team::whereRaw('LOWER(name) LIKE ?', ["%{$phrase}%"])
+                    ->orderByRaw('LENGTH(name) ASC')
+                    ->first();
+                if ($team) {
+                    return $team;
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
