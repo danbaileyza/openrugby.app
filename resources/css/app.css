@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+/* Archivo — display / UI / numerals */
+@import "@fontsource/archivo/400.css";
+@import "@fontsource/archivo/500.css";
+@import "@fontsource/archivo/600.css";
+@import "@fontsource/archivo/700.css";
+@import "@fontsource/archivo/800.css";
+@import "@fontsource/archivo/900.css";
+
+/* JetBrains Mono — labels, tags, metadata */
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+@import "@fontsource/jetbrains-mono/700.css";
+
+/* Design tokens — V1 Stadium */
+@import "./tokens.css";
+@import "./chrome.css";
+@import "./stadium.css";
+
+/* Apply Archivo as the default display font globally so pages inherit it
+   even before individual components are migrated to the new type utilities. */
+html,
+body {
+  font-family: var(--font-display);
+}

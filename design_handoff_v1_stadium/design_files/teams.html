@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Open Rugby · Stadium · Teams</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared.css">
+<style>
+main{padding: 32px 40px 80px;}
+.team-grid{display:grid; grid-template-columns: repeat(4, 1fr); gap: 2px;}
+@media (max-width: 1100px){ .team-grid{ grid-template-columns: repeat(2,1fr);}}
+.tt{
+  background: var(--bg2); padding: 20px; cursor:pointer;
+  border-top: 3px solid var(--clr, #444); position: relative;
+  display:flex; flex-direction:column; gap: 8px; transition: background .15s;
+}
+.tt:hover{ background:#111c17;}
+.tt .badge{
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--clr, #444); display:flex; align-items:center; justify-content:center;
+  color: #fff; font-family: Archivo; font-weight: 900; font-size: 18px;
+  box-shadow: inset 0 -4px 8px rgba(0,0,0,.3);
+}
+.tt .name{ font-family: Archivo; font-weight: 900; font-size: 20px; text-transform: uppercase; letter-spacing:-.01em;}
+.tt .loc{ font-family:"JetBrains Mono",monospace; font-size: 10px; color: var(--muted); letter-spacing:.1em; text-transform: uppercase;}
+.tt .stats{
+  display:flex; gap: 16px; margin-top: auto; padding-top: 12px;
+  border-top: 1px solid var(--line); font-family:"JetBrains Mono",monospace; font-size: 11px;
+}
+.tt .stats b{ font-family: Archivo; font-size: 15px; color: var(--yellow); display:block;}
+.tt .stats span{ color: var(--muted); letter-spacing:.08em;}
+.tt .comp{
+  position: absolute; top: 14px; right: 14px;
+  font-family:"JetBrains Mono",monospace; font-size:9px; letter-spacing:.15em;
+  color: var(--muted); text-transform: uppercase;
+}
+</style>
+</head>
+<body data-screen-label="01 V1 Stadium Teams">
+
+<header class="chrome">
+  <div class="brand"><span class="ball"></span> <span>Open Rugby</span></div>
+  <nav class="nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="competitions.html">Competitions</a>
+    <a href="teams.html" class="active">Teams</a>
+    <a href="players.html">Players</a>
+    <a href="match.html">Matches</a>
+    <a href="capture.html">Live Capture</a>
+    <a href="#">Admin</a>
+  </nav>
+  <div class="chrome-right">
+    <span>Dan <span class="admin-tag">ADMIN</span></span>
+    <span>Sign Out</span>
+    <button class="ask-btn">Ask the Bot</button>
+  </div>
+</header>
+
+<section class="page-head">
+  <div class="crumb">← <a href="dashboard.html">back to dashboard</a></div>
+  <h1 class="big">Teams<span class="yellow">.</span></h1>
+  <p class="sub">532 clubs across every tier of the professional game. Filter by competition, country or playing style.</p>
+</section>
+
+<main>
+  <div class="filter-row">
+    <span class="chip active">All</span>
+    <span class="chip">URC</span>
+    <span class="chip">Premiership</span>
+    <span class="chip">Top 14</span>
+    <span class="chip">Super Rugby</span>
+    <span class="chip">Internationals</span>
+    <span class="chip">Currie Cup</span>
+  </div>
+
+  <div class="team-grid">
+    <a class="tt" href="team.html" style="--clr:#1a4d7a"><span class="comp">URC</span><div class="badge">BU</div><div class="name">Bulls</div><div class="loc">Pretoria · ZA</div><div class="stats"><span><b>8</b>WON</span><span><b>40</b>PTS</span><span><b>#8</b>POS</span></div></a>
+    <a class="tt" href="team.html" style="--clr:#c9a961"><span class="comp">URC</span><div class="badge">GW</div><div class="name">Glasgow Warriors</div><div class="loc">Scotstoun · SCO</div><div class="stats"><span><b>11</b>WON</span><span><b>55</b>PTS</span><span><b>#1</b>POS</span></div></a>
+    <a class="tt" href="team.html" style="--clr:#1d3557"><span class="comp">URC</span><div class="badge">LE</div><div class="name">Leinster</div><div class="loc">Dublin · IRL</div><div class="stats"><span><b>9</b>WON</span><span><b>46</b>PTS</span><span><b>#4</b>POS</span></div></a>
+    <a class="tt" href="team.html" style="--clr:#0b2a4d"><span class="comp">URC</span><div class="badge">ST</div><div class="name">Stormers</div><div class="loc">Cape Town · ZA</div><div class="stats"><span><b>11</b>WON</span><span><b>51</b>PTS</span><span><b>#2</b>POS</span></div></a>
+    <a class="tt" href="team.html" style="--clr:#e63946"><span class="comp">URC</span><div class="badge">UL</div><div class="name">Ulster</div><div class="loc">Belfast · IRL</div><div class="stats"><span><b>9</b>WON</span><span><b>47</b>PTS</span><span><b>#3</b>POS</span></div></a>
+    <a class="tt" href="team.html" style="--clr:#c00"><span class="comp">URC</span><div class="badge">MU</div><div class="name">Munster</div><div class="loc">Limerick · IRL</div><div class="stats"><span><b>8</b>WON</span><span><b>41</b>PTS</span><span><b>#7</b>POS</span></div></a>
+    <a class="tt" href="team.html" style="--clr:#dc2626"><span class="comp">URC</span><div class="badge">LI</div><div class="name">Lions</div><div class="loc">Joburg · ZA</div><div class="stats"><span><b>8</b>WON</span><span><b>43</b>PTS</span><span><b>#5</b>POS</span></div></a>
+    <a class="tt" href="team.html" style="--clr:#1565c0"><span class="comp">URC</span><div class="badge">CA</div><div class="name">Cardiff Rugby</div><div class="loc">Cardiff · WAL</div><div class="stats"><span><b>8</b>WON</span><span><b>41</b>PTS</span><span><b>#6</b>POS</span></div></a>
+    <a class="tt" href="team.html" style="--clr:#111"><span class="comp">PREM</span><div class="badge">SA</div><div class="name">Saracens</div><div class="loc">London · ENG</div><div class="stats"><span><b>13</b>WON</span><span><b>61</b>PTS</span><span><b>#1</b>POS</span></div></a>
+    <a class="tt" href="team.html" style="--clr:#9c3a2a"><span class="comp">PREM</span><div class="badge">LT</div><div class="name">Leicester Tigers</div><div class="loc">Leicester · ENG</div><div class="stats"><span><b>10</b>WON</span><span><b>48</b>PTS</span><span><b>#3</b>POS</span></div></a>
+    <a class="tt" href="team.html" style="--clr:#003f8a"><span class="comp">PREM</span><div class="badge">BA</div><div class="name">Bath</div><div class="loc">Bath · ENG</div><div class="stats"><span><b>11</b>WON</span><span><b>54</b>PTS</span><span><b>#2</b>POS</span></div></a>
+    <a class="tt" href="team.html" style="--clr:#1d8a5b"><span class="comp">PREM</span><div class="badge">NO</div><div class="name">Northampton Saints</div><div class="loc">Northampton · ENG</div><div class="stats"><span><b>9</b>WON</span><span><b>45</b>PTS</span><span><b>#4</b>POS</span></div></a>
+    <a class="tt" href="team.html" style="--clr:#2c5f9a"><span class="comp">PREM</span><div class="badge">SS</div><div class="name">Sale Sharks</div><div class="loc">Manchester · ENG</div><div class="stats"><span><b>8</b>WON</span><span><b>41</b>PTS</span><span><b>#5</b>POS</span></div></a>
+    <a class="tt" href="team.html" style="--clr:#004d9f"><span class="comp">T14</span><div class="badge">R9</div><div class="name">Racing 92</div><div class="loc">Paris · FRA</div><div class="stats"><span><b>14</b>WON</span><span><b>65</b>PTS</span><span><b>#1</b>POS</span></div></a>
+    <a class="tt" href="team.html" style="--clr:#c9172e"><span class="comp">T14</span><div class="badge">TO</div><div class="name">Stade Toulousain</div><div class="loc">Toulouse · FRA</div><div class="stats"><span><b>13</b>WON</span><span><b>62</b>PTS</span><span><b>#2</b>POS</span></div></a>
+    <a class="tt" href="team.html" style="--clr:#0b0b0b"><span class="comp">INT</span><div class="badge">NZ</div><div class="name">New Zealand</div><div class="loc">All Blacks</div><div class="stats"><span><b>—</b>TIER 1</span><span><b>#1</b>WR</span><span><b>✓</b>VER</span></div></a>
+    <a class="tt" href="team.html" style="--clr:#1d8a5b"><span class="comp">INT</span><div class="badge">ZA</div><div class="name">South Africa</div><div class="loc">Springboks</div><div class="stats"><span><b>—</b>TIER 1</span><span><b>#2</b>WR</span><span><b>✓</b>VER</span></div></a>
+    <a class="tt" href="team.html" style="--clr:#0a652b"><span class="comp">INT</span><div class="badge">IR</div><div class="name">Ireland</div><div class="loc">Six Nations</div><div class="stats"><span><b>—</b>TIER 1</span><span><b>#3</b>WR</span><span><b>✓</b>VER</span></div></a>
+    <a class="tt" href="team.html" style="--clr:#ffcc00"><span class="comp">INT</span><div class="badge" style="color:#0a1410">AU</div><div class="name">Australia</div><div class="loc">Wallabies</div><div class="stats"><span><b>—</b>TIER 1</span><span><b>#6</b>WR</span><span><b>✓</b>VER</span></div></a>
+    <a class="tt" href="team.html" style="--clr:#c8102e"><span class="comp">INT</span><div class="badge">EN</div><div class="name">England</div><div class="loc">Six Nations</div><div class="stats"><span><b>—</b>TIER 1</span><span><b>#4</b>WR</span><span><b>✓</b>VER</span></div></a>
+    <a class="tt" href="team.html" style="--clr:#002855"><span class="comp">INT</span><div class="badge">FR</div><div class="name">France</div><div class="loc">Les Bleus</div><div class="stats"><span><b>—</b>TIER 1</span><span><b>#5</b>WR</span><span><b>✓</b>VER</span></div></a>
+    <a class="tt" href="team.html" style="--clr:#c00"><span class="comp">INT</span><div class="badge">WA</div><div class="name">Wales</div><div class="loc">Six Nations</div><div class="stats"><span><b>—</b>TIER 1</span><span><b>#9</b>WR</span><span><b>✓</b>VER</span></div></a>
+    <a class="tt" href="team.html" style="--clr:#0a1f44"><span class="comp">INT</span><div class="badge">SC</div><div class="name">Scotland</div><div class="loc">Six Nations</div><div class="stats"><span><b>—</b>TIER 1</span><span><b>#7</b>WR</span><span><b>✓</b>VER</span></div></a>
+    <a class="tt" href="team.html" style="--clr:#1e5631"><span class="comp">INT</span><div class="badge">IT</div><div class="name">Italy</div><div class="loc">Six Nations</div><div class="stats"><span><b>—</b>TIER 1</span><span><b>#14</b>WR</span><span><b>✓</b>VER</span></div></a>
+  </div>
+</main>
+
+<div class="switcher">
+  <span class="label">VERSION</span>
+  <a href="../index.html">←</a>
+  <a class="active" href="dashboard.html">01 STADIUM</a>
+  <a href="../v2-editorial/dashboard.html">02 PROGRAMME</a>
+  <a href="../v3-terminal/dashboard.html">03 TERMINAL</a>
+</div>
+
+<script>
+document.querySelectorAll('.chip').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

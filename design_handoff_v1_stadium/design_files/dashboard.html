@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Open Rugby · Stadium · Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Archivo+Narrow:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg: #07100c;
+  --bg2: #0b1712;
+  --ink: #ecf3ee;
+  --muted: #7a8a82;
+  --line: rgba(255,255,255,.08);
+  --yellow: #ffd100;
+  --green: #1d8a5b;
+  --red: #e63946;
+  --blue: #3b82f6;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family: Archivo, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+a{color:inherit; text-decoration:none;}
+.mono{font-family:"JetBrains Mono", monospace; letter-spacing:.02em;}
+
+/* Chrome */
+.chrome{
+  background: #050a08;
+  border-bottom: 1px solid var(--line);
+  padding: 14px 40px;
+  display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:30;
+}
+.brand{ display:flex; align-items:center; gap:12px; font-weight:900; letter-spacing:-.01em;}
+.ball{
+  width:30px; height:20px; border-radius:50%;
+  background: linear-gradient(135deg,#d4a574,#8b5a2b);
+  transform: rotate(-18deg);
+  box-shadow: inset 0 -4px 8px rgba(0,0,0,.35);
+  position:relative;
+}
+.ball::after{content:"";position:absolute;inset:0;border-radius:50%;background:repeating-linear-gradient(90deg, transparent 0 12px, rgba(0,0,0,.35) 12px 13px);}
+.nav{display:flex; gap: 2px;}
+.nav a{
+  padding: 8px 14px; font-size: 13px; font-weight: 600; letter-spacing:.02em;
+  border-radius: 4px; color: #aab4ad;
+}
+.nav a.active{ background: var(--yellow); color:#0a1410;}
+.nav a:hover:not(.active){ color: #fff;}
+.chrome-right{ display:flex; align-items:center; gap:16px; font-size: 13px; color:#aab4ad;}
+.admin-tag{ background:#ffd100; color:#0a1410; padding: 3px 6px; font-size:10px; font-weight:800; letter-spacing:.08em; border-radius:3px;}
+.ask-btn{
+  background: var(--yellow); color:#0a1410; font-weight: 800;
+  padding: 10px 16px; border-radius: 4px; font-size: 13px; letter-spacing:.02em;
+  border: none; cursor:pointer;
+}
+
+/* Version switcher */
+.switcher{
+  position:fixed; bottom: 20px; right: 20px;
+  background: rgba(10,15,12,.9); border: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+  padding: 6px; border-radius: 6px; z-index: 50;
+  display:flex; gap: 4px; font-family:"JetBrains Mono",monospace;font-size:11px;
+}
+.switcher a{ padding: 6px 10px; border-radius: 3px; color:#aab4ad;}
+.switcher a.active{ background: var(--yellow); color:#0a1410; font-weight:700;}
+.switcher .label{ color:#6a746d; padding:6px 8px; border-right: 1px solid var(--line);}
+
+/* HERO */
+.hero{
+  position:relative;
+  padding: 48px 40px 32px;
+  overflow:hidden;
+  border-bottom: 1px solid var(--line);
+  background:
+    radial-gradient(1200px 500px at 85% 0%, rgba(255,209,0,.1), transparent 50%),
+    linear-gradient(180deg, #0a1612 0%, #07100c 100%);
+}
+.hero-top{
+  display:flex; justify-content:space-between; align-items:flex-end;
+  margin-bottom: 28px;
+}
+.eyebrow{
+  font-family:"JetBrains Mono",monospace; font-size:11px;
+  letter-spacing:.22em; text-transform:uppercase;
+  color: var(--yellow);
+  display:flex; align-items:center; gap:10px; margin-bottom: 12px;
+}
+.dot{ width:8px; height:8px; border-radius:50%; background: var(--red); animation: pulse 1.4s ease-in-out infinite;}
+@keyframes pulse{ 0%,100%{opacity:1} 50%{opacity:.3}}
+h1.hero-title{
+  font-family: Archivo; font-weight: 900; font-size: clamp(48px, 7vw, 92px);
+  line-height: .9; letter-spacing: -0.04em;
+  margin: 0;
+  text-transform: uppercase;
+}
+h1.hero-title .yellow{ color: var(--yellow);}
+h1.hero-title .stroke{ -webkit-text-stroke: 2px var(--ink); color: transparent;}
+
+.hero-sub{
+  color:#aab4ad; max-width: 52ch; font-size: 16px; line-height:1.55;
+  margin-top: 16px;
+}
+
+.ticker{
+  display:flex; gap: 0; align-items:stretch;
+  background: #050908;
+  border: 1px solid var(--line);
+  border-radius: 4px; overflow:hidden; margin-top: 36px;
+}
+.tick{
+  flex:1; padding: 18px 24px;
+  border-right: 1px solid var(--line);
+  display:flex; flex-direction:column; gap:6px;
+  position:relative;
+}
+.tick:last-child{ border-right:none;}
+.tick .label{ font-family:"JetBrains Mono",monospace; font-size:10px; letter-spacing:.2em; color: var(--muted); text-transform:uppercase;}
+.tick .n{ font-family: Archivo; font-weight: 900; font-size: 48px; line-height:1; letter-spacing:-0.03em;}
+.tick .delta{ font-family:"JetBrains Mono",monospace; font-size:11px; color: #6cd4a4;}
+.tick.hot .n{ color: var(--yellow);}
+.tick.hot::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:2px; background: var(--yellow);
+}
+
+/* MAIN */
+main{ padding: 32px 40px 80px; display:grid; grid-template-columns: 2fr 1fr; gap: 24px;}
+@media (max-width: 1100px){ main{ grid-template-columns: 1fr;}}
+
+.section-head{
+  display:flex; justify-content:space-between; align-items:baseline;
+  margin-bottom: 14px;
+}
+.section-title{
+  font-family: Archivo; font-weight: 800; font-size: 22px; letter-spacing:-.01em;
+  text-transform: uppercase;
+  display:flex; align-items:center; gap:10px;
+}
+.section-title .bar{ width: 4px; height: 22px; background: var(--yellow);}
+.section-link{ font-family:"JetBrains Mono",monospace; font-size:12px; color: var(--yellow);}
+
+/* Results strip */
+.results{ display:flex; flex-direction:column; gap: 2px;}
+.result{
+  background: var(--bg2);
+  padding: 18px 22px;
+  display: grid;
+  grid-template-columns: 120px 1fr auto 1fr 100px;
+  gap: 20px; align-items:center;
+  border-left: 4px solid var(--line);
+  transition: border-color .2s, background .2s;
+  cursor: pointer;
+}
+.result:hover{ background:#111c17; }
+.result .comp{ font-family:"JetBrains Mono",monospace; font-size:11px; color: var(--muted); text-transform: uppercase; letter-spacing:.1em;}
+.result .home, .result .away{ font-weight:700; font-size: 18px;}
+.result .away{ text-align: right;}
+.result .score{
+  font-family: Archivo; font-weight: 900; font-size: 28px;
+  display:flex; gap: 18px; align-items:center;
+  letter-spacing:-.02em;
+}
+.result .score .s-home, .result .score .s-away{ min-width: 34px; text-align:center;}
+.result .score .dash{ color: var(--muted); font-weight: 400;}
+.result .date{ font-family:"JetBrains Mono",monospace; font-size:11px; color: var(--muted); text-align:right;}
+.result.won-home{ border-left-color: var(--yellow);}
+.result.won-home .home{ color: var(--yellow);}
+.result.won-away{ border-left-color: var(--yellow);}
+.result.won-away .away{ color: var(--yellow);}
+.result.blow .score{ color: var(--yellow);}
+
+/* Fixtures are rendered differently - upcoming */
+.fixtures{ display:flex; flex-direction:column; gap: 2px;}
+.fixture{
+  background: var(--bg2);
+  padding: 16px 22px;
+  display:grid;
+  grid-template-columns: 140px 1fr auto 1fr 140px;
+  gap: 20px; align-items:center;
+  position:relative;
+}
+.fixture .time{ font-family:"JetBrains Mono",monospace; font-size:12px; color: var(--yellow); letter-spacing:.06em;}
+.fixture .comp{ font-family:"JetBrains Mono",monospace; font-size:11px; color: var(--muted); text-transform: uppercase;}
+.fixture .team-h, .fixture .team-a{ font-weight:700; font-size: 16px;}
+.fixture .team-a{ text-align:right;}
+.fixture .vs{ font-family:"JetBrains Mono",monospace; font-size: 14px; color: var(--muted); letter-spacing:.1em; padding: 4px 10px; border:1px solid var(--line); border-radius: 2px;}
+
+/* Tabs */
+.tabs{ display:flex; gap: 2px; margin-bottom: 18px; border-bottom: 1px solid var(--line);}
+.tab{
+  font-family: Archivo; font-weight: 700; font-size: 13px;
+  padding: 10px 18px; cursor:pointer; color: #aab4ad;
+  letter-spacing:.06em; text-transform: uppercase;
+  border-bottom: 2px solid transparent;
+  transition: .15s;
+}
+.tab.active{ color: var(--yellow); border-bottom-color: var(--yellow);}
+.tab:hover:not(.active){ color: #fff;}
+
+.tab-panel{ display:none;}
+.tab-panel.active{ display:block;}
+
+/* Right column */
+.side{ display:flex; flex-direction:column; gap: 32px;}
+
+.standings{ background: var(--bg2); padding: 0; border: 1px solid var(--line); }
+.standings-head{
+  padding: 16px 20px; display:flex; justify-content:space-between; align-items:center;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(90deg, rgba(255,209,0,.07), transparent);
+}
+.standings-head h3{ margin:0; font-size:13px; text-transform:uppercase; letter-spacing:.1em; font-weight:800; color: var(--yellow);}
+.standings-head .comp-pick{
+  font-family:"JetBrains Mono",monospace; font-size:11px; color: #aab4ad;
+  background: transparent; border: 1px solid var(--line); padding: 4px 8px; border-radius: 3px;
+  cursor:pointer;
+}
+.standings table{ width:100%; border-collapse: collapse; font-size: 13px;}
+.standings th{
+  font-family:"JetBrains Mono",monospace; font-size: 10px; font-weight: 500;
+  letter-spacing:.15em; text-transform:uppercase; color: var(--muted);
+  text-align: right; padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.standings th.left{ text-align:left;}
+.standings td{
+  padding: 11px 12px; text-align: right;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.standings td.left{ text-align:left;}
+.standings td.team{ font-weight: 600;}
+.standings td.pts{ font-weight: 900; font-family: Archivo; font-size: 15px; color: var(--yellow);}
+.standings tr:hover td{ background: rgba(255,255,255,.02);}
+.team-dot{ display:inline-block; width:3px; height:16px; vertical-align:middle; margin-right:8px;}
+.pos{ font-family:"JetBrains Mono",monospace; color: var(--muted); font-size:12px; width: 28px;}
+.pos.top{ color: var(--yellow); font-weight: 700;}
+
+/* Competitions tile row */
+.comps{
+  display:grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+}
+@media (max-width: 900px){ .comps{ grid-template-columns: 1fr;}}
+.comp-tile{
+  background: var(--bg2);
+  padding: 18px 20px;
+  display:flex; flex-direction:column; gap: 6px;
+  position:relative; overflow:hidden;
+  transition: .15s;
+  cursor: pointer;
+}
+.comp-tile:hover{ background: #111c17;}
+.comp-tile .name{ font-weight: 800; font-size: 15px;}
+.comp-tile .season{ font-family:"JetBrains Mono",monospace; font-size:11px; color: var(--muted);}
+.comp-tile .meter{ height: 3px; background: var(--line); margin-top: 10px; position:relative; overflow:hidden;}
+.comp-tile .meter span{ position:absolute; inset: 0 auto 0 0; background: var(--yellow); width: 75%;}
+.comp-tile .pct{ font-family:"JetBrains Mono",monospace; font-size:10px; color: var(--muted); margin-top: 4px; letter-spacing:.05em;}
+.comp-tile[data-pct="100"] .meter span{ background: var(--green);}
+.comp-tile[data-pct="55"] .meter span{ background: var(--red);}
+.comp-tile .check{ position:absolute; top: 16px; right: 16px; color: var(--yellow); font-size: 14px;}
+
+/* Ask the bot */
+.ask-card{
+  margin-top: 32px;
+  padding: 32px 40px;
+  background:
+    radial-gradient(600px 200px at 0% 0%, rgba(255,209,0,.15), transparent 50%),
+    #0e1813;
+  border: 1px solid var(--line);
+  display:grid; grid-template-columns: 2fr 1fr; gap: 32px; align-items:center;
+}
+@media (max-width: 800px){ .ask-card{ grid-template-columns: 1fr;}}
+.ask-card h3{
+  margin:0 0 8px; font-family: Archivo; font-weight: 900; font-size: 32px;
+  text-transform:uppercase; letter-spacing:-.02em;
+}
+.ask-card p{ margin:0; color:#aab4ad; font-size: 15px; line-height: 1.55; max-width: 52ch;}
+.ask-card .go{
+  background: var(--yellow); color:#0a1410; padding: 14px 22px;
+  font-weight: 800; font-size: 14px; letter-spacing:.04em; border-radius: 3px;
+  text-align:center; cursor:pointer; display:inline-block; border:none;
+  font-family: Archivo;
+}
+
+/* Form-ish input for the ask */
+.ask-input{
+  display:flex; gap: 0; align-items:stretch;
+  border: 1px solid rgba(255,255,255,.15);
+  background: rgba(0,0,0,.3);
+  border-radius: 3px; overflow:hidden;
+}
+.ask-input input{
+  flex:1; background:transparent; border:none; color: var(--ink);
+  padding: 14px 16px; font-family: Archivo; font-size: 14px;
+}
+.ask-input input:focus{ outline:none;}
+.ask-input button{
+  background: var(--yellow); color:#0a1410; padding: 0 20px;
+  font-weight: 800; border: none; cursor:pointer; font-family:Archivo; letter-spacing: .04em;
+}
+
+/* Small utility */
+.filter-row{
+  display:flex; gap: 8px; margin-bottom: 14px; flex-wrap:wrap;
+}
+.chip{
+  font-family:"JetBrains Mono",monospace; font-size:11px;
+  padding: 6px 10px; border: 1px solid var(--line); border-radius: 2px;
+  color: #aab4ad; cursor:pointer; letter-spacing:.05em;
+  background: var(--bg2);
+}
+.chip.active{ background: var(--yellow); color:#0a1410; border-color: var(--yellow); font-weight:700;}
+.chip:hover:not(.active){ color: #fff; border-color: rgba(255,255,255,.2);}
+
+</style>
+</head>
+<body data-screen-label="01 V1 Stadium Dashboard">
+
+<header class="chrome">
+  <div class="brand"><span class="ball"></span> <span>Open Rugby</span></div>
+  <nav class="nav">
+    <a href="dashboard.html" class="active">Dashboard</a>
+    <a href="competitions.html">Competitions</a>
+    <a href="teams.html">Teams</a>
+    <a href="players.html">Players</a>
+    <a href="match.html">Matches</a>
+    <a href="capture.html">Live Capture</a>
+    <a href="#">Admin</a>
+  </nav>
+  <div class="chrome-right">
+    <span>Dan <span class="admin-tag">ADMIN</span></span>
+    <span>Sign Out</span>
+    <button class="ask-btn">Ask the Bot</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-top">
+    <div>
+      <div class="eyebrow"><span class="dot"></span> Round 15 live · 3 matches in progress</div>
+      <h1 class="hero-title">Every league.<br><span class="yellow">Every match.</span><br><span class="stroke">Every player.</span></h1>
+      <p class="hero-sub">Results, fixtures, standings and stats across the world's top rugby competitions — updated live through the final whistle. <span style="color:#ffd100; font-family:'JetBrains Mono',monospace; font-size:13px; letter-spacing:.08em;">openrugby.app</span></p>
+    </div>
+  </div>
+
+  <div class="ticker">
+    <div class="tick">
+      <span class="label">Competitions</span>
+      <span class="n">40</span>
+      <span class="delta">+2 this month</span>
+    </div>
+    <div class="tick">
+      <span class="label">Teams</span>
+      <span class="n">532</span>
+      <span class="delta">across 22 nations</span>
+    </div>
+    <div class="tick">
+      <span class="label">Players</span>
+      <span class="n">9,032</span>
+      <span class="delta">+127 this week</span>
+    </div>
+    <div class="tick hot">
+      <span class="label">Matches Played</span>
+      <span class="n">9,120</span>
+      <span class="delta">18 this weekend</span>
+    </div>
+  </div>
+</section>
+
+<main>
+  <div>
+    <!-- Results / Fixtures tabs -->
+    <div class="section-head">
+      <div class="section-title"><span class="bar"></span> The Action</div>
+      <a class="section-link" href="#">All matches →</a>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="results">Latest Results <span style="color:var(--red); margin-left:6px; font-size:10px;">● 3 LIVE</span></div>
+      <div class="tab" data-tab="fixtures">Upcoming Fixtures</div>
+    </div>
+
+    <div class="filter-row">
+      <span class="chip active">All competitions</span>
+      <span class="chip">URC</span>
+      <span class="chip">Premiership</span>
+      <span class="chip">Top 14</span>
+      <span class="chip">Super Rugby</span>
+      <span class="chip">Internationals</span>
+    </div>
+
+    <div class="tab-panel active" data-panel="results">
+      <div class="results">
+        <div class="result won-home" style="border-left-color: var(--red); background: linear-gradient(90deg, rgba(230,57,70,.08), var(--bg2) 60%);">
+          <div class="comp" style="color:var(--red); font-weight:700;"><span class="dot" style="display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--red); margin-right:6px; animation: pulse 1.4s ease-in-out infinite;"></span>LIVE · 67'</div>
+          <div class="home">Sharks</div>
+          <div class="score"><span class="s-home" style="color:var(--yellow)">17</span><span class="dash">—</span><span class="s-away">9</span></div>
+          <div class="away">Zebre</div>
+          <div class="date" style="color:var(--red);">Durban</div>
+        </div>
+        <div class="result" style="border-left-color: var(--red); background: linear-gradient(90deg, rgba(230,57,70,.08), var(--bg2) 60%);">
+          <div class="comp" style="color:var(--red); font-weight:700;"><span class="dot" style="display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--red); margin-right:6px; animation: pulse 1.4s ease-in-out infinite;"></span>LIVE · 23'</div>
+          <div class="home">Cardiff Rugby</div>
+          <div class="score"><span class="s-home">7</span><span class="dash">—</span><span class="s-away">7</span></div>
+          <div class="away">Ospreys</div>
+          <div class="date" style="color:var(--red);">Cardiff</div>
+        </div>
+        <div class="result won-away" style="border-left-color: var(--red); background: linear-gradient(90deg, rgba(230,57,70,.08), var(--bg2) 60%);">
+          <div class="comp" style="color:var(--red); font-weight:700;"><span class="dot" style="display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--red); margin-right:6px; animation: pulse 1.4s ease-in-out infinite;"></span>LIVE · HT</div>
+          <div class="home">Falcons</div>
+          <div class="score"><span class="s-home">3</span><span class="dash">—</span><span class="s-away" style="color:var(--yellow)">14</span></div>
+          <div class="away">Bristol</div>
+          <div class="date" style="color:var(--red);">Kingston Park</div>
+        </div>
+        <div class="result won-home blow">
+          <div class="comp">Top 14 · R14</div>
+          <div class="home">Racing 92</div>
+          <div class="score"><span class="s-home">47</span><span class="dash">—</span><span class="s-away">20</span></div>
+          <div class="away">Stade Français Paris</div>
+          <div class="date">19 APR</div>
+        </div>
+        <div class="result won-away blow">
+          <div class="comp">Premiership · R13</div>
+          <div class="home">Sale Sharks</div>
+          <div class="score"><span class="s-home">19</span><span class="dash">—</span><span class="s-away">85</span></div>
+          <div class="away">Saracens</div>
+          <div class="date">19 APR</div>
+        </div>
+        <div class="result won-away blow">
+          <div class="comp">URC · R15</div>
+          <div class="home">Benetton</div>
+          <div class="score"><span class="s-home">15</span><span class="dash">—</span><span class="s-away">45</span></div>
+          <div class="away">Munster</div>
+          <div class="date">18 APR</div>
+        </div>
+        <div class="result won-home">
+          <div class="comp">URC · R15</div>
+          <div class="home">Ospreys</div>
+          <div class="score"><span class="s-home">21</span><span class="dash">—</span><span class="s-away">17</span></div>
+          <div class="away">Sharks</div>
+          <div class="date">18 APR</div>
+        </div>
+        <div class="result won-home blow">
+          <div class="comp">Top 14 · R14</div>
+          <div class="home">Clermont Auvergne</div>
+          <div class="score"><span class="s-home">41</span><span class="dash">—</span><span class="s-away">23</span></div>
+          <div class="away">Lyon</div>
+          <div class="date">18 APR</div>
+        </div>
+        <div class="result won-away">
+          <div class="comp">Challenge Cup · QF</div>
+          <div class="home">Toulon</div>
+          <div class="score"><span class="s-home">22</span><span class="dash">—</span><span class="s-away">28</span></div>
+          <div class="away">Gloucester</div>
+          <div class="date">18 APR</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="fixtures">
+      <div class="fixtures">
+        <div class="fixture">
+          <div>
+            <div class="time">FRI 24 · 07:35</div>
+            <div class="comp">Super Rugby · R11</div>
+          </div>
+          <div class="team-h">Crusaders</div>
+          <div class="vs">V</div>
+          <div class="team-a">Waratahs</div>
+          <div class="date" style="text-align:right; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);">Christchurch</div>
+        </div>
+        <div class="fixture">
+          <div>
+            <div class="time">FRI 24 · 18:00</div>
+            <div class="comp">URC · R16</div>
+          </div>
+          <div class="team-h">Cardiff Rugby</div>
+          <div class="vs">V</div>
+          <div class="team-a">Ospreys</div>
+          <div class="date" style="text-align:right; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);">Cardiff Arms Park</div>
+        </div>
+        <div class="fixture">
+          <div>
+            <div class="time">FRI 24 · 18:45</div>
+            <div class="comp">URC · R16</div>
+          </div>
+          <div class="team-h">Edinburgh</div>
+          <div class="vs">V</div>
+          <div class="team-a">Sharks</div>
+          <div class="date" style="text-align:right; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);">Hive Stadium</div>
+        </div>
+        <div class="fixture">
+          <div>
+            <div class="time">FRI 24 · 18:45</div>
+            <div class="comp">URC · R16</div>
+          </div>
+          <div class="team-h">Zebre</div>
+          <div class="vs">V</div>
+          <div class="team-a">Dragons</div>
+          <div class="date" style="text-align:right; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);">Parma</div>
+        </div>
+        <div class="fixture">
+          <div>
+            <div class="time">FRI 24 · 18:45</div>
+            <div class="comp">Premiership · R14</div>
+          </div>
+          <div class="team-h">Falcons</div>
+          <div class="vs">V</div>
+          <div class="team-a">Bristol</div>
+          <div class="date" style="text-align:right; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);">Kingston Park</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Competitions -->
+    <div class="section-head" style="margin-top: 40px;">
+      <div class="section-title"><span class="bar"></span> Competitions</div>
+      <a class="section-link" href="#">All 40 →</a>
+    </div>
+    <div class="comps">
+      <div class="comp-tile" data-pct="100">
+        <span class="check">✓</span>
+        <div class="name">SA Schools Rugby</div>
+        <div class="season">2026</div>
+        <div class="meter"><span style="width:100%"></span></div>
+        <div class="pct">100% COMPLETE</div>
+      </div>
+      <div class="comp-tile" data-pct="100">
+        <span class="check">✓</span>
+        <div class="name">Super Rugby</div>
+        <div class="season">2025–26</div>
+        <div class="meter"><span style="width:100%"></span></div>
+        <div class="pct">100% COMPLETE</div>
+      </div>
+      <div class="comp-tile" data-pct="100">
+        <span class="check">✓</span>
+        <div class="name">United Rugby Championship</div>
+        <div class="season">2025–26</div>
+        <div class="meter"><span style="width:100%"></span></div>
+        <div class="pct">100% COMPLETE</div>
+      </div>
+      <div class="comp-tile">
+        <div class="name">Challenge Cup</div>
+        <div class="season">2025</div>
+        <div class="meter"><span style="width:85%"></span></div>
+        <div class="pct">85% COMPLETE</div>
+      </div>
+      <div class="comp-tile" data-pct="55">
+        <div class="name">Top 14</div>
+        <div class="season">2025–26</div>
+        <div class="meter"><span style="width:55%"></span></div>
+        <div class="pct">55% COMPLETE</div>
+      </div>
+      <div class="comp-tile">
+        <span class="check">✓</span>
+        <div class="name">Premiership</div>
+        <div class="season">2025–26</div>
+        <div class="meter"><span style="width:96%"></span></div>
+        <div class="pct">96% COMPLETE</div>
+      </div>
+    </div>
+  </div>
+
+  <aside class="side">
+    <div class="standings">
+      <div class="standings-head">
+        <h3>URC Standings</h3>
+        <button class="comp-pick">URC ▾</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th class="left" style="width: 30px;">#</th>
+            <th class="left">Team</th>
+            <th>P</th>
+            <th>W</th>
+            <th>PD</th>
+            <th>Pts</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="pos top">1</td><td class="left team"><span class="team-dot" style="background:#c9a961"></span>Glasgow Warriors</td><td>14</td><td>11</td><td style="color:#6cd4a4">+192</td><td class="pts">55</td></tr>
+          <tr><td class="pos top">2</td><td class="left team"><span class="team-dot" style="background:#1a4d7a"></span>Stormers</td><td>14</td><td>11</td><td style="color:#6cd4a4">+139</td><td class="pts">51</td></tr>
+          <tr><td class="pos top">3</td><td class="left team"><span class="team-dot" style="background:#e63946"></span>Ulster</td><td>14</td><td>9</td><td style="color:#6cd4a4">+113</td><td class="pts">47</td></tr>
+          <tr><td class="pos top">4</td><td class="left team"><span class="team-dot" style="background:#1d3557"></span>Leinster</td><td>14</td><td>9</td><td style="color:#6cd4a4">+62</td><td class="pts">46</td></tr>
+          <tr><td class="pos">5</td><td class="left team"><span class="team-dot" style="background:#dc2626"></span>Lions</td><td>14</td><td>8</td><td style="color:#6cd4a4">+36</td><td class="pts">43</td></tr>
+          <tr><td class="pos">6</td><td class="left team"><span class="team-dot" style="background:#1565c0"></span>Cardiff Rugby</td><td>14</td><td>8</td><td style="color:#ff6b6b">−9</td><td class="pts">41</td></tr>
+          <tr><td class="pos">7</td><td class="left team"><span class="team-dot" style="background:#c00"></span>Munster</td><td>14</td><td>8</td><td style="color:#ff6b6b">−25</td><td class="pts">41</td></tr>
+          <tr><td class="pos">8</td><td class="left team"><span class="team-dot" style="background:#6cb4ff"></span>Bulls</td><td>14</td><td>8</td><td style="color:#6cd4a4">+57</td><td class="pts">40</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="standings">
+      <div class="standings-head">
+        <h3>Top Scorers · URC</h3>
+        <button class="comp-pick">This season ▾</button>
+      </div>
+      <table>
+        <tbody>
+          <tr><td class="pos top" style="padding-left: 20px;">01</td><td class="left team">Handré Pollard <span style="color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:11px; margin-left:4px;">Bulls</span></td><td class="pts">147</td></tr>
+          <tr><td class="pos top">02</td><td class="left team">Adam Hastings <span style="color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:11px; margin-left:4px;">Glasgow</span></td><td class="pts">132</td></tr>
+          <tr><td class="pos top">03</td><td class="left team">Manie Libbok <span style="color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:11px; margin-left:4px;">Stormers</span></td><td class="pts">118</td></tr>
+          <tr><td class="pos">04</td><td class="left team">Sam Prendergast <span style="color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:11px; margin-left:4px;">Leinster</span></td><td class="pts">104</td></tr>
+          <tr><td class="pos">05</td><td class="left team">Jack Crowley <span style="color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:11px; margin-left:4px;">Munster</span></td><td class="pts">97</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </aside>
+</main>
+
+<!-- Ask -->
+<section style="padding: 0 40px 60px;">
+  <div class="ask-card">
+    <div>
+      <h3>Ask the Rugby Bot.</h3>
+      <p>Ask questions in plain English about any team, player, match or competition — powered by our full historical dataset back to 1871.</p>
+    </div>
+    <div>
+      <div class="ask-input">
+        <input placeholder="Who's scored most tries in URC 2025–26?" />
+        <button>ASK →</button>
+      </div>
+      <div class="mono" style="font-size:10px; color:var(--muted); margin-top:10px; letter-spacing:.1em;">TRY: "Pollard career totals" · "Bulls head-to-head vs Dragons"</div>
+    </div>
+  </div>
+</section>
+
+<!-- Version Switcher -->
+<div class="switcher">
+  <span class="label">VERSION</span>
+  <a href="../index.html">←</a>
+  <a class="active" href="dashboard.html">01 STADIUM</a>
+  <a href="../v2-editorial/dashboard.html">02 PROGRAMME</a>
+  <a href="../v3-terminal/dashboard.html">03 TERMINAL</a>
+</div>
+
+<script>
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    const tab = t.dataset.tab;
+    document.querySelectorAll('.tab').forEach(x => x.classList.toggle('active', x === t));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === tab));
+  });
+});
+document.querySelectorAll('.chip').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

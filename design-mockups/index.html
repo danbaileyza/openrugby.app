@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RugbyStats — Design Options</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  body { font-family: Inter, system-ui, sans-serif; }
+  .display { font-family: 'Source Serif 4', Georgia, serif; }
+</style>
+</head>
+<body class="bg-zinc-50 text-zinc-900 antialiased">
+
+<div class="max-w-6xl mx-auto px-6 py-14">
+
+  <header class="mb-12">
+    <div class="text-[11px] font-semibold text-indigo-600 uppercase tracking-[0.15em]">RugbyStats · Design review</div>
+    <h1 class="display text-5xl font-semibold mt-3 tracking-tight">Three directions to compare</h1>
+    <p class="mt-4 text-[16px] text-zinc-600 max-w-2xl leading-relaxed">
+      Each mockup re-imagines the same content — nav, KPIs, live matches, standings, results, fixtures, competition directory, and the AI assistant CTA — so you can compare aesthetics on like-for-like material. Click through and scroll to the bottom of each.
+    </p>
+  </header>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+    <!-- Option 1 -->
+    <a href="option-1-data-terminal.html" class="group block bg-white rounded-xl border border-zinc-200 overflow-hidden hover:border-zinc-400 hover:shadow-lg transition">
+      <div class="aspect-[4/3] bg-white relative overflow-hidden border-b border-zinc-200">
+        <!-- Mini preview -->
+        <div class="absolute inset-0 p-2 text-[4px] leading-tight">
+          <div class="h-2 border-b border-zinc-300 flex items-center gap-1 px-1 text-zinc-500"><span>●</span><span>RugbyStats</span></div>
+          <div class="h-2 bg-zinc-50 border-b border-zinc-200 flex items-center px-1 text-red-500">LIVE · Bulls 21 - 14 Leinster · Sharks 17-10</div>
+          <div class="mt-1 grid grid-cols-5 gap-0.5">
+            <div class="border border-zinc-200 p-1"><div class="text-[3px] text-zinc-500">COMP</div><div class="font-bold">12</div></div>
+            <div class="border border-zinc-200 p-1"><div class="text-[3px] text-zinc-500">TEAMS</div><div class="font-bold">287</div></div>
+            <div class="border border-zinc-200 p-1"><div class="text-[3px] text-zinc-500">PLAYERS</div><div class="font-bold">6412</div></div>
+            <div class="border border-zinc-200 p-1"><div class="text-[3px] text-zinc-500">MATCHES</div><div class="font-bold">1843</div></div>
+            <div class="border border-zinc-200 p-1"><div class="text-[3px] text-zinc-500">RAG</div><div class="font-bold">18k</div></div>
+          </div>
+          <div class="mt-1 grid grid-cols-3 gap-0.5">
+            <div class="col-span-2 border border-zinc-200 p-1">
+              <div class="font-bold text-[4px]">URC Standings</div>
+              <div class="space-y-px mt-0.5">
+                <div class="flex justify-between"><span>1 Leinster</span><span>53</span></div>
+                <div class="flex justify-between bg-green-50"><span>2 Bulls</span><span>46</span></div>
+                <div class="flex justify-between bg-green-50"><span>3 Stormers</span><span>43</span></div>
+                <div class="flex justify-between"><span>4 Glasgow</span><span>41</span></div>
+                <div class="flex justify-between bg-green-50"><span>5 Sharks</span><span>38</span></div>
+              </div>
+            </div>
+            <div class="border border-zinc-200 p-1">
+              <div class="font-bold text-[4px]">Live</div>
+              <div class="space-y-0.5 mt-0.5">
+                <div>Bulls 21</div>
+                <div class="text-zinc-500">Leinster 14</div>
+                <div class="pt-0.5 border-t border-zinc-100 mt-0.5">Sharks 17</div>
+                <div class="text-zinc-500">Connacht 10</div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-1 grid grid-cols-4 gap-0.5">
+            <div class="border border-zinc-200 p-0.5"><div class="text-[3px] font-bold">URC</div><div class="h-0.5 bg-emerald-500 rounded mt-0.5"></div></div>
+            <div class="border border-zinc-200 p-0.5"><div class="text-[3px] font-bold">ECC</div><div class="h-0.5 bg-emerald-500 rounded mt-0.5 w-[96%]"></div></div>
+            <div class="border border-zinc-200 p-0.5"><div class="text-[3px] font-bold">RC</div><div class="h-0.5 bg-amber-500 rounded mt-0.5 w-[78%]"></div></div>
+            <div class="border border-zinc-200 p-0.5"><div class="text-[3px] font-bold">6N</div><div class="h-0.5 bg-emerald-500 rounded mt-0.5"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="p-5">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[10.5px] font-semibold text-zinc-500 uppercase tracking-wider">Option 1</span>
+          <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 rounded px-1.5 py-0.5">Data-dense</span>
+        </div>
+        <h2 class="text-[20px] font-semibold tracking-tight">Data Terminal</h2>
+        <p class="text-[13px] text-zinc-600 mt-1.5 leading-relaxed">Light, tight, Opta/Bloomberg-style. Hairline borders, tabular figures everywhere, sortable tables, KPI sparklines, live ticker.</p>
+        <div class="mt-4 flex flex-wrap gap-1.5 text-[10.5px]">
+          <span class="bg-zinc-100 text-zinc-700 rounded px-1.5 py-0.5">Inter + JetBrains Mono</span>
+          <span class="bg-zinc-100 text-zinc-700 rounded px-1.5 py-0.5">Hairline rules</span>
+          <span class="bg-zinc-100 text-zinc-700 rounded px-1.5 py-0.5">Dense tables</span>
+          <span class="bg-zinc-100 text-zinc-700 rounded px-1.5 py-0.5">⌘K search</span>
+        </div>
+        <div class="mt-5 text-[13px] font-medium text-indigo-600 group-hover:text-indigo-700">Open mockup →</div>
+      </div>
+    </a>
+
+    <!-- Option 2 -->
+    <a href="option-2-editorial.html" class="group block bg-white rounded-xl border border-zinc-200 overflow-hidden hover:border-zinc-400 hover:shadow-lg transition">
+      <div class="aspect-[4/3] relative overflow-hidden border-b border-zinc-200" style="background:#fbfaf6">
+        <div class="absolute inset-0 p-2 text-[4px] leading-tight" style="color:#1a1a1a">
+          <div class="display text-[7px] font-bold">RugbyStats</div>
+          <div class="text-[3px] text-zinc-500 tracking-wider">THE INTELLIGENCE OF RUGBY UNION</div>
+          <div class="h-px bg-[#e5e0d7] mt-1"></div>
+          <div class="mt-1 flex gap-1 text-[3.5px]"><span class="border-b border-red-600 pb-px">Dashboard</span><span class="text-zinc-500">Competitions</span><span class="text-zinc-500">Teams</span><span class="text-zinc-500">Players</span><span class="text-zinc-500">Matches</span></div>
+          <div class="h-px bg-[#e5e0d7] mt-1"></div>
+          <div class="mt-2 grid grid-cols-3 gap-1.5">
+            <div class="col-span-2">
+              <div class="text-[3px] text-red-600 font-bold">LIVE NOW · URC</div>
+              <div class="display text-[9px] font-bold leading-tight mt-0.5">Bulls edge Leinster at Loftus as URC title race tightens</div>
+              <div class="display text-[16px] font-bold mt-1">21 – 14</div>
+              <div class="text-[3px] text-zinc-600 mt-0.5 leading-tight">Twenty minutes from time, the Bulls hold a seven-point lead over a Leinster side unbeaten in six…</div>
+            </div>
+            <div class="border-l border-[#e5e0d7] pl-1">
+              <div class="text-[3px] font-bold tracking-wider text-zinc-500">ALSO LIVE</div>
+              <div class="text-[3.5px] mt-1">Connacht <span class="float-right">10</span></div>
+              <div class="text-[3.5px] font-bold">Sharks <span class="float-right">17</span></div>
+              <div class="h-px bg-[#e5e0d7] my-1"></div>
+              <div class="text-[3.5px] font-bold">Toulouse <span class="float-right">15</span></div>
+              <div class="text-[3.5px]">Racing <span class="float-right">12</span></div>
+            </div>
+          </div>
+          <div class="h-px bg-[#e5e0d7] mt-2"></div>
+          <div class="mt-1 display text-[5px] font-bold">By the numbers</div>
+          <div class="grid grid-cols-5 gap-1 mt-0.5">
+            <div><div class="display text-[7px] font-bold">12</div><div class="text-[2.5px] text-zinc-500">COMP</div></div>
+            <div><div class="display text-[7px] font-bold">287</div><div class="text-[2.5px] text-zinc-500">TEAMS</div></div>
+            <div><div class="display text-[7px] font-bold">6412</div><div class="text-[2.5px] text-zinc-500">PLAYERS</div></div>
+            <div><div class="display text-[7px] font-bold">1843</div><div class="text-[2.5px] text-zinc-500">MATCHES</div></div>
+            <div><div class="display text-[7px] font-bold">18k</div><div class="text-[2.5px] text-zinc-500">BRIEFS</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="p-5">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[10.5px] font-semibold text-zinc-500 uppercase tracking-wider">Option 2</span>
+          <span class="text-[10px] font-semibold text-orange-700 bg-orange-50 rounded px-1.5 py-0.5">Editorial</span>
+        </div>
+        <h2 class="text-[20px] font-semibold tracking-tight">Editorial Minimalist</h2>
+        <p class="text-[13px] text-zinc-600 mt-1.5 leading-relaxed">FT/Stratechery feel. Warm paper background, serif display type, generous whitespace. Data framed like a magazine — scoreboards become headlines.</p>
+        <div class="mt-4 flex flex-wrap gap-1.5 text-[10.5px]">
+          <span class="bg-zinc-100 text-zinc-700 rounded px-1.5 py-0.5">Source Serif + Inter</span>
+          <span class="bg-zinc-100 text-zinc-700 rounded px-1.5 py-0.5">Cream paper</span>
+          <span class="bg-zinc-100 text-zinc-700 rounded px-1.5 py-0.5">Terracotta accent</span>
+          <span class="bg-zinc-100 text-zinc-700 rounded px-1.5 py-0.5">Masthead nav</span>
+        </div>
+        <div class="mt-5 text-[13px] font-medium text-indigo-600 group-hover:text-indigo-700">Open mockup →</div>
+      </div>
+    </a>
+
+    <!-- Option 3 -->
+    <a href="option-3-modern-saas.html" class="group block bg-white rounded-xl border border-zinc-200 overflow-hidden hover:border-zinc-400 hover:shadow-lg transition">
+      <div class="aspect-[4/3] bg-zinc-50 relative overflow-hidden border-b border-zinc-200">
+        <div class="absolute inset-0 flex text-[4px] leading-tight">
+          <div class="w-1/4 bg-white border-r border-zinc-200 p-1">
+            <div class="flex items-center gap-0.5">
+              <div class="h-2 w-2 rounded bg-indigo-600"></div>
+              <div class="font-bold">RugbyStats</div>
+            </div>
+            <div class="h-1.5 bg-zinc-100 rounded mt-1"></div>
+            <div class="mt-1 space-y-0.5">
+              <div class="bg-indigo-50 text-indigo-700 rounded px-0.5 py-px font-medium">● Dashboard</div>
+              <div class="text-zinc-500 px-0.5 py-px">● Competitions</div>
+              <div class="text-zinc-500 px-0.5 py-px">● Teams</div>
+              <div class="text-zinc-500 px-0.5 py-px">● Players</div>
+              <div class="text-zinc-500 px-0.5 py-px">● Matches</div>
+              <div class="text-zinc-500 px-0.5 py-px">● Referees</div>
+            </div>
+            <div class="mt-1.5 text-[3px] text-zinc-400 uppercase">Pinned</div>
+            <div class="space-y-0.5 mt-0.5">
+              <div class="text-zinc-500 px-0.5 py-px">● Bulls</div>
+              <div class="text-zinc-500 px-0.5 py-px">● Stormers</div>
+              <div class="text-zinc-500 px-0.5 py-px">● Springboks</div>
+            </div>
+          </div>
+          <div class="flex-1 p-1">
+            <div class="h-2 bg-white border border-zinc-200 rounded flex items-center px-1 text-[3px] text-zinc-500">Workspace › Dashboard</div>
+            <div class="text-[5px] font-bold mt-1">Good afternoon, Daniel</div>
+            <div class="grid grid-cols-4 gap-0.5 mt-1">
+              <div class="bg-white border border-zinc-200 rounded p-0.5"><div class="text-[2.5px] text-zinc-500">COMP</div><div class="font-bold">12</div></div>
+              <div class="bg-white border border-zinc-200 rounded p-0.5"><div class="text-[2.5px] text-zinc-500">TEAMS</div><div class="font-bold">287</div></div>
+              <div class="bg-white border border-zinc-200 rounded p-0.5"><div class="text-[2.5px] text-zinc-500">PLAYERS</div><div class="font-bold">6412</div></div>
+              <div class="bg-white border border-zinc-200 rounded p-0.5"><div class="text-[2.5px] text-zinc-500">MATCHES</div><div class="font-bold">1843</div></div>
+            </div>
+            <div class="bg-white border border-zinc-200 rounded mt-1 p-0.5">
+              <div class="text-[3px] font-bold text-red-600">● LIVE NOW</div>
+              <div class="grid grid-cols-2 gap-1 mt-0.5">
+                <div><div>Bulls <span class="float-right font-bold">21</span></div><div class="text-zinc-500">Leinster <span class="float-right">14</span></div></div>
+                <div><div class="text-zinc-500">Connacht <span class="float-right">10</span></div><div>Sharks <span class="float-right font-bold">17</span></div></div>
+              </div>
+            </div>
+            <div class="bg-white border border-zinc-200 rounded mt-1 p-0.5">
+              <div class="text-[3px] font-bold">URC Standings</div>
+              <div class="text-[3px] mt-0.5">
+                <div class="flex justify-between"><span>1 Leinster</span><span>53</span></div>
+                <div class="flex justify-between bg-indigo-50 -mx-0.5 px-0.5"><span>2 Bulls</span><span>46</span></div>
+                <div class="flex justify-between bg-indigo-50 -mx-0.5 px-0.5"><span>3 Stormers</span><span>43</span></div>
+              </div>
+            </div>
+            <div class="bg-gradient-to-br from-indigo-600 to-indigo-900 rounded mt-1 p-0.5 text-white">
+              <div class="font-bold text-[3.5px]">⚡ Rugby Assistant</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-5">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[10.5px] font-semibold text-zinc-500 uppercase tracking-wider">Option 3</span>
+          <span class="text-[10px] font-semibold text-indigo-700 bg-indigo-50 rounded px-1.5 py-0.5">SaaS</span>
+        </div>
+        <h2 class="text-[20px] font-semibold tracking-tight">Modern SaaS</h2>
+        <p class="text-[13px] text-zinc-600 mt-1.5 leading-relaxed">Linear/Vercel-style workspace. Left sidebar nav with pinned items, soft cards, inline sparklines, breadcrumbs, command palette. Feels like a Pro tool.</p>
+        <div class="mt-4 flex flex-wrap gap-1.5 text-[10.5px]">
+          <span class="bg-zinc-100 text-zinc-700 rounded px-1.5 py-0.5">Inter</span>
+          <span class="bg-zinc-100 text-zinc-700 rounded px-1.5 py-0.5">Sidebar layout</span>
+          <span class="bg-zinc-100 text-zinc-700 rounded px-1.5 py-0.5">Indigo accent</span>
+          <span class="bg-zinc-100 text-zinc-700 rounded px-1.5 py-0.5">Soft shadows</span>
+        </div>
+        <div class="mt-5 text-[13px] font-medium text-indigo-600 group-hover:text-indigo-700">Open mockup →</div>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- Comparison table -->
+  <section class="mt-16">
+    <h2 class="text-[20px] font-semibold tracking-tight mb-1">At a glance</h2>
+    <p class="text-[13px] text-zinc-600 mb-5">How each direction handles the same recurring decisions.</p>
+    <div class="bg-white rounded-xl border border-zinc-200 overflow-hidden">
+      <table class="w-full text-[13px]">
+        <thead>
+          <tr class="border-b border-zinc-200 bg-zinc-50 text-[11px] uppercase tracking-wider text-zinc-500">
+            <th class="text-left font-semibold py-2.5 px-4 w-40"></th>
+            <th class="text-left font-semibold py-2.5 px-4">1 · Data Terminal</th>
+            <th class="text-left font-semibold py-2.5 px-4">2 · Editorial</th>
+            <th class="text-left font-semibold py-2.5 px-4">3 · Modern SaaS</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-zinc-100">
+          <tr>
+            <td class="py-3 px-4 font-medium text-zinc-500">Primary nav</td>
+            <td class="py-3 px-4">Top tab bar + ⌘K search</td>
+            <td class="py-3 px-4">Newspaper masthead + underlined tabs</td>
+            <td class="py-3 px-4">Left sidebar with pinned items</td>
+          </tr>
+          <tr>
+            <td class="py-3 px-4 font-medium text-zinc-500">Density</td>
+            <td class="py-3 px-4">High — rows, columns, everything tight</td>
+            <td class="py-3 px-4">Low — reads like a weekend paper</td>
+            <td class="py-3 px-4">Medium — cards with room to breathe</td>
+          </tr>
+          <tr>
+            <td class="py-3 px-4 font-medium text-zinc-500">Type</td>
+            <td class="py-3 px-4">Inter + JetBrains Mono for numbers</td>
+            <td class="py-3 px-4">Source Serif 4 for display, Inter for body</td>
+            <td class="py-3 px-4">Inter throughout</td>
+          </tr>
+          <tr>
+            <td class="py-3 px-4 font-medium text-zinc-500">Background</td>
+            <td class="py-3 px-4">Pure white with grey section fills</td>
+            <td class="py-3 px-4">Warm cream paper (#fbfaf6)</td>
+            <td class="py-3 px-4">Cool zinc-50 with white cards</td>
+          </tr>
+          <tr>
+            <td class="py-3 px-4 font-medium text-zinc-500">Accent</td>
+            <td class="py-3 px-4">Deep rugby green</td>
+            <td class="py-3 px-4">Terracotta / FT salmon</td>
+            <td class="py-3 px-4">Indigo / violet gradient</td>
+          </tr>
+          <tr>
+            <td class="py-3 px-4 font-medium text-zinc-500">Standings treatment</td>
+            <td class="py-3 px-4">Full stat columns (P, W, D, L, PF, PA, Diff, BP, Pts, Form)</td>
+            <td class="py-3 px-4">Editorial table — serif team names, narrative lede</td>
+            <td class="py-3 px-4">Team logos + trend sparklines per row</td>
+          </tr>
+          <tr>
+            <td class="py-3 px-4 font-medium text-zinc-500">Live match</td>
+            <td class="py-3 px-4">Scrolling ticker + compact panel</td>
+            <td class="py-3 px-4">Lead "story" with giant score</td>
+            <td class="py-3 px-4">Featured card with xT + possession</td>
+          </tr>
+          <tr>
+            <td class="py-3 px-4 font-medium text-zinc-500">Best for</td>
+            <td class="py-3 px-4">Power users scanning lots of numbers fast</td>
+            <td class="py-3 px-4">Casual fans & editorial / content push</td>
+            <td class="py-3 px-4">Product/app feel, return users with saved views</td>
+          </tr>
+          <tr>
+            <td class="py-3 px-4 font-medium text-zinc-500">Laravel lift</td>
+            <td class="py-3 px-4">Low — tightest fit to your current Tailwind stack</td>
+            <td class="py-3 px-4">Medium — adds a web font + layout restructure</td>
+            <td class="py-3 px-4">Medium-high — new sidebar layout + icon set</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="mt-14 pt-6 border-t border-zinc-200 text-[12px] text-zinc-500 flex items-center justify-between">
+    <span>Mockups are static HTML — no Livewire wiring yet. Sample data only.</span>
+    <span>Built for Daniel · April 2026</span>
+  </footer>
+
+</div>
+</body>
+</html>

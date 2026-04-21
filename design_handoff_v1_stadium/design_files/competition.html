@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Open Rugby · Stadium · URC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared.css">
+<style>
+main{ padding: 32px 40px 80px;}
+.hero-meta{ display:flex; gap: 18px; align-items:center; margin-top: 14px; font-family:"JetBrains Mono",monospace; font-size:12px; color: var(--muted); letter-spacing:.08em;}
+.season-pick{
+  background: var(--bg2); border:1px solid var(--yellow); color:var(--yellow);
+  padding: 8px 14px; border-radius: 3px; font-family:"JetBrains Mono",monospace; font-size: 12px;
+  cursor:pointer;
+}
+.ticker{ margin-top: 28px;}
+.form-row{ display:flex; gap: 3px;}
+.form-row .f{
+  width: 22px; height: 22px; display:inline-flex; align-items:center; justify-content:center;
+  font-size: 10px; font-weight: 900; font-family: Archivo;
+  border-radius: 2px;
+}
+.f.w{ background: var(--green); color: #fff;}
+.f.l{ background: var(--red); color: #fff;}
+.f.d{ background: #555; color: #fff;}
+td.win{ color: #6cd4a4; font-weight: 700;}
+td.loss{ color: #ff6b6b; font-weight: 700;}
+td.draw{ color: #aab4ad; font-weight: 700;}
+.top-row{ font-family: Archivo; font-weight: 900; font-size: 15px; color: var(--yellow);}
+.team-name{ font-weight: 700; font-size: 14px;}
+.pos-cell{ font-family:"JetBrains Mono",monospace; font-size:12px; color: var(--muted);}
+.pos-cell.top{ color: var(--yellow); font-weight: 700;}
+.pos-cell.rel{ color: #ff6b6b;}
+.split{ display:grid; grid-template-columns: 1.5fr 1fr; gap: 24px; margin-top: 24px;}
+@media (max-width: 1100px){ .split{ grid-template-columns: 1fr;}}
+.fx-row{
+  background: var(--bg2); padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,.04);
+  display:grid; grid-template-columns: 90px 1fr auto 1fr; gap: 14px; align-items:center;
+}
+.fx-row .date{ font-family:"JetBrains Mono",monospace; font-size:11px; color: var(--yellow);}
+.fx-row .t{ font-weight: 600; font-size:14px;}
+.fx-row .t.a{ text-align: right;}
+.fx-row .sc{
+  font-family: Archivo; font-weight: 900; font-size: 18px; letter-spacing:-.02em;
+  min-width: 72px; text-align:center;
+}
+.fx-row .sc .d{ color: var(--muted); font-weight: 400; margin: 0 6px;}
+.fx-row.live{ background: linear-gradient(90deg, rgba(230,57,70,.1), var(--bg2) 60%); border-left: 3px solid var(--red);}
+</style>
+</head>
+<body data-screen-label="01 V1 Stadium Competition Detail">
+
+<header class="chrome">
+  <div class="brand"><span class="ball"></span> <span>Open Rugby</span></div>
+  <nav class="nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="competitions.html" class="active">Competitions</a>
+    <a href="teams.html">Teams</a>
+    <a href="players.html">Players</a>
+    <a href="match.html">Matches</a>
+    <a href="capture.html">Live Capture</a>
+    <a href="#">Admin</a>
+  </nav>
+  <div class="chrome-right">
+    <span>Dan <span class="admin-tag">ADMIN</span></span>
+    <span>Sign Out</span>
+    <button class="ask-btn">Ask the Bot</button>
+  </div>
+</header>
+
+<section class="page-head" style="position:relative; overflow:hidden;">
+  <div class="crumb">← <a href="competitions.html">Competitions</a></div>
+  <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:20px; flex-wrap:wrap;">
+    <div>
+      <h1 class="big">United Rugby<br><span class="yellow">Championship</span></h1>
+      <div class="hero-meta">
+        <span>WORLD · UNION</span>
+        <span style="color:#6cd4a4">✓ Verified</span>
+        <span>6 seasons tracked</span>
+        <span>Sep 2025 → May 2026</span>
+      </div>
+    </div>
+    <button class="season-pick">2025–26 (Current) ▾</button>
+  </div>
+
+  <div class="stat-row ticker">
+    <div class="stat"><span class="lbl">Teams</span><span class="n">16</span><span class="delta">across 4 nations</span></div>
+    <div class="stat hot"><span class="lbl">Matches</span><span class="n">144</span><span class="delta">117 played · 27 to go</span></div>
+    <div class="stat"><span class="lbl">Rounds</span><span class="n">18</span><span class="delta">R15 complete</span></div>
+    <div class="stat"><span class="lbl">Top Scorer</span><span class="n" style="font-size:26px; line-height:1.1;">H. Pollard <span style="color:var(--yellow)">147</span></span><span class="delta">Bulls · +12 on R14</span></div>
+  </div>
+</section>
+
+<main>
+  <div class="tabs">
+    <div class="tab active" data-tab="standings">Standings</div>
+    <div class="tab" data-tab="matches">Matches</div>
+    <div class="tab" data-tab="teams">Teams (16)</div>
+    <div class="tab" data-tab="refs">Referees (85)</div>
+    <div class="tab" data-tab="stats">Stats</div>
+  </div>
+
+  <div class="tab-panel active" data-panel="standings">
+    <div class="tbl-wrap">
+      <table class="std">
+        <thead><tr><th class="left" style="width:40px">#</th><th class="left">Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>PF</th><th>PA</th><th>PD</th><th class="left" style="text-align:center">Form</th><th>Pts</th></tr></thead>
+        <tbody>
+          <tr><td class="left"><span class="pos-cell top">1</span></td><td class="left team-name">Glasgow Warriors</td><td>14</td><td class="win">11</td><td>0</td><td class="loss">3</td><td>389</td><td>197</td><td style="color:#6cd4a4">+192</td><td style="text-align:center"><div class="form-row" style="justify-content:center"><span class="f w">W</span><span class="f w">W</span><span class="f l">L</span><span class="f w">W</span><span class="f w">W</span></div></td><td class="top-row">55</td></tr>
+          <tr><td class="left"><span class="pos-cell top">2</span></td><td class="left team-name">Stormers</td><td>14</td><td class="win">11</td><td>0</td><td class="loss">3</td><td>378</td><td>239</td><td style="color:#6cd4a4">+139</td><td style="text-align:center"><div class="form-row" style="justify-content:center"><span class="f w">W</span><span class="f w">W</span><span class="f w">W</span><span class="f l">L</span><span class="f w">W</span></div></td><td class="top-row">51</td></tr>
+          <tr><td class="left"><span class="pos-cell top">3</span></td><td class="left team-name">Ulster</td><td>14</td><td class="win">9</td><td>0</td><td class="loss">5</td><td>399</td><td>286</td><td style="color:#6cd4a4">+113</td><td style="text-align:center"><div class="form-row" style="justify-content:center"><span class="f l">L</span><span class="f w">W</span><span class="f w">W</span><span class="f w">W</span><span class="f l">L</span></div></td><td class="top-row">47</td></tr>
+          <tr><td class="left"><span class="pos-cell top">4</span></td><td class="left team-name"><a href="team.html" style="color:inherit;">Leinster</a></td><td>14</td><td class="win">9</td><td>0</td><td class="loss">5</td><td>361</td><td>299</td><td style="color:#6cd4a4">+62</td><td style="text-align:center"><div class="form-row" style="justify-content:center"><span class="f w">W</span><span class="f l">L</span><span class="f w">W</span><span class="f w">W</span><span class="f w">W</span></div></td><td class="top-row">46</td></tr>
+          <tr><td class="left"><span class="pos-cell">5</span></td><td class="left team-name">Lions</td><td>14</td><td class="win">8</td><td class="draw">1</td><td class="loss">5</td><td>421</td><td>385</td><td style="color:#6cd4a4">+36</td><td style="text-align:center"><div class="form-row" style="justify-content:center"><span class="f w">W</span><span class="f w">W</span><span class="f d">D</span><span class="f l">L</span><span class="f w">W</span></div></td><td>43</td></tr>
+          <tr><td class="left"><span class="pos-cell">6</span></td><td class="left team-name">Cardiff Rugby</td><td>14</td><td class="win">8</td><td>0</td><td class="loss">6</td><td>262</td><td>271</td><td style="color:#ff6b6b">−9</td><td style="text-align:center"><div class="form-row" style="justify-content:center"><span class="f l">L</span><span class="f w">W</span><span class="f w">W</span><span class="f l">L</span><span class="f w">W</span></div></td><td>41</td></tr>
+          <tr><td class="left"><span class="pos-cell">7</span></td><td class="left team-name">Munster</td><td>14</td><td class="win">8</td><td>0</td><td class="loss">6</td><td>279</td><td>304</td><td style="color:#ff6b6b">−25</td><td style="text-align:center"><div class="form-row" style="justify-content:center"><span class="f w">W</span><span class="f w">W</span><span class="f l">L</span><span class="f w">W</span><span class="f w">W</span></div></td><td>41</td></tr>
+          <tr><td class="left"><span class="pos-cell">8</span></td><td class="left team-name">Bulls</td><td>14</td><td class="win">8</td><td>0</td><td class="loss">6</td><td>397</td><td>340</td><td style="color:#6cd4a4">+57</td><td style="text-align:center"><div class="form-row" style="justify-content:center"><span class="f w">W</span><span class="f w">W</span><span class="f l">L</span><span class="f w">W</span><span class="f w">W</span></div></td><td>40</td></tr>
+          <tr><td class="left"><span class="pos-cell">9</span></td><td class="left team-name">Connacht</td><td>14</td><td class="win">7</td><td>0</td><td class="loss">7</td><td>336</td><td>326</td><td style="color:#6cd4a4">+10</td><td style="text-align:center"><div class="form-row" style="justify-content:center"><span class="f l">L</span><span class="f w">W</span><span class="f l">L</span><span class="f w">W</span><span class="f l">L</span></div></td><td>39</td></tr>
+          <tr><td class="left"><span class="pos-cell">10</span></td><td class="left team-name">Sharks</td><td>14</td><td class="win">6</td><td class="draw">1</td><td class="loss">7</td><td>322</td><td>348</td><td style="color:#ff6b6b">−26</td><td style="text-align:center"><div class="form-row" style="justify-content:center"><span class="f l">L</span><span class="f l">L</span><span class="f w">W</span><span class="f d">D</span><span class="f w">W</span></div></td><td>33</td></tr>
+          <tr><td class="left"><span class="pos-cell">11</span></td><td class="left team-name">Ospreys</td><td>14</td><td class="win">5</td><td class="draw">2</td><td class="loss">7</td><td>293</td><td>325</td><td style="color:#ff6b6b">−32</td><td style="text-align:center"><div class="form-row" style="justify-content:center"><span class="f w">W</span><span class="f l">L</span><span class="f d">D</span><span class="f l">L</span><span class="f w">W</span></div></td><td>30</td></tr>
+          <tr><td class="left"><span class="pos-cell">12</span></td><td class="left team-name">Benetton</td><td>14</td><td class="win">5</td><td class="draw">2</td><td class="loss">7</td><td>257</td><td>331</td><td style="color:#ff6b6b">−74</td><td style="text-align:center"><div class="form-row" style="justify-content:center"><span class="f l">L</span><span class="f d">D</span><span class="f l">L</span><span class="f w">W</span><span class="f l">L</span></div></td><td>28</td></tr>
+          <tr><td class="left"><span class="pos-cell rel">13</span></td><td class="left team-name">Edinburgh</td><td>14</td><td class="win">4</td><td>0</td><td class="loss">10</td><td>269</td><td>340</td><td style="color:#ff6b6b">−71</td><td style="text-align:center"><div class="form-row" style="justify-content:center"><span class="f l">L</span><span class="f l">L</span><span class="f w">W</span><span class="f l">L</span><span class="f l">L</span></div></td><td>23</td></tr>
+          <tr><td class="left"><span class="pos-cell rel">14</span></td><td class="left team-name">Dragons</td><td>14</td><td class="win">2</td><td class="draw">3</td><td class="loss">9</td><td>274</td><td>357</td><td style="color:#ff6b6b">−83</td><td style="text-align:center"><div class="form-row" style="justify-content:center"><span class="f l">L</span><span class="f l">L</span><span class="f d">D</span><span class="f l">L</span><span class="f l">L</span></div></td><td>22</td></tr>
+          <tr><td class="left"><span class="pos-cell rel">15</span></td><td class="left team-name">Scarlets</td><td>14</td><td class="win">4</td><td class="draw">1</td><td class="loss">9</td><td>261</td><td>347</td><td style="color:#ff6b6b">−86</td><td style="text-align:center"><div class="form-row" style="justify-content:center"><span class="f l">L</span><span class="f w">W</span><span class="f l">L</span><span class="f d">D</span><span class="f l">L</span></div></td><td>21</td></tr>
+          <tr><td class="left"><span class="pos-cell rel">16</span></td><td class="left team-name">Zebre</td><td>14</td><td class="win">2</td><td>0</td><td class="loss">12</td><td>226</td><td>429</td><td style="color:#ff6b6b">−203</td><td style="text-align:center"><div class="form-row" style="justify-content:center"><span class="f l">L</span><span class="f l">L</span><span class="f l">L</span><span class="f l">L</span><span class="f l">L</span></div></td><td>12</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="display:flex; gap:20px; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); margin-top:14px; letter-spacing:.1em;">
+      <span><span style="display:inline-block; width:10px; height:10px; background:var(--yellow); margin-right:6px; vertical-align:middle;"></span>Playoff spots (top 8)</span>
+      <span><span style="display:inline-block; width:10px; height:10px; background:#ff6b6b; margin-right:6px; vertical-align:middle;"></span>Bottom 4 · no playoffs</span>
+    </div>
+  </div>
+
+  <div class="tab-panel" data-panel="matches">
+    <div class="filter-row">
+      <span class="chip active">R15</span>
+      <span class="chip">R14</span>
+      <span class="chip">R13</span>
+      <span class="chip">All 144</span>
+    </div>
+    <div class="tbl-wrap">
+      <div class="fx-row live">
+        <div class="date"><span class="pulse-dot"></span> 67'</div>
+        <div class="t">Sharks</div>
+        <div class="sc"><span style="color:var(--yellow)">17</span><span class="d">—</span>9</div>
+        <div class="t a">Zebre</div>
+      </div>
+      <div class="fx-row live">
+        <div class="date"><span class="pulse-dot"></span> 23'</div>
+        <div class="t">Cardiff Rugby</div>
+        <div class="sc">7<span class="d">—</span>7</div>
+        <div class="t a">Ospreys</div>
+      </div>
+      <div class="fx-row">
+        <div class="date">17 APR</div>
+        <div class="t">Dragons</div>
+        <div class="sc">7<span class="d">—</span><span style="color:var(--yellow)">47</span></div>
+        <div class="t a">Bulls</div>
+      </div>
+      <div class="fx-row">
+        <div class="date">18 APR</div>
+        <div class="t">Benetton</div>
+        <div class="sc">15<span class="d">—</span><span style="color:var(--yellow)">45</span></div>
+        <div class="t a">Munster</div>
+      </div>
+      <div class="fx-row">
+        <div class="date">18 APR</div>
+        <div class="t">Ospreys</div>
+        <div class="sc"><span style="color:var(--yellow)">21</span><span class="d">—</span>17</div>
+        <div class="t a">Sharks</div>
+      </div>
+      <div class="fx-row">
+        <div class="date">18 APR</div>
+        <div class="t">Glasgow Warriors</div>
+        <div class="sc"><span style="color:var(--yellow)">32</span><span class="d">—</span>14</div>
+        <div class="t a">Lions</div>
+      </div>
+      <div class="fx-row">
+        <div class="date">18 APR</div>
+        <div class="t">Stormers</div>
+        <div class="sc"><span style="color:var(--yellow)">28</span><span class="d">—</span>9</div>
+        <div class="t a">Scarlets</div>
+      </div>
+      <div class="fx-row">
+        <div class="date">19 APR</div>
+        <div class="t">Leinster</div>
+        <div class="sc"><span style="color:var(--yellow)">26</span><span class="d">—</span>19</div>
+        <div class="t a">Edinburgh</div>
+      </div>
+      <div class="fx-row">
+        <div class="date">19 APR</div>
+        <div class="t">Connacht</div>
+        <div class="sc">14<span class="d">—</span><span style="color:var(--yellow)">18</span></div>
+        <div class="t a">Ulster</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" data-panel="teams">
+    <div class="grid-cards" style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 2px;">
+      <a class="cc" href="team.html" style="background:var(--bg2); padding: 18px;"><div class="name" style="font-size:16px; padding-right:0;">Glasgow Warriors</div><div class="loc">Scotland · Scotstoun</div></a>
+      <a class="cc" href="team.html" style="background:var(--bg2); padding: 18px;"><div class="name" style="font-size:16px; padding-right:0;">Stormers</div><div class="loc">South Africa · Cape Town</div></a>
+      <a class="cc" href="team.html" style="background:var(--bg2); padding: 18px;"><div class="name" style="font-size:16px; padding-right:0;">Ulster</div><div class="loc">Ireland · Belfast</div></a>
+      <a class="cc" href="team.html" style="background:var(--bg2); padding: 18px;"><div class="name" style="font-size:16px; padding-right:0;">Leinster</div><div class="loc">Ireland · Dublin</div></a>
+      <a class="cc" href="team.html" style="background:var(--bg2); padding: 18px;"><div class="name" style="font-size:16px; padding-right:0;">Lions</div><div class="loc">South Africa · Johannesburg</div></a>
+      <a class="cc" href="team.html" style="background:var(--bg2); padding: 18px;"><div class="name" style="font-size:16px; padding-right:0;">Cardiff Rugby</div><div class="loc">Wales · Cardiff</div></a>
+      <a class="cc" href="team.html" style="background:var(--bg2); padding: 18px;"><div class="name" style="font-size:16px; padding-right:0;">Munster</div><div class="loc">Ireland · Limerick</div></a>
+      <a class="cc" href="team.html" style="background:var(--bg2); padding: 18px;"><div class="name" style="font-size:16px; padding-right:0;">Bulls</div><div class="loc">South Africa · Pretoria</div></a>
+      <a class="cc" href="team.html" style="background:var(--bg2); padding: 18px;"><div class="name" style="font-size:16px; padding-right:0;">Connacht</div><div class="loc">Ireland · Galway</div></a>
+      <a class="cc" href="team.html" style="background:var(--bg2); padding: 18px;"><div class="name" style="font-size:16px; padding-right:0;">Sharks</div><div class="loc">South Africa · Durban</div></a>
+      <a class="cc" href="team.html" style="background:var(--bg2); padding: 18px;"><div class="name" style="font-size:16px; padding-right:0;">Ospreys</div><div class="loc">Wales · Swansea</div></a>
+      <a class="cc" href="team.html" style="background:var(--bg2); padding: 18px;"><div class="name" style="font-size:16px; padding-right:0;">Benetton</div><div class="loc">Italy · Treviso</div></a>
+      <a class="cc" href="team.html" style="background:var(--bg2); padding: 18px;"><div class="name" style="font-size:16px; padding-right:0;">Edinburgh</div><div class="loc">Scotland · Edinburgh</div></a>
+      <a class="cc" href="team.html" style="background:var(--bg2); padding: 18px;"><div class="name" style="font-size:16px; padding-right:0;">Dragons</div><div class="loc">Wales · Newport</div></a>
+      <a class="cc" href="team.html" style="background:var(--bg2); padding: 18px;"><div class="name" style="font-size:16px; padding-right:0;">Scarlets</div><div class="loc">Wales · Llanelli</div></a>
+      <a class="cc" href="team.html" style="background:var(--bg2); padding: 18px;"><div class="name" style="font-size:16px; padding-right:0;">Zebre</div><div class="loc">Italy · Parma</div></a>
+    </div>
+  </div>
+
+  <div class="tab-panel" data-panel="refs">
+    <div style="color:var(--muted); padding: 40px; text-align:center; font-family:'JetBrains Mono',monospace;">85 registered officials — filter pending</div>
+  </div>
+
+  <div class="tab-panel" data-panel="stats">
+    <div class="split">
+      <div class="tbl-wrap">
+        <div style="padding: 14px 18px; border-bottom:1px solid var(--line); font-family:Archivo; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--yellow); font-size:13px;">Top Try Scorers</div>
+        <table class="std">
+          <tbody>
+            <tr><td class="left" style="width:40px"><span class="pos-cell top">01</span></td><td class="left team-name">Kyle Steyn <span style="color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:11px;">Glasgow</span></td><td class="top-row">14</td></tr>
+            <tr><td class="left"><span class="pos-cell top">02</span></td><td class="left team-name">Canan Moodie <span style="color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:11px;">Bulls</span></td><td class="top-row">12</td></tr>
+            <tr><td class="left"><span class="pos-cell top">03</span></td><td class="left team-name">Jamie Osborne <span style="color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:11px;">Leinster</span></td><td class="top-row">11</td></tr>
+            <tr><td class="left"><span class="pos-cell">04</span></td><td class="left team-name">Suleiman Hartzenberg <span style="color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:11px;">Stormers</span></td><td>10</td></tr>
+            <tr><td class="left"><span class="pos-cell">05</span></td><td class="left team-name">Louis Rees-Zammit <span style="color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:11px;">Cardiff</span></td><td>9</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tbl-wrap">
+        <div style="padding: 14px 18px; border-bottom:1px solid var(--line); font-family:Archivo; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--yellow); font-size:13px;">Top Points</div>
+        <table class="std">
+          <tbody>
+            <tr><td class="left" style="width:40px"><span class="pos-cell top">01</span></td><td class="left team-name"><a href="player.html" style="color:inherit;">Handré Pollard</a> <span style="color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:11px;">Bulls</span></td><td class="top-row">147</td></tr>
+            <tr><td class="left"><span class="pos-cell top">02</span></td><td class="left team-name">Adam Hastings <span style="color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:11px;">Glasgow</span></td><td class="top-row">132</td></tr>
+            <tr><td class="left"><span class="pos-cell top">03</span></td><td class="left team-name">Manie Libbok <span style="color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:11px;">Stormers</span></td><td class="top-row">118</td></tr>
+            <tr><td class="left"><span class="pos-cell">04</span></td><td class="left team-name">Sam Prendergast <span style="color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:11px;">Leinster</span></td><td>104</td></tr>
+            <tr><td class="left"><span class="pos-cell">05</span></td><td class="left team-name">Jack Crowley <span style="color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:11px;">Munster</span></td><td>97</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="switcher">
+  <span class="label">VERSION</span>
+  <a href="../index.html">←</a>
+  <a class="active" href="dashboard.html">01 STADIUM</a>
+  <a href="../v2-editorial/dashboard.html">02 PROGRAMME</a>
+  <a href="../v3-terminal/dashboard.html">03 TERMINAL</a>
+</div>
+
+<script>
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    const tab = t.dataset.tab;
+    document.querySelectorAll('.tabs .tab').forEach(x => x.classList.toggle('active', x === t));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === tab));
+  });
+});
+document.querySelectorAll('.chip').forEach(c => {
+  c.addEventListener('click', () => {
+    c.parentElement.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

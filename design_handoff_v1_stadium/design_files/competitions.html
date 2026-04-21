@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Open Rugby · Stadium · Competitions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared.css">
+<style>
+main{ padding: 32px 40px 80px;}
+.grid-cards{
+  display:grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+  margin-top: 18px;
+}
+@media (max-width: 1000px){ .grid-cards{ grid-template-columns: 1fr;}}
+.cc{
+  background: var(--bg2); padding: 22px 24px;
+  display:flex; flex-direction:column; gap: 10px;
+  position:relative; overflow:hidden; cursor:pointer;
+  transition: background .15s, transform .15s;
+  border-left: 3px solid transparent;
+}
+.cc:hover{ background:#111c17; transform: translateX(2px); border-left-color: var(--yellow);}
+.cc .kind{
+  position:absolute; top: 18px; right: 18px;
+  font-family:"JetBrains Mono",monospace; font-size:10px; letter-spacing:.15em;
+  color: var(--muted); text-transform:uppercase;
+  background: rgba(255,255,255,.04); padding: 3px 7px; border-radius: 2px;
+}
+.cc .verified{ color: var(--yellow); font-size: 12px;}
+.cc .name{
+  font-family: Archivo; font-weight: 900; font-size: 22px; letter-spacing:-.015em;
+  line-height: 1.05; text-transform: uppercase;
+  display:flex; align-items:center; gap:8px; padding-right: 60px;
+}
+.cc .loc{ font-family:"JetBrains Mono",monospace; font-size:11px; color: var(--muted); letter-spacing:.08em; text-transform: uppercase;}
+.cc .seasons{ color:#aab4ad; font-size:13px; margin-top: 2px;}
+.cc .bar-outer{ height: 4px; background: rgba(255,255,255,.06); margin-top: 14px; position:relative;}
+.cc .bar-outer span{ position:absolute; inset: 0 auto 0 0; background: var(--yellow);}
+.cc .pct{
+  display:flex; justify-content:space-between; align-items:center;
+  font-family:"JetBrains Mono",monospace; font-size:10px; color: var(--muted); letter-spacing:.1em;
+  margin-top: 6px;
+}
+.cc[data-state="complete"] .bar-outer span{ background: var(--green);}
+.cc[data-state="partial"] .bar-outer span{ background: var(--yellow);}
+.cc[data-state="poor"] .bar-outer span{ background: var(--red);}
+.cc[data-state="complete"] .pct b{ color: #6cd4a4;}
+.cc[data-state="partial"] .pct b{ color: var(--yellow);}
+.cc[data-state="poor"] .pct b{ color: var(--red);}
+
+.search-row{
+  display:flex; gap: 10px; align-items:center; flex-wrap: wrap;
+  margin-top: 20px; margin-bottom: 12px;
+}
+.search{
+  flex:1; min-width: 220px;
+  background: var(--bg2); border:1px solid var(--line); border-radius: 3px;
+  padding: 10px 14px; color: var(--ink); font-family: Archivo; font-size: 13px;
+}
+.search:focus{ outline:none; border-color: var(--yellow);}
+.sel{
+  background: var(--bg2); border:1px solid var(--line); border-radius: 3px;
+  padding: 10px 12px; color: #aab4ad; font-family:"JetBrains Mono",monospace; font-size: 11px;
+  letter-spacing:.08em; cursor:pointer;
+}
+.hidden-note{ font-family:"JetBrains Mono",monospace; font-size:11px; color: var(--muted);}
+</style>
+</head>
+<body data-screen-label="01 V1 Stadium Competitions">
+
+<header class="chrome">
+  <div class="brand"><span class="ball"></span> <span>Open Rugby</span></div>
+  <nav class="nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="competitions.html" class="active">Competitions</a>
+    <a href="teams.html">Teams</a>
+    <a href="players.html">Players</a>
+    <a href="match.html">Matches</a>
+    <a href="capture.html">Live Capture</a>
+    <a href="#">Admin</a>
+  </nav>
+  <div class="chrome-right">
+    <span>Dan <span class="admin-tag">ADMIN</span></span>
+    <span>Sign Out</span>
+    <button class="ask-btn">Ask the Bot</button>
+  </div>
+</header>
+
+<section class="page-head">
+  <div class="crumb">← <a href="dashboard.html">back to dashboard</a></div>
+  <h1 class="big">Compe<span class="yellow">titions</span></h1>
+  <p class="sub">Every domestic league, Cup and international series we track — 40 competitions across 22 nations. Click any card for full standings, fixtures and team rosters.</p>
+
+  <div class="search-row">
+    <input class="search" placeholder="Search competitions..." />
+    <select class="sel"><option>All formats</option><option>Union</option><option>League</option></select>
+    <select class="sel"><option>All countries</option><option>South Africa</option><option>England</option><option>Europe</option></select>
+    <select class="sel"><option>Good data (≥50%)</option><option>Any data</option><option>Complete only</option></select>
+    <span class="hidden-note">138 incomplete competitions hidden</span>
+  </div>
+</section>
+
+<main>
+  <div class="filter-row">
+    <span class="chip active">All (40)</span>
+    <span class="chip">International (12)</span>
+    <span class="chip">Domestic (21)</span>
+    <span class="chip">Cup (7)</span>
+    <span class="chip">Schools (3)</span>
+    <span class="chip">Verified only</span>
+  </div>
+
+  <div class="grid-cards">
+    <a class="cc" data-state="partial" href="competition.html">
+      <span class="kind">UNION</span>
+      <div class="name">Autumn Nations</div>
+      <div class="loc">International</div>
+      <div class="seasons">2 seasons</div>
+      <div class="bar-outer"><span style="width:62%"></span></div>
+      <div class="pct"><span>Data coverage</span><b>62% COMPLETE</b></div>
+    </a>
+    <a class="cc" data-state="partial" href="competition.html">
+      <span class="kind">UNION</span>
+      <div class="name">Challenge Cup</div>
+      <div class="loc">Wales</div>
+      <div class="seasons">25 seasons</div>
+      <div class="bar-outer"><span style="width:75%"></span></div>
+      <div class="pct"><span>Data coverage</span><b>75% COMPLETE</b></div>
+    </a>
+    <a class="cc" data-state="complete" href="competition.html">
+      <span class="kind">UNION</span>
+      <div class="name">Currie Cup <span class="verified">✓</span></div>
+      <div class="loc">South Africa</div>
+      <div class="seasons">15 seasons</div>
+      <div class="bar-outer"><span style="width:100%"></span></div>
+      <div class="pct"><span>Data coverage</span><b>100% COMPLETE</b></div>
+    </a>
+    <a class="cc" data-state="partial" href="competition.html">
+      <span class="kind">UNION</span>
+      <div class="name">Euro Champions Cup</div>
+      <div class="loc">Europe</div>
+      <div class="seasons">7 seasons</div>
+      <div class="bar-outer"><span style="width:75%"></span></div>
+      <div class="pct"><span>Data coverage</span><b>75% COMPLETE</b></div>
+    </a>
+    <a class="cc" data-state="partial" href="competition.html">
+      <span class="kind">UNION</span>
+      <div class="name">Lions Tour</div>
+      <div class="loc">World</div>
+      <div class="seasons">7 seasons</div>
+      <div class="bar-outer"><span style="width:75%"></span></div>
+      <div class="pct"><span>Data coverage</span><b>75% COMPLETE</b></div>
+    </a>
+    <a class="cc" data-state="complete" href="competition.html">
+      <span class="kind">UNION</span>
+      <div class="name">Premiership <span class="verified">✓</span></div>
+      <div class="loc">Wales</div>
+      <div class="seasons">7 seasons</div>
+      <div class="bar-outer"><span style="width:96%"></span></div>
+      <div class="pct"><span>Data coverage</span><b>96% COMPLETE</b></div>
+    </a>
+    <a class="cc" data-state="poor" href="competition.html">
+      <span class="kind">UNION</span>
+      <div class="name">Premiership Rugby Cup</div>
+      <div class="loc">England</div>
+      <div class="seasons">9 seasons</div>
+      <div class="bar-outer"><span style="width:56%"></span></div>
+      <div class="pct"><span>Data coverage</span><b>56% COMPLETE</b></div>
+    </a>
+    <a class="cc" data-state="partial" href="competition.html">
+      <span class="kind">UNION</span>
+      <div class="name">Rainbow Cup SA</div>
+      <div class="loc">International</div>
+      <div class="seasons">2 seasons</div>
+      <div class="bar-outer"><span style="width:75%"></span></div>
+      <div class="pct"><span>Data coverage</span><b>75% COMPLETE</b></div>
+    </a>
+    <a class="cc" data-state="complete" href="competition.html">
+      <span class="kind">UNION</span>
+      <div class="name">Rugby Championship <span class="verified">✓</span></div>
+      <div class="loc">World</div>
+      <div class="seasons">13 seasons</div>
+      <div class="bar-outer"><span style="width:100%"></span></div>
+      <div class="pct"><span>Data coverage</span><b>100% COMPLETE</b></div>
+    </a>
+    <a class="cc" data-state="complete" href="competition.html">
+      <span class="kind">UNION</span>
+      <div class="name">SA Schools</div>
+      <div class="loc">South Africa</div>
+      <div class="seasons">27 seasons</div>
+      <div class="bar-outer"><span style="width:100%"></span></div>
+      <div class="pct"><span>Data coverage</span><b>100% COMPLETE</b></div>
+    </a>
+    <a class="cc" data-state="complete" href="competition.html">
+      <span class="kind">UNION</span>
+      <div class="name">Six Nations <span class="verified">✓</span></div>
+      <div class="loc">Europe</div>
+      <div class="seasons">19 seasons</div>
+      <div class="bar-outer"><span style="width:100%"></span></div>
+      <div class="pct"><span>Data coverage</span><b>100% COMPLETE</b></div>
+    </a>
+    <a class="cc" data-state="complete" href="competition.html">
+      <span class="kind">UNION</span>
+      <div class="name">Super Rugby <span class="verified">✓</span></div>
+      <div class="loc">World</div>
+      <div class="seasons">12 seasons</div>
+      <div class="bar-outer"><span style="width:100%"></span></div>
+      <div class="pct"><span>Data coverage</span><b>100% COMPLETE</b></div>
+    </a>
+    <a class="cc" data-state="partial" href="competition.html">
+      <span class="kind">UNION</span>
+      <div class="name">Test Matches</div>
+      <div class="loc">International</div>
+      <div class="seasons">7 seasons</div>
+      <div class="bar-outer"><span style="width:75%"></span></div>
+      <div class="pct"><span>Data coverage</span><b>75% COMPLETE</b></div>
+    </a>
+    <a class="cc" data-state="complete" href="competition.html">
+      <span class="kind">UNION</span>
+      <div class="name">The Greatest Rivalry <span class="verified">✓</span></div>
+      <div class="loc">South Africa</div>
+      <div class="seasons">1 season</div>
+      <div class="bar-outer"><span style="width:100%"></span></div>
+      <div class="pct"><span>Data coverage</span><b>100% COMPLETE</b></div>
+    </a>
+    <a class="cc" data-state="partial" href="competition.html">
+      <span class="kind">UNION</span>
+      <div class="name">Top 14</div>
+      <div class="loc">International</div>
+      <div class="seasons">5 seasons</div>
+      <div class="bar-outer"><span style="width:75%"></span></div>
+      <div class="pct"><span>Data coverage</span><b>75% COMPLETE</b></div>
+    </a>
+    <a class="cc" data-state="complete" href="competition.html">
+      <span class="kind">UNION</span>
+      <div class="name">United Rugby Championship <span class="verified">✓</span></div>
+      <div class="loc">World</div>
+      <div class="seasons">6 seasons</div>
+      <div class="bar-outer"><span style="width:100%"></span></div>
+      <div class="pct"><span>Data coverage</span><b>100% COMPLETE</b></div>
+    </a>
+    <a class="cc" data-state="complete" href="competition.html">
+      <span class="kind">UNION</span>
+      <div class="name">World Cup <span class="verified">✓</span></div>
+      <div class="loc">World</div>
+      <div class="seasons">9 seasons</div>
+      <div class="bar-outer"><span style="width:100%"></span></div>
+      <div class="pct"><span>Data coverage</span><b>100% COMPLETE</b></div>
+    </a>
+  </div>
+</main>
+
+<div class="switcher">
+  <span class="label">VERSION</span>
+  <a href="../index.html">←</a>
+  <a class="active" href="dashboard.html">01 STADIUM</a>
+  <a href="../v2-editorial/dashboard.html">02 PROGRAMME</a>
+  <a href="../v3-terminal/dashboard.html">03 TERMINAL</a>
+</div>
+
+<script>
+document.querySelectorAll('.chip').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

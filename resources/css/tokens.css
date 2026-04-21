@@ -1,0 +1,120 @@
+/* ============================================================
+   Open Rugby — V1 Stadium design tokens
+   See design_handoff_v1_stadium/README.md for the spec.
+   ============================================================ */
+
+:root {
+  /* ---------- Brand ---------- */
+  --color-brand-yellow: #ffd100;
+  --color-brand-yellow-ink: #0a1410;
+
+  /* ---------- Semantic ---------- */
+  --color-live: #e63946;
+  --color-home: #1d8a5b;
+  --color-home-bright: #6cd4a4;
+  --color-away: #1e40af;
+  --color-away-bright: #6cb4ff;
+  --color-penalty: #5b3cc4;
+  --color-drop: #7c3aed;
+  --color-card-yellow: #ffd100;
+
+  /* ---------- Fonts ---------- */
+  --font-display: "Archivo", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* ---------- Radius ---------- */
+  --r-xs: 2px;
+  --r-sm: 3px;
+  --r-md: 4px;
+  --r-lg: 6px;
+  --r-pill: 999px;
+
+  /* ---------- Spacing scale (4px base) ---------- */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10: 40px;
+
+  /* ---------- Elevations ---------- */
+  --shadow-card: 0 6px 20px rgba(0, 0, 0, .35);
+  --shadow-overlay: 0 8px 24px rgba(0, 0, 0, .45);
+}
+
+/* ---------- Dark theme (default) ---------- */
+:root,
+[data-theme="dark"] {
+  --color-bg: #07100c;
+  --color-bg-2: #0b1712;
+  --color-bg-3: #111c17;
+  --color-bg-inset: #050a08;
+  --color-ink: #ecf3ee;
+  --color-ink-dim: #aab4ad;
+  --color-muted: #7a8a82;
+  --color-line: rgba(255, 255, 255, .08);
+  --color-line-2: rgba(255, 255, 255, .04);
+
+  --surf-try:   #0f3a24; --surf-try-line:   #1d8a5b;
+  --surf-conv:  #0e2650; --surf-conv-line:  #1e40af;
+  --surf-pen:   #1f1442; --surf-pen-line:   #5b3cc4;
+  --surf-drop:  #2b1642; --surf-drop-line:  #7c3aed;
+  --surf-pconc: #3a2a0f; --surf-pconc-line: #b07500;
+  --surf-yc:    #3a3010; --surf-yc-line:    #ffd100;
+  --surf-rc:    #4d0f14; --surf-rc-line:    #e63946;
+}
+
+/* ---------- Light theme ---------- */
+[data-theme="light"] {
+  --color-bg: #f4f6f3;
+  --color-bg-2: #ffffff;
+  --color-bg-3: #e9ece7;
+  --color-bg-inset: #0a1410; /* Chrome stays dark on both themes */
+  --color-ink: #0a1410;
+  --color-ink-dim: #4a5550;
+  --color-muted: #6a746d;
+  --color-line: rgba(10, 20, 16, .12);
+  --color-line-2: rgba(10, 20, 16, .06);
+
+  --surf-try:   #e6f4ec; --surf-try-line:   #1d8a5b;
+  --surf-conv:  #e6eefc; --surf-conv-line:  #1e40af;
+  --surf-pen:   #ece6fa; --surf-pen-line:   #5b3cc4;
+  --surf-drop:  #efe4fa; --surf-drop-line:  #7c3aed;
+  --surf-pconc: #fcf1dc; --surf-pconc-line: #b07500;
+  --surf-yc:    #fff7cc; --surf-yc-line:    #d4ae00;
+  --surf-rc:    #ffe1e3; --surf-rc-line:    #e63946;
+
+  --color-home-bright: #0e6b40;
+  --color-away-bright: #1e40af;
+}
+
+/* ---------- Type scale ---------- */
+.t-num-xl { font-family: var(--font-display); font-weight: 900; font-size: 56px; line-height: 1; letter-spacing: -.04em; }
+.t-num-lg { font-family: var(--font-display); font-weight: 900; font-size: 44px; line-height: 1; letter-spacing: -.03em; }
+.t-num-md { font-family: var(--font-display); font-weight: 900; font-size: 32px; line-height: 1; letter-spacing: -.04em; }
+
+.t-h1 { font-family: var(--font-display); font-weight: 900; font-size: clamp(40px, 5vw, 72px); line-height: .9; letter-spacing: -.03em; text-transform: uppercase; }
+.t-h2 { font-family: var(--font-display); font-weight: 800; font-size: 20px; letter-spacing: -.01em; text-transform: uppercase; }
+
+.t-body { font-family: var(--font-display); font-weight: 400; font-size: 14px; line-height: 1.45; }
+.t-body-bold { font-weight: 700; }
+
+.t-label-xs { font-family: var(--font-mono); font-size: 10px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: var(--color-muted); }
+.t-label-sm { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: .15em; text-transform: uppercase; color: var(--color-muted); }
+.t-tag      { font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+
+/* ---------- Motion ---------- */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .3; }
+}
+.pulse-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--color-live);
+  animation: pulse-dot 1.4s ease-in-out infinite;
+}

@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Open Rugby · Stadium · Pollard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared.css">
+<style>
+main{ padding: 32px 40px 80px;}
+.p-hero{
+  padding: 40px; border-bottom: 1px solid var(--line); position:relative; overflow:hidden;
+  background: linear-gradient(110deg, rgba(26,77,122,.3) 0%, transparent 55%), var(--bg);
+  display:grid; grid-template-columns: 200px 1fr auto; gap: 32px; align-items:center;
+}
+@media(max-width:1000px){ .p-hero{ grid-template-columns: 1fr;}}
+.p-hero .portrait{
+  width: 200px; height: 200px; border-radius: 8px; background: #1a4d7a;
+  position:relative; overflow:hidden; border: 3px solid var(--yellow);
+  display:flex; align-items:center; justify-content:center;
+  font-family: Archivo; font-weight: 900; font-size: 72px; color: #fff;
+  letter-spacing:-.04em;
+}
+.p-hero .portrait::after{ content:""; position:absolute; inset:0; background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,.5));}
+.p-hero .portrait .num{
+  position:absolute; bottom: 8px; right: 12px; font-size: 32px; color: var(--yellow); z-index:2;
+}
+.p-hero h1{ font-family: Archivo; font-weight: 900; font-size: clamp(48px, 6vw, 88px); margin:0; line-height:.9; letter-spacing:-.03em; text-transform: uppercase;}
+.p-hero h1 .accent{ color: var(--yellow);}
+.p-hero .sub-meta{ display:flex; gap: 18px; margin-top: 12px; font-family:"JetBrains Mono",monospace; font-size:12px; color: var(--muted); letter-spacing:.08em; text-transform: uppercase; flex-wrap:wrap;}
+.p-hero .sub-meta b{ color: var(--ink); font-family: inherit;}
+.status-pill{
+  display:inline-block; font-family:"JetBrains Mono",monospace; font-size:10px;
+  padding: 4px 8px; background: var(--green); color: #fff; letter-spacing:.15em;
+}
+.split{ display:grid; grid-template-columns: 300px 1fr; gap: 24px; margin-top: 24px;}
+@media(max-width:1100px){ .split{ grid-template-columns: 1fr;}}
+.career-side{ display:flex; flex-direction: column; gap: 24px;}
+.stat-grid{ display:grid; grid-template-columns: repeat(2, 1fr); gap: 2px;}
+.stat-sq{
+  background: var(--bg2); padding: 18px 20px; aspect-ratio: 1; display:flex; flex-direction:column; justify-content:space-between;
+  border-top: 2px solid transparent;
+}
+.stat-sq.hot{ border-top-color: var(--yellow);}
+.stat-sq .lbl{ font-family:"JetBrains Mono",monospace; font-size:10px; color: var(--muted); letter-spacing:.15em; text-transform:uppercase;}
+.stat-sq .n{ font-family: Archivo; font-weight: 900; font-size: 44px; line-height:1; letter-spacing:-.03em;}
+.stat-sq.hot .n{ color: var(--yellow);}
+.stat-sq.green .n{ color: #6cd4a4;}
+.stat-sq.red .n{ color: var(--red);}
+.stat-sq.blue .n{ color: #6cb4ff;}
+.career-item{
+  background: var(--bg2); padding: 14px 16px; display:flex; justify-content:space-between; align-items:center;
+  border-left: 3px solid var(--line); cursor:pointer; transition:.15s;
+}
+.career-item:hover{ background: #111c17;}
+.career-item.current{ border-left-color: var(--yellow); background: linear-gradient(90deg, rgba(255,209,0,.06), var(--bg2) 60%);}
+.career-item .tc{ font-weight: 700; font-size: 14px;}
+.career-item .yrs{ font-family:"JetBrains Mono",monospace; font-size:11px; color: var(--muted); margin-top:2px;}
+.career-item .cur-tag{ font-family:"JetBrains Mono",monospace; font-size:10px; color: var(--yellow); letter-spacing:.1em;}
+.chart-box{
+  background: var(--bg2); border: 1px solid var(--line); padding: 18px 20px; margin-bottom: 2px;
+}
+.chart-box h3{
+  margin:0 0 16px; font-family: Archivo; font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--yellow);
+  display:flex; justify-content:space-between;
+}
+.chart-box h3 .axis{ color: var(--muted); font-weight: 400; font-family:"JetBrains Mono",monospace; letter-spacing:.05em; text-transform:none;}
+.bars{ display:flex; gap: 4px; align-items:flex-end; height: 140px; padding-top: 16px; border-bottom: 1px solid var(--line); position:relative;}
+.bar-col{ flex:1; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; gap: 4px; min-width:0; position:relative;}
+.bar-col .bv{ width: 80%; background: var(--yellow); position: relative; border-radius: 1px 1px 0 0;}
+.bar-col .bl{ font-family:"JetBrains Mono",monospace; font-size: 9px; color: var(--muted); letter-spacing: .03em; margin-top: 4px; white-space:nowrap; transform: rotate(-35deg); transform-origin: center top;}
+.bar-col .bn{ font-family:"JetBrains Mono",monospace; font-size:9px; color: var(--ink); position:absolute; bottom: 100%; margin-bottom:2px;}
+
+.apps-row{
+  background: var(--bg2); padding: 14px 18px; display:grid;
+  grid-template-columns: 100px 1fr auto 1fr 70px; gap: 14px; align-items:center;
+  border-bottom: 1px solid rgba(255,255,255,.04); font-size: 13px;
+}
+.apps-row .comp{ font-family:"JetBrains Mono",monospace; font-size: 10px; color: var(--muted); letter-spacing:.08em; text-transform: uppercase;}
+.apps-row .dt{ font-family:"JetBrains Mono",monospace; font-size:11px; color: var(--yellow); display:block;}
+.apps-row .tm{ font-weight: 700; font-size:14px;}
+.apps-row .tm.a{ text-align:right;}
+.apps-row .sc{ font-family: Archivo; font-weight: 900; font-size:18px; letter-spacing:-.02em; min-width: 80px; text-align:center;}
+.apps-row .sc .d{ color: var(--muted); font-weight: 400; margin: 0 6px;}
+.apps-row .mn{ font-family:"JetBrains Mono",monospace; font-size:11px; color:#6cd4a4; text-align:right;}
+.apps-row.loss .mn{ color:#ff6b6b;}
+.apps-row.draw .mn{ color:#aab4ad;}
+
+.measure{
+  background: var(--bg2); border: 1px solid var(--line); padding: 18px 20px; margin-top: 24px;
+}
+.measure-form{ display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; margin-top: 14px;}
+.measure-form input{
+  background: #0a1610; border:1px solid var(--line); color: var(--ink); padding: 10px 12px;
+  font-family: Archivo; font-size: 13px; border-radius: 3px;
+}
+.measure-form input:focus{outline:none; border-color: var(--yellow);}
+.measure-form button{
+  background: var(--yellow); color:#0a1410; border:none; padding: 10px 16px; font-weight: 800;
+  font-family: Archivo; cursor: pointer; border-radius: 3px; letter-spacing:.04em;
+}
+
+.dist-chart{
+  display:flex; height: 200px; gap:2px; margin-top:16px;
+}
+.dist-chart .seg{
+  display:flex; flex-direction:column; justify-content:flex-end; align-items:center; color:#0a1410;
+  font-family:"JetBrains Mono",monospace; font-size: 11px; font-weight: 700; letter-spacing:.05em;
+  padding: 8px; text-align:center; min-width:0;
+}
+.dist-legend{ display:flex; gap:18px; margin-top:12px; font-family:"JetBrains Mono",monospace; font-size:10px; color:var(--muted); letter-spacing:.1em;}
+.dist-legend i{ display:inline-block; width: 12px; height: 12px; margin-right: 6px; vertical-align: middle;}
+</style>
+</head>
+<body data-screen-label="01 V1 Stadium Player Profile">
+
+<header class="chrome">
+  <div class="brand"><span class="ball"></span> <span>Open Rugby</span></div>
+  <nav class="nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="competitions.html">Competitions</a>
+    <a href="teams.html">Teams</a>
+    <a href="players.html" class="active">Players</a>
+    <a href="match.html">Matches</a>
+    <a href="capture.html">Live Capture</a>
+    <a href="#">Admin</a>
+  </nav>
+  <div class="chrome-right">
+    <span>Dan <span class="admin-tag">ADMIN</span></span>
+    <span>Sign Out</span>
+    <button class="ask-btn">Ask the Bot</button>
+  </div>
+</header>
+
+<section class="p-hero">
+  <div>
+    <div class="portrait">HP<span class="num">10</span></div>
+  </div>
+  <div>
+    <div class="crumb" style="margin-bottom:12px"><a href="players.html">← Players</a> · <a href="team.html">Bulls</a></div>
+    <h1>Handré<br><span class="accent">Pollard</span></h1>
+    <div class="sub-meta">
+      <span>Fly-half · <b>#10</b></span>
+      <span>Born <b>11 Mar 1994</b> · age 32</span>
+      <span>Somerset West, ZA</span>
+      <span class="status-pill">ACTIVE</span>
+    </div>
+  </div>
+  <div style="text-align:right;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:10px; color: var(--muted); letter-spacing:.2em;">CAREER POINTS</div>
+    <div style="font-family:Archivo; font-weight:900; font-size:88px; color: var(--yellow); letter-spacing:-.04em; line-height:1;">1474</div>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#6cd4a4; margin-top:4px;">+31 in R15 · 5C over Dragons</div>
+  </div>
+</section>
+
+<main>
+  <div class="tabs">
+    <div class="tab active" data-tab="overview">Overview</div>
+    <div class="tab" data-tab="appearances">Appearances</div>
+    <div class="tab" data-tab="season">Season Stats</div>
+    <div class="tab" data-tab="growth">Growth — H & W</div>
+  </div>
+
+  <div class="tab-panel active" data-panel="overview">
+    <div class="split">
+      <div class="career-side">
+        <div>
+          <div class="sec-title" style="color:var(--yellow); font-family: Archivo; font-weight:800; font-size:13px; text-transform:uppercase; letter-spacing:.1em; margin-bottom: 8px;">Career Totals</div>
+          <div class="stat-grid">
+            <div class="stat-sq"><span class="lbl">Appearances</span><span class="n">154</span></div>
+            <div class="stat-sq hot"><span class="lbl">Points</span><span class="n">1474</span></div>
+            <div class="stat-sq green"><span class="lbl">Tries</span><span class="n">18</span></div>
+            <div class="stat-sq blue"><span class="lbl">Conversions</span><span class="n">296</span></div>
+            <div class="stat-sq hot"><span class="lbl">Penalties</span><span class="n">254</span></div>
+            <div class="stat-sq hot"><span class="lbl">Drop Goals</span><span class="n">10</span></div>
+          </div>
+          <div class="stat-grid" style="margin-top:2px;">
+            <div class="stat-sq red" style="aspect-ratio: 2;"><span class="lbl">Yellow Cards</span><span class="n">2</span></div>
+            <div class="stat-sq" style="aspect-ratio: 2;"><span class="lbl">Win Rate</span><span class="n" style="color:#6cd4a4">67<span style="font-size:22px">%</span></span></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="sec-title" style="color:var(--yellow); font-family: Archivo; font-weight:800; font-size:13px; text-transform:uppercase; letter-spacing:.1em; margin-bottom: 8px;">Career</div>
+          <div style="display:flex; flex-direction:column; gap:2px;">
+            <div class="career-item"><div><div class="tc">Leicester Tigers</div><div class="yrs">2022 — 2025</div></div></div>
+            <div class="career-item"><div><div class="tc">Montpellier</div><div class="yrs">2022 — 2022</div></div></div>
+            <div class="career-item current"><div><div class="tc">South Africa</div><div class="yrs">2015 — Present</div></div><span class="cur-tag">CURRENT</span></div>
+            <div class="career-item current"><div><div class="tc">Bulls</div><div class="yrs">2014 — Present</div></div><span class="cur-tag">CURRENT</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="chart-box">
+          <h3>Tries Per Season <span class="axis">since 2010</span></h3>
+          <div class="bars">
+            <div class="bar-col"><span class="bn">1</span><span class="bv" style="height:22%"></span><span class="bl">RC'10</span></div>
+            <div class="bar-col"><span class="bn">3</span><span class="bv" style="height:66%"></span><span class="bl">JMatch'18</span></div>
+            <div class="bar-col"><span class="bn">1</span><span class="bv" style="height:22%"></span><span class="bl">TestM'18-19</span></div>
+            <div class="bar-col"><span class="bn">2</span><span class="bv" style="height:44%"></span><span class="bl">TstM'20</span></div>
+            <div class="bar-col"><span class="bn">3</span><span class="bv" style="height:66%"></span><span class="bl">JMat'21-22</span></div>
+            <div class="bar-col"><span class="bn">2</span><span class="bv" style="height:44%"></span><span class="bl">TM'22</span></div>
+            <div class="bar-col"><span class="bn">1</span><span class="bv" style="height:22%"></span><span class="bl">TstM'23</span></div>
+            <div class="bar-col"><span class="bn">2</span><span class="bv" style="height:44%"></span><span class="bl">RaCh'24-25</span></div>
+            <div class="bar-col"><span class="bn">1</span><span class="bv" style="height:22%"></span><span class="bl">SR'17-19</span></div>
+            <div class="bar-col"><span class="bn">2</span><span class="bv" style="height:44%"></span><span class="bl">CC'22-23</span></div>
+            <div class="bar-col"><span class="bn">2</span><span class="bv" style="height:44%"></span><span class="bl">CC'25-26</span></div>
+            <div class="bar-col"><span class="bn">1</span><span class="bv" style="height:22%"></span><span class="bl">WCup'19</span></div>
+            <div class="bar-col"><span class="bn">0</span><span class="bv" style="height:4%; opacity:.3"></span><span class="bl">Prem'24-25</span></div>
+          </div>
+        </div>
+
+        <div class="chart-box">
+          <h3>Career Points Breakdown <span class="axis">1474 total</span></h3>
+          <div class="dist-chart">
+            <div class="seg" style="background: #6cd4a4; flex:90"><span>Tries</span><span>90</span></div>
+            <div class="seg" style="background: #6cb4ff; flex:592"><span>Conversions</span><span>592</span></div>
+            <div class="seg" style="background: var(--yellow); flex:762"><span>Penalties</span><span>762</span></div>
+            <div class="seg" style="background: var(--red); flex:30; color:#fff;"><span>DG</span><span>30</span></div>
+          </div>
+          <div class="dist-legend">
+            <span><i style="background:#6cd4a4"></i>Tries (90)</span>
+            <span><i style="background:#6cb4ff"></i>Conversions (592)</span>
+            <span><i style="background:var(--yellow)"></i>Penalties (762)</span>
+            <span><i style="background:var(--red)"></i>Drop Goals (30)</span>
+          </div>
+        </div>
+
+        <div class="measure">
+          <h3 style="margin:0 0 4px; font-family:Archivo; font-weight:800; font-size:14px; text-transform:uppercase; letter-spacing:.08em; color:var(--yellow);">Growth — Height & Weight</h3>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); letter-spacing:.05em;">No measurements recorded yet · <span style="color:var(--yellow)">0 measurements</span></div>
+          <div class="measure-form">
+            <input placeholder="HEIGHT (cm)"/>
+            <input placeholder="WEIGHT (kg)"/>
+            <input type="date" value="2026-04-21"/>
+            <button>+ Add measurement</button>
+          </div>
+          <input style="margin-top:10px; width:100%; background:#0a1610; border:1px solid var(--line); color:var(--ink); padding:10px 12px; font-family:Archivo; font-size:13px; border-radius:3px;" placeholder="Notes (optional) — e.g. Pre-season weigh-in"/>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" data-panel="appearances">
+    <div class="filter-row">
+      <span class="chip active">All comps</span>
+      <span class="chip">URC 25/26</span>
+      <span class="chip">ERC Cup</span>
+      <span class="chip">Test Matches</span>
+    </div>
+    <div class="tbl-wrap">
+      <div class="apps-row"><div><div class="dt">17 APR 2026</div><div class="comp">URC · R15</div></div><div class="tm">Bulls</div><div class="sc"><span style="color:var(--yellow)">47</span><span class="d">—</span>7</div><div class="tm a">Dragons</div><div class="mn">W · 80'</div></div>
+      <div class="apps-row loss"><div><div class="dt">04 APR 2026</div><div class="comp">ERC Cup</div></div><div class="tm">Bulls</div><div class="sc">21<span class="d">—</span>26</div><div class="tm a">Glasgow Warriors</div><div class="mn">L · 73'</div></div>
+      <div class="apps-row"><div><div class="dt">28 MAR 2026</div><div class="comp">URC · R14</div></div><div class="tm">Bulls</div><div class="sc"><span style="color:var(--yellow)">34</span><span class="d">—</span>31</div><div class="tm a">Munster</div><div class="mn">W · 80'</div></div>
+      <div class="apps-row"><div><div class="dt">20 MAR 2026</div><div class="comp">URC · R13</div></div><div class="tm">Bulls</div><div class="sc"><span style="color:var(--yellow)">40</span><span class="d">—</span>7</div><div class="tm a">Cardiff Rugby</div><div class="mn">W · 65'</div></div>
+      <div class="apps-row loss"><div><div class="dt">14 MAR 2026</div><div class="comp">URC · R8</div></div><div class="tm">Bulls</div><div class="sc">19<span class="d">—</span>32</div><div class="tm a">Stormers</div><div class="mn">L · 80'</div></div>
+      <div class="apps-row"><div><div class="dt">28 FEB 2026</div><div class="comp">URC · R12</div></div><div class="tm">Bulls</div><div class="sc"><span style="color:var(--yellow)">41</span><span class="d">—</span>12</div><div class="tm a">Sharks</div><div class="mn">W · 69'</div></div>
+      <div class="apps-row"><div><div class="dt">31 JAN 2026</div><div class="comp">URC · R11</div></div><div class="tm">Bulls</div><div class="sc"><span style="color:var(--yellow)">52</span><span class="d">—</span>17</div><div class="tm a">Lions</div><div class="mn">W · 80'</div></div>
+      <div class="apps-row"><div><div class="dt">23 JAN 2026</div><div class="comp">URC · R10</div></div><div class="tm">Bulls</div><div class="sc">19<span class="d">—</span>17</div><div class="tm a">Edinburgh</div><div class="mn">W · 80'</div></div>
+    </div>
+  </div>
+
+  <div class="tab-panel" data-panel="season">
+    <div class="stat-grid" style="grid-template-columns: repeat(4,1fr);">
+      <div class="stat-sq hot"><span class="lbl">URC 25/26 Points</span><span class="n">147</span></div>
+      <div class="stat-sq green"><span class="lbl">Conv. rate</span><span class="n">84%</span></div>
+      <div class="stat-sq blue"><span class="lbl">Pen. rate</span><span class="n">79%</span></div>
+      <div class="stat-sq"><span class="lbl">Metres / game</span><span class="n">38</span></div>
+      <div class="stat-sq"><span class="lbl">Passes / game</span><span class="n">28.4</span></div>
+      <div class="stat-sq"><span class="lbl">Tackles / game</span><span class="n">6.1</span></div>
+      <div class="stat-sq"><span class="lbl">Minutes</span><span class="n">1087</span></div>
+      <div class="stat-sq"><span class="lbl">Starts</span><span class="n">14/14</span></div>
+    </div>
+  </div>
+
+  <div class="tab-panel" data-panel="growth">
+    <div class="measure">
+      <div style="color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:12px;">No measurements recorded yet · 0 entries</div>
+      <div class="measure-form"><input placeholder="HEIGHT (cm)"/><input placeholder="WEIGHT (kg)"/><input type="date" value="2026-04-21"/><button>+ Add</button></div>
+    </div>
+  </div>
+</main>
+
+<div class="switcher">
+  <span class="label">VERSION</span>
+  <a href="../index.html">←</a>
+  <a class="active" href="dashboard.html">01 STADIUM</a>
+  <a href="../v2-editorial/dashboard.html">02 PROGRAMME</a>
+  <a href="../v3-terminal/dashboard.html">03 TERMINAL</a>
+</div>
+
+<script>
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    const tab = t.dataset.tab;
+    document.querySelectorAll('.tabs .tab').forEach(x => x.classList.toggle('active', x === t));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === tab));
+  });
+});
+document.querySelectorAll('.chip').forEach(c => {
+  c.addEventListener('click', () => {
+    c.parentElement.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

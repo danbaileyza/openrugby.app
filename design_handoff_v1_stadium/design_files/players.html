@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Open Rugby · Stadium · Players</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared.css">
+<style>
+main{ padding: 32px 40px 80px;}
+.search-bar{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom: 18px;}
+.search-bar input{
+  flex:1; min-width: 240px; background: var(--bg2); border:1px solid var(--line);
+  padding: 10px 14px; color: var(--ink); font-family: Archivo; font-size: 13px; border-radius: 3px;
+}
+.search-bar input:focus{ outline:none; border-color: var(--yellow);}
+.search-bar select{
+  background: var(--bg2); border:1px solid var(--line); padding: 10px 12px;
+  color: #aab4ad; font-family:"JetBrains Mono",monospace; font-size: 11px; letter-spacing:.08em; border-radius: 3px;
+}
+.lead{
+  display:grid; grid-template-columns: repeat(3,1fr); gap: 2px; margin-bottom: 24px;
+}
+@media(max-width:1000px){ .lead{ grid-template-columns: 1fr;}}
+.lead-card{
+  background: var(--bg2); border-top: 3px solid var(--yellow);
+  padding: 22px 24px; display:flex; flex-direction:column; gap:10px; cursor:pointer;
+}
+.lead-card:hover{ background: #111c17;}
+.lead-card .tag{ font-family:"JetBrains Mono",monospace; font-size:10px; letter-spacing:.15em; color: var(--yellow); text-transform:uppercase;}
+.lead-card .nm{ font-family: Archivo; font-weight: 900; font-size: 28px; letter-spacing: -.02em; line-height:1; text-transform:uppercase;}
+.lead-card .tm{ font-family:"JetBrains Mono",monospace; font-size:11px; color: var(--muted); letter-spacing:.08em; text-transform: uppercase;}
+.lead-card .n{ font-family: Archivo; font-weight: 900; font-size: 56px; color: var(--yellow); letter-spacing:-.03em; line-height:1;}
+.lead-card .lbl{ font-family:"JetBrains Mono",monospace; font-size:10px; letter-spacing:.2em; color: var(--muted); text-transform:uppercase;}
+
+table.players{ width:100%; border-collapse: collapse;}
+table.players th{
+  font-family:"JetBrains Mono",monospace; font-size: 10px; font-weight: 500;
+  letter-spacing:.15em; text-transform:uppercase; color: var(--muted);
+  text-align: right; padding: 12px 14px; border-bottom: 1px solid var(--line);
+  background: var(--bg2);
+}
+table.players th.left{ text-align:left;}
+table.players td{
+  padding: 12px 14px; text-align: right; border-bottom: 1px solid rgba(255,255,255,.04);
+  background: var(--bg2);
+}
+table.players td.left{ text-align:left;}
+table.players tr:hover td{ background: #111c17; cursor:pointer;}
+.p-nm{ font-weight:700; font-size:14px;}
+.p-team{ font-family:"JetBrains Mono",monospace; font-size:10px; color: var(--muted); letter-spacing:.08em; text-transform:uppercase; margin-left:6px;}
+.pos-chip{
+  font-family:"JetBrains Mono",monospace; font-size: 9px; letter-spacing:.1em;
+  padding: 3px 6px; border-radius: 2px; background: rgba(255,255,255,.05); color:#aab4ad;
+}
+.pts-n{ font-family: Archivo; font-weight: 900; font-size: 16px; color: var(--yellow); letter-spacing:-.01em;}
+.pos-cell{ font-family:"JetBrains Mono",monospace; font-size:12px; color: var(--muted); width: 40px;}
+.pos-cell.top{ color: var(--yellow); font-weight: 700;}
+</style>
+</head>
+<body data-screen-label="01 V1 Stadium Players">
+
+<header class="chrome">
+  <div class="brand"><span class="ball"></span> <span>Open Rugby</span></div>
+  <nav class="nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="competitions.html">Competitions</a>
+    <a href="teams.html">Teams</a>
+    <a href="players.html" class="active">Players</a>
+    <a href="match.html">Matches</a>
+    <a href="capture.html">Live Capture</a>
+    <a href="#">Admin</a>
+  </nav>
+  <div class="chrome-right">
+    <span>Dan <span class="admin-tag">ADMIN</span></span>
+    <span>Sign Out</span>
+    <button class="ask-btn">Ask the Bot</button>
+  </div>
+</header>
+
+<section class="page-head">
+  <div class="crumb">← <a href="dashboard.html">back to dashboard</a></div>
+  <h1 class="big">Play<span class="yellow">ers</span></h1>
+  <p class="sub">9,032 professional players tracked across every competition we cover — full career history, match-by-match.</p>
+</section>
+
+<main>
+  <div class="lead">
+    <a class="lead-card" href="player.html">
+      <div class="tag">⚡ TOP POINTS · URC 25/26</div>
+      <div style="display:flex; align-items:flex-end; gap:16px;">
+        <div style="flex:1">
+          <div class="nm">Handré<br>Pollard</div>
+          <div class="tm">Bulls · Fly-half</div>
+        </div>
+        <div>
+          <div class="n">147</div>
+          <div class="lbl">POINTS</div>
+        </div>
+      </div>
+    </a>
+    <div class="lead-card">
+      <div class="tag">⚡ TOP TRIES · URC 25/26</div>
+      <div style="display:flex; align-items:flex-end; gap:16px;">
+        <div style="flex:1">
+          <div class="nm">Kyle<br>Steyn</div>
+          <div class="tm">Glasgow · Wing</div>
+        </div>
+        <div>
+          <div class="n">14</div>
+          <div class="lbl">TRIES</div>
+        </div>
+      </div>
+    </div>
+    <div class="lead-card">
+      <div class="tag">⚡ TOP TACKLES · URC 25/26</div>
+      <div style="display:flex; align-items:flex-end; gap:16px;">
+        <div style="flex:1">
+          <div class="nm">Caelan<br>Doris</div>
+          <div class="tm">Leinster · No. 8</div>
+        </div>
+        <div>
+          <div class="n">198</div>
+          <div class="lbl">TACKLES</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="search-bar">
+    <input placeholder="Search players by name..." />
+    <select><option>All competitions</option><option>URC</option><option>Premiership</option><option>Top 14</option><option>Test matches</option></select>
+    <select><option>All positions</option><option>Front row</option><option>Second row</option><option>Back row</option><option>Halves</option><option>Centres</option><option>Back three</option></select>
+    <select><option>Active only</option><option>All players</option><option>Retired</option></select>
+    <select><option>Sort: Points</option><option>Sort: Tries</option><option>Sort: Appearances</option><option>Sort: Age</option></select>
+  </div>
+
+  <div class="filter-row">
+    <span class="chip active">URC</span>
+    <span class="chip">Premiership</span>
+    <span class="chip">Top 14</span>
+    <span class="chip">Tests</span>
+    <span class="chip">All comps</span>
+  </div>
+
+  <div class="tbl-wrap">
+    <table class="players">
+      <thead>
+        <tr>
+          <th class="left" style="width:40px">#</th>
+          <th class="left">Player</th>
+          <th class="left">Pos</th>
+          <th>Apps</th>
+          <th>Tries</th>
+          <th>Points</th>
+          <th>Tackles</th>
+          <th>Age</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr onclick="location='player.html'"><td class="left"><span class="pos-cell top">01</span></td><td class="left"><span class="p-nm">Handré Pollard</span><span class="p-team">Bulls</span></td><td class="left"><span class="pos-chip">FLY</span></td><td>154</td><td>18</td><td class="pts-n">1474</td><td>89</td><td>32</td></tr>
+        <tr><td class="left"><span class="pos-cell top">02</span></td><td class="left"><span class="p-nm">Adam Hastings</span><span class="p-team">Glasgow</span></td><td class="left"><span class="pos-chip">FLY</span></td><td>128</td><td>14</td><td class="pts-n">1189</td><td>72</td><td>29</td></tr>
+        <tr><td class="left"><span class="pos-cell top">03</span></td><td class="left"><span class="p-nm">Manie Libbok</span><span class="p-team">Stormers</span></td><td class="left"><span class="pos-chip">FLY</span></td><td>96</td><td>11</td><td class="pts-n">923</td><td>65</td><td>28</td></tr>
+        <tr><td class="left"><span class="pos-cell">04</span></td><td class="left"><span class="p-nm">Sam Prendergast</span><span class="p-team">Leinster</span></td><td class="left"><span class="pos-chip">FLY</span></td><td>42</td><td>7</td><td class="pts-n">412</td><td>31</td><td>23</td></tr>
+        <tr><td class="left"><span class="pos-cell">05</span></td><td class="left"><span class="p-nm">Jack Crowley</span><span class="p-team">Munster</span></td><td class="left"><span class="pos-chip">FLY</span></td><td>78</td><td>9</td><td class="pts-n">687</td><td>54</td><td>26</td></tr>
+        <tr><td class="left"><span class="pos-cell">06</span></td><td class="left"><span class="p-nm">Kyle Steyn</span><span class="p-team">Glasgow</span></td><td class="left"><span class="pos-chip">WNG</span></td><td>89</td><td>48</td><td class="pts-n">240</td><td>112</td><td>31</td></tr>
+        <tr><td class="left"><span class="pos-cell">07</span></td><td class="left"><span class="p-nm">Canan Moodie</span><span class="p-team">Bulls</span></td><td class="left"><span class="pos-chip">WNG</span></td><td>68</td><td>34</td><td class="pts-n">170</td><td>87</td><td>23</td></tr>
+        <tr><td class="left"><span class="pos-cell">08</span></td><td class="left"><span class="p-nm">Caelan Doris</span><span class="p-team">Leinster</span></td><td class="left"><span class="pos-chip">N8</span></td><td>112</td><td>22</td><td class="pts-n">110</td><td>1342</td><td>28</td></tr>
+        <tr><td class="left"><span class="pos-cell">09</span></td><td class="left"><span class="p-nm">Marcell Coetzee</span><span class="p-team">Bulls</span></td><td class="left"><span class="pos-chip">FLK</span></td><td>189</td><td>29</td><td class="pts-n">145</td><td>1987</td><td>34</td></tr>
+        <tr><td class="left"><span class="pos-cell">10</span></td><td class="left"><span class="p-nm">Jamie Osborne</span><span class="p-team">Leinster</span></td><td class="left"><span class="pos-chip">CEN</span></td><td>54</td><td>22</td><td class="pts-n">110</td><td>92</td><td>24</td></tr>
+        <tr><td class="left"><span class="pos-cell">11</span></td><td class="left"><span class="p-nm">Louis Rees-Zammit</span><span class="p-team">Cardiff</span></td><td class="left"><span class="pos-chip">WNG</span></td><td>67</td><td>31</td><td class="pts-n">155</td><td>68</td><td>25</td></tr>
+        <tr><td class="left"><span class="pos-cell">12</span></td><td class="left"><span class="p-nm">Rassie van der Dussen</span><span class="p-team">Stormers</span></td><td class="left"><span class="pos-chip">FLK</span></td><td>143</td><td>14</td><td class="pts-n">70</td><td>1532</td><td>31</td></tr>
+        <tr><td class="left"><span class="pos-cell">13</span></td><td class="left"><span class="p-nm">Damian Willemse</span><span class="p-team">Stormers</span></td><td class="left"><span class="pos-chip">FB</span></td><td>87</td><td>19</td><td class="pts-n">346</td><td>124</td><td>27</td></tr>
+        <tr><td class="left"><span class="pos-cell">14</span></td><td class="left"><span class="p-nm">Tom Jordan</span><span class="p-team">Glasgow</span></td><td class="left"><span class="pos-chip">FB</span></td><td>72</td><td>18</td><td class="pts-n">298</td><td>95</td><td>27</td></tr>
+        <tr><td class="left"><span class="pos-cell">15</span></td><td class="left"><span class="p-nm">Willie le Roux</span><span class="p-team">Bulls</span></td><td class="left"><span class="pos-chip">FB</span></td><td>164</td><td>31</td><td class="pts-n">155</td><td>187</td><td>36</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); margin-top:14px; letter-spacing:.08em;">Showing 15 of 1,248 URC players · <span style="color:var(--yellow)">Load more →</span></div>
+</main>
+
+<div class="switcher">
+  <span class="label">VERSION</span>
+  <a href="../index.html">←</a>
+  <a class="active" href="dashboard.html">01 STADIUM</a>
+  <a href="../v2-editorial/dashboard.html">02 PROGRAMME</a>
+  <a href="../v3-terminal/dashboard.html">03 TERMINAL</a>
+</div>
+
+<script>
+document.querySelectorAll('.chip').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

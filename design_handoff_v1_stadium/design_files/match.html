@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Open Rugby · Stadium · Match</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Archivo+Narrow:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg: #07100c;
+  --bg2: #0b1712;
+  --ink: #ecf3ee;
+  --muted: #7a8a82;
+  --line: rgba(255,255,255,.08);
+  --yellow: #ffd100;
+  --green: #1d8a5b;
+  --red: #e63946;
+  --bulls: #6cb4ff;
+  --dragons: #d4405a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family: Archivo, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+a{color:inherit; text-decoration:none;}
+.mono{font-family:"JetBrains Mono", monospace; letter-spacing:.02em;}
+
+/* Chrome */
+.chrome{
+  background: #050a08;
+  border-bottom: 1px solid var(--line);
+  padding: 14px 40px;
+  display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:30;
+}
+.brand{ display:flex; align-items:center; gap:12px; font-weight:900; letter-spacing:-.01em;}
+.ball{
+  width:30px; height:20px; border-radius:50%;
+  background: linear-gradient(135deg,#d4a574,#8b5a2b);
+  transform: rotate(-18deg);
+}
+.ball::after{content:"";position:absolute;inset:0;border-radius:50%;background:repeating-linear-gradient(90deg, transparent 0 12px, rgba(0,0,0,.35) 12px 13px);}
+.nav{display:flex; gap: 2px;}
+.nav a{ padding: 8px 14px; font-size: 13px; font-weight: 600; border-radius: 4px; color: #aab4ad;}
+.nav a.active{ background: var(--yellow); color:#0a1410;}
+.chrome-right{ display:flex; align-items:center; gap:16px; font-size: 13px; color:#aab4ad;}
+.admin-tag{ background:#ffd100; color:#0a1410; padding: 3px 6px; font-size:10px; font-weight:800; letter-spacing:.08em;}
+.ask-btn{
+  background: var(--yellow); color:#0a1410; font-weight: 800;
+  padding: 10px 16px; border-radius: 4px; font-size: 13px; border: none; cursor:pointer;
+}
+
+/* Breadcrumb */
+.crumb{
+  padding: 20px 40px 0;
+  display:flex; justify-content:space-between; align-items:center;
+  font-family:"JetBrains Mono",monospace; font-size: 12px; color: var(--muted);
+  letter-spacing:.1em;
+}
+.crumb a{ color: var(--yellow);}
+.crumb .actions{ display:flex; gap: 8px;}
+.crumb .actions button{
+  background: var(--bg2); border: 1px solid var(--line);
+  color: var(--ink); padding: 8px 14px; font-size: 12px; font-family:"JetBrains Mono",monospace;
+  letter-spacing:.05em; cursor:pointer; border-radius: 3px;
+}
+.crumb .actions button.primary{ background: var(--yellow); color:#0a1410; border-color: var(--yellow); font-weight: 700;}
+
+/* HERO SCORECARD - broadcast style */
+.scorecard{
+  margin: 24px 40px 0;
+  position:relative;
+  overflow:hidden;
+  border-radius: 4px;
+  display:grid;
+  grid-template-columns: 1fr auto 1fr;
+  min-height: 320px;
+  border: 1px solid var(--line);
+}
+.scorecard .side{
+  padding: 36px 44px;
+  display:flex; flex-direction:column; justify-content:center;
+  position:relative;
+}
+.scorecard .side.home{
+  background:
+    linear-gradient(90deg, rgba(212,64,90,.25) 0%, rgba(212,64,90,.02) 60%),
+    #0a1108;
+  text-align:left;
+}
+.scorecard .side.away{
+  background:
+    linear-gradient(-90deg, rgba(108,180,255,.22) 0%, rgba(108,180,255,.02) 60%),
+    #0a1108;
+  text-align: right; align-items: flex-end;
+}
+.scorecard .side.home::before{
+  content:""; position:absolute; top:0; bottom:0; left:0; width: 6px; background: var(--dragons);
+}
+.scorecard .side.away::after{
+  content:""; position:absolute; top:0; bottom:0; right:0; width: 6px; background: var(--bulls);
+}
+.scorecard .team-name{
+  font-family: Archivo; font-weight: 900; font-size: clamp(40px, 5.5vw, 80px);
+  line-height: .85; letter-spacing: -0.04em; text-transform: uppercase;
+}
+.scorecard .team-sub{
+  color: var(--muted); font-family:"JetBrains Mono",monospace; font-size: 12px;
+  letter-spacing: .2em; text-transform: uppercase; margin-top: 10px;
+}
+.scorecard .team-meta{
+  margin-top: 24px; font-family:"JetBrains Mono",monospace; font-size: 11px; color: #aab4ad; letter-spacing:.08em;
+}
+.scorecard .middle{
+  background: #050908;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding: 28px 48px;
+  min-width: 340px;
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+  position:relative;
+}
+.scorecard .final-pill{
+  background: var(--yellow); color:#0a1410;
+  font-weight: 900; font-size: 11px; letter-spacing:.2em;
+  padding: 4px 10px; margin-bottom: 18px;
+}
+.scorecard .scores{
+  display:flex; align-items:baseline; gap: 20px;
+  font-family: Archivo; font-weight: 900;
+  font-size: 124px; line-height: 1; letter-spacing: -0.05em;
+}
+.scorecard .s-away{ color: var(--bulls);}
+.scorecard .s-home{ color: var(--dragons);}
+.scorecard .s-dash{ color: var(--muted); font-weight: 200; font-size: 60px;}
+.scorecard .halftime{ font-family:"JetBrains Mono",monospace; font-size: 11px; color: var(--muted); margin-top: 14px; letter-spacing: .15em;}
+.scorecard .venue{
+  font-family: Archivo; font-size: 13px; color: #aab4ad; margin-top: 12px; text-align:center;
+}
+.scorecard .competition-bar{
+  grid-column: 1 / -1;
+  background: #050908;
+  padding: 10px 24px;
+  display:flex; justify-content:center; align-items:center; gap: 12px;
+  font-family: "JetBrains Mono",monospace; font-size: 11px; color: var(--yellow); letter-spacing:.18em;
+  border-bottom: 1px solid var(--line);
+}
+
+/* Tabs */
+.tabs{
+  margin: 32px 40px 0;
+  display:flex; gap: 2px; border-bottom: 1px solid var(--line);
+}
+.tab{
+  font-family: Archivo; font-weight: 700; font-size: 14px;
+  padding: 12px 22px; cursor:pointer; color: #aab4ad;
+  letter-spacing:.06em; text-transform: uppercase;
+  border-bottom: 2px solid transparent;
+}
+.tab.active{ color: var(--yellow); border-bottom-color: var(--yellow);}
+.tab:hover:not(.active){ color:#fff;}
+.tab-panel{ display:none;}
+.tab-panel.active{ display:block;}
+
+main{ padding: 28px 40px 80px;}
+
+/* Overview layout */
+.overview{
+  display:grid; grid-template-columns: 1fr 2fr 1fr; gap: 20px;
+}
+@media (max-width: 1100px){ .overview{ grid-template-columns: 1fr;}}
+
+.lineup{
+  background: var(--bg2); border: 1px solid var(--line);
+}
+.lineup h4{
+  margin: 0; padding: 14px 18px; font-size: 12px; letter-spacing:.18em;
+  text-transform: uppercase; font-weight: 800;
+  border-bottom: 1px solid var(--line);
+  display:flex; justify-content:space-between; align-items:center;
+}
+.lineup.dragons h4{ color: var(--dragons); border-left: 4px solid var(--dragons);}
+.lineup.bulls h4{ color: var(--bulls); border-left: 4px solid var(--bulls);}
+.lineup-section{
+  padding: 4px 0;
+  border-bottom: 1px solid var(--line);
+}
+.lineup-section:last-child{ border-bottom: none;}
+.lineup-section .label{
+  padding: 10px 18px; font-family:"JetBrains Mono",monospace;
+  font-size: 10px; letter-spacing:.2em; color: var(--muted); text-transform: uppercase;
+}
+.lineup-row{
+  display:grid; grid-template-columns: 32px 1fr auto;
+  align-items: center; padding: 8px 18px; gap: 10px;
+  font-size: 14px;
+  transition: background .15s;
+}
+.lineup-row:hover{ background: rgba(255,255,255,.02);}
+.lineup-row .num{ font-family:"JetBrains Mono",monospace; color: var(--muted); font-size: 12px;}
+.lineup-row .name{ font-weight: 600;}
+.lineup-row.starred .name::after{ content:" ★"; color: var(--yellow);}
+.lineup-row .mins{ font-family:"JetBrains Mono",monospace; font-size: 11px; color: var(--muted);}
+
+/* Timeline */
+.timeline{
+  background: var(--bg2); border: 1px solid var(--line);
+  padding: 0;
+}
+.timeline h4{
+  margin: 0; padding: 14px 20px; font-size: 12px; letter-spacing:.18em;
+  text-transform: uppercase; font-weight: 800; color: var(--yellow);
+  border-bottom: 1px solid var(--line);
+  display:flex; justify-content:space-between; align-items:center;
+}
+.timeline h4 .split{
+  font-family:"JetBrains Mono",monospace; font-size: 10px; color: var(--muted);
+}
+.event{
+  display:grid; grid-template-columns: 60px 28px 1fr auto;
+  padding: 12px 20px;
+  gap: 14px; align-items:center;
+  border-bottom: 1px solid rgba(255,255,255,.03);
+  position:relative;
+  transition: background .15s;
+}
+.event:hover{ background: rgba(255,255,255,.02);}
+.event .min{
+  font-family: Archivo; font-weight: 900; font-size: 18px;
+  letter-spacing:-.02em; color: var(--yellow);
+}
+.event.for-dragons .min{ color: var(--dragons);}
+.event.for-bulls .min{ color: var(--bulls);}
+.event .icon{
+  width: 24px; height: 24px; display:flex; align-items:center; justify-content:center;
+  background: var(--bg); border: 1px solid var(--line); border-radius: 3px;
+  font-size: 11px; font-weight: 700;
+}
+.event.try .icon{ background: var(--yellow); color:#0a1410; border-color: var(--yellow);}
+.event.con .icon{ color: #aab4ad;}
+.event .what{ font-weight: 700; font-size: 15px;}
+.event .player{ color: #aab4ad; font-size: 12px; font-family:"JetBrains Mono",monospace; letter-spacing:.04em;}
+.event .team{ font-family: Archivo; font-weight: 800; font-size: 11px; letter-spacing:.15em; text-transform: uppercase;}
+.event.for-bulls .team{ color: var(--bulls);}
+.event.for-dragons .team{ color: var(--dragons);}
+.event-type{ font-size: 11px; color: var(--muted); margin-left: 6px; text-transform: uppercase; letter-spacing: .1em;}
+
+/* Scoreflow graph */
+.scoreflow{
+  background: var(--bg2); border: 1px solid var(--line);
+  margin-top: 20px;
+  padding: 18px 20px 6px;
+}
+.scoreflow h4{
+  margin: 0 0 14px; font-size: 12px; letter-spacing:.18em;
+  text-transform: uppercase; font-weight: 800; color: var(--yellow);
+}
+.flow-wrap{ position:relative; height: 140px;}
+.flow-wrap svg{ width:100%; height:100%; display:block;}
+.flow-legend{
+  display:flex; gap: 18px; margin-top: 10px;
+  font-family:"JetBrains Mono",monospace; font-size: 11px; color: var(--muted);
+}
+.flow-legend .k{ display:flex; align-items:center; gap:6px;}
+.flow-legend .k i{ width: 18px; height: 3px;}
+
+/* Stats panels */
+.stats-grid{
+  display:grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  padding: 0 0;
+}
+.stat-row{
+  display:grid; grid-template-columns: 56px 1fr 56px;
+  align-items:center; padding: 12px 0; gap: 12px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.stat-row .label{ grid-column: 1/-1; font-family:"JetBrains Mono",monospace; font-size: 10px; color: var(--muted); letter-spacing:.15em; text-transform: uppercase; text-align:center; margin-bottom: 4px; padding: 0;}
+.stat-row .home-val, .stat-row .away-val{ font-family: Archivo; font-weight: 900; font-size: 20px; letter-spacing:-.02em;}
+.stat-row .home-val{ text-align:left; color: var(--dragons);}
+.stat-row .away-val{ text-align:right; color: var(--bulls);}
+.stat-row .bar{
+  position:relative; height: 6px; background: rgba(255,255,255,.08); border-radius: 2px;
+  display: flex;
+}
+.stat-row .bar .h{ background: var(--dragons);}
+.stat-row .bar .a{ background: var(--bulls); margin-left: auto;}
+
+.stats-wrap{
+  background: var(--bg2); border: 1px solid var(--line); padding: 18px 24px;
+  margin-top: 20px;
+}
+.stats-wrap h4{
+  margin: 0 0 10px; font-size: 12px; letter-spacing:.18em;
+  text-transform: uppercase; font-weight: 800; color: var(--yellow);
+}
+
+/* Version Switcher */
+.switcher{
+  position:fixed; bottom: 20px; right: 20px;
+  background: rgba(10,15,12,.9); border: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+  padding: 6px; border-radius: 6px; z-index: 50;
+  display:flex; gap: 4px; font-family:"JetBrains Mono",monospace;font-size:11px;
+}
+.switcher a{ padding: 6px 10px; border-radius: 3px; color:#aab4ad;}
+.switcher a.active{ background: var(--yellow); color:#0a1410; font-weight:700;}
+.switcher .label{ color:#6a746d; padding:6px 8px; border-right: 1px solid var(--line);}
+.goto{
+  position: fixed; top: 70px; right: 20px; z-index: 40;
+  font-family:"JetBrains Mono",monospace; font-size: 11px;
+  background: var(--bg2); border: 1px solid var(--line); padding: 6px 10px;
+  letter-spacing:.1em;
+}
+.goto a{ color: var(--yellow);}
+
+</style>
+</head>
+<body data-screen-label="02 V1 Stadium Match">
+
+<header class="chrome">
+  <div class="brand"><span class="ball"></span> <span>Open Rugby</span></div>
+  <nav class="nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="#">Competitions</a>
+    <a href="#">Teams</a>
+    <a href="#">Players</a>
+    <a href="match.html" class="active">Matches</a>
+    <a href="#">Referees</a>
+    <a href="#">Admin</a>
+  </nav>
+  <div class="chrome-right">
+    <span>Dan <span class="admin-tag">ADMIN</span></span>
+    <span>Sign Out</span>
+    <button class="ask-btn">Ask the Bot</button>
+  </div>
+</header>
+
+<div class="crumb">
+  <div><a href="dashboard.html">← United Rugby Championship</a></div>
+  <div class="actions">
+    <button>Lineup</button>
+    <button class="primary">Capture Scores</button>
+  </div>
+</div>
+
+<section class="scorecard">
+  <div class="competition-bar">● UNITED RUGBY CHAMPIONSHIP · ROUND 15 · POOL STAGE</div>
+  <div class="side home">
+    <div class="team-sub">Home · Newport</div>
+    <div class="team-name">Dragons</div>
+    <div class="team-meta">1T · 1C · 0P · 0DG</div>
+  </div>
+  <div class="middle">
+    <div class="final-pill">FULL TIME</div>
+    <div class="scores">
+      <span class="s-home">7</span>
+      <span class="s-dash">—</span>
+      <span class="s-away">47</span>
+    </div>
+    <div class="halftime">HALF TIME · 0 — 0</div>
+    <div class="venue">Rodney Parade, Newport<br><span class="mono" style="color:var(--muted); font-size:11px; letter-spacing:.15em;">FRI 17 APR 2026 · 18:45 · REF D. JONES</span></div>
+  </div>
+  <div class="side away">
+    <div class="team-sub">Away · Pretoria</div>
+    <div class="team-name">Bulls</div>
+    <div class="team-meta">7T · 6C · 0P · 0DG</div>
+  </div>
+</section>
+
+<div class="tabs">
+  <div class="tab active" data-tab="overview">Overview</div>
+  <div class="tab" data-tab="lineups">Lineups</div>
+  <div class="tab" data-tab="stats">Stats</div>
+  <div class="tab" data-tab="officials">Officials</div>
+</div>
+
+<main>
+  <div class="tab-panel active" data-panel="overview">
+    <div class="overview">
+      <div class="lineup dragons">
+        <h4>Dragons <span class="mono" style="color:var(--muted);font-size:10px;">RED</span></h4>
+        <div class="lineup-section">
+          <div class="label">Starting XV</div>
+          <div class="lineup-row"><span class="num">1</span><span class="name">Jones</span><span class="mins">80'</span></div>
+          <div class="lineup-row"><span class="num">2</span><span class="name">Dee</span><span class="mins">65'</span></div>
+          <div class="lineup-row"><span class="num">3</span><span class="name">Coleman</span><span class="mins">58'</span></div>
+          <div class="lineup-row"><span class="num">4</span><span class="name">Douglas</span><span class="mins">80'</span></div>
+          <div class="lineup-row"><span class="num">5</span><span class="name">Davies</span><span class="mins">72'</span></div>
+          <div class="lineup-row"><span class="num">6</span><span class="name">Woodman</span><span class="mins">80'</span></div>
+          <div class="lineup-row"><span class="num">7</span><span class="name">Beddall</span><span class="mins">55'</span></div>
+          <div class="lineup-row"><span class="num">8</span><span class="name">Keddie</span><span class="mins">80'</span></div>
+          <div class="lineup-row"><span class="num">9</span><span class="name">Armstrong</span><span class="mins">60'</span></div>
+          <div class="lineup-row starred"><span class="num">10</span><span class="name">de Beer</span><span class="mins">80'</span></div>
+          <div class="lineup-row"><span class="num">11</span><span class="name">Dyer</span><span class="mins">80'</span></div>
+          <div class="lineup-row"><span class="num">12</span><span class="name">Paea</span><span class="mins">80'</span></div>
+          <div class="lineup-row"><span class="num">13</span><span class="name">Inisi</span><span class="mins">68'</span></div>
+          <div class="lineup-row"><span class="num">14</span><span class="name">Rosser</span><span class="mins">80'</span></div>
+          <div class="lineup-row"><span class="num">15</span><span class="name">Evans</span><span class="mins">80'</span></div>
+        </div>
+        <div class="lineup-section">
+          <div class="label">Replacements</div>
+          <div class="lineup-row"><span class="num">16</span><span class="name">Burrows</span><span class="mins">15'</span></div>
+          <div class="lineup-row"><span class="num">17</span><span class="name">Jones</span><span class="mins">22'</span></div>
+          <div class="lineup-row"><span class="num">18</span><span class="name">Lewis</span><span class="mins">22'</span></div>
+          <div class="lineup-row"><span class="num">19</span><span class="name">Screech</span><span class="mins">8'</span></div>
+          <div class="lineup-row"><span class="num">20</span><span class="name">Young</span><span class="mins">20'</span></div>
+          <div class="lineup-row"><span class="num">21</span><span class="name">Lloyd</span><span class="mins">20'</span></div>
+          <div class="lineup-row"><span class="num">22</span><span class="name">Ackerman</span><span class="mins">12'</span></div>
+          <div class="lineup-row"><span class="num">23</span><span class="name">Anderson</span><span class="mins">—</span></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="timeline">
+          <h4>Match Timeline <span class="split">17 events · scoring plays</span></h4>
+          <div class="event try for-bulls">
+            <div class="min">10'</div><div class="icon">T</div>
+            <div><div class="what">Embrose Papier <span class="event-type">Try</span></div><div class="player">Pretoria · Fly-half's pick</div></div>
+            <div class="team">Bulls</div>
+          </div>
+          <div class="event con for-bulls">
+            <div class="min">10'</div><div class="icon">C</div>
+            <div><div class="what">Handré Pollard <span class="event-type">Conversion</span></div><div class="player">7m right of posts</div></div>
+            <div class="team">Bulls</div>
+          </div>
+          <div class="event try for-dragons">
+            <div class="min">22'</div><div class="icon">T</div>
+            <div><div class="what">Fine Inisi <span class="event-type">Try</span></div><div class="player">Corner dot-down</div></div>
+            <div class="team">Dragons</div>
+          </div>
+          <div class="event con for-dragons">
+            <div class="min">23'</div><div class="icon">C</div>
+            <div><div class="what">Cai Evans <span class="event-type">Conversion</span></div><div class="player">Wide right, missed</div></div>
+            <div class="team">Dragons</div>
+          </div>
+          <div class="event try for-bulls">
+            <div class="min">36'</div><div class="icon">T</div>
+            <div><div class="what">Johan Grobbelaar <span class="event-type">Try</span></div><div class="player">Rolling maul from 5m</div></div>
+            <div class="team">Bulls</div>
+          </div>
+          <div class="event try for-bulls">
+            <div class="min">43'</div><div class="icon">T</div>
+            <div><div class="what">Marcell Coetzee <span class="event-type">Try</span></div><div class="player">Pick-and-go</div></div>
+            <div class="team">Bulls</div>
+          </div>
+          <div class="event con for-bulls">
+            <div class="min">44'</div><div class="icon">C</div>
+            <div><div class="what">Handré Pollard <span class="event-type">Conversion</span></div><div class="player">Dead centre</div></div>
+            <div class="team">Bulls</div>
+          </div>
+          <div class="event try for-bulls">
+            <div class="min">56'</div><div class="icon">T</div>
+            <div><div class="what">Marco van Staden <span class="event-type">Try</span></div><div class="player">Break from halfway</div></div>
+            <div class="team">Bulls</div>
+          </div>
+          <div class="event con for-bulls">
+            <div class="min">57'</div><div class="icon">C</div>
+            <div><div class="what">Handré Pollard <span class="event-type">Conversion</span></div><div class="player">Touchline, perfect</div></div>
+            <div class="team">Bulls</div>
+          </div>
+          <div class="event try for-bulls">
+            <div class="min">73'</div><div class="icon">T</div>
+            <div><div class="what">Marco van Staden <span class="event-type">Try</span></div><div class="player">Second of the match</div></div>
+            <div class="team">Bulls</div>
+          </div>
+          <div class="event con for-bulls">
+            <div class="min">74'</div><div class="icon">C</div>
+            <div><div class="what">David Kriel <span class="event-type">Conversion</span></div><div class="player">Pollard off — Kriel on</div></div>
+            <div class="team">Bulls</div>
+          </div>
+          <div class="event try for-bulls">
+            <div class="min">76'</div><div class="icon">T</div>
+            <div><div class="what">Devon Williams <span class="event-type">Try</span></div><div class="player">Cross-field grubber</div></div>
+            <div class="team">Bulls</div>
+          </div>
+          <div class="event try for-bulls">
+            <div class="min">79'</div><div class="icon">T</div>
+            <div><div class="what">Sergeal Petersen <span class="event-type">Try</span></div><div class="player">Final play, outside break</div></div>
+            <div class="team">Bulls</div>
+          </div>
+        </div>
+
+        <div class="scoreflow">
+          <h4>Score Flow · 80 MIN</h4>
+          <div class="flow-wrap">
+            <svg viewBox="0 0 900 140" preserveAspectRatio="none">
+              <!-- gridlines -->
+              <g stroke="rgba(255,255,255,.06)" stroke-width="1">
+                <line x1="0" y1="70" x2="900" y2="70"/>
+                <line x1="450" y1="0" x2="450" y2="140" stroke-dasharray="3 3" stroke="rgba(255,209,0,.3)"/>
+              </g>
+              <text x="455" y="14" fill="#ffd100" font-family="JetBrains Mono" font-size="10" letter-spacing=".1em">HT</text>
+              <!-- Bulls line (away, blue) going UP -->
+              <polyline fill="none" stroke="#6cb4ff" stroke-width="2.5" points="
+                0,70 112,70 113,58 113,58
+                245,58 246,46 246,46
+                405,46 406,34 406,34
+                483,34 484,22 484,22
+                630,22 631,10 631,10
+                820,10 821,2 821,2 855,2 888,2
+              "/>
+              <!-- Dragons line (home, red) going DOWN -->
+              <polyline fill="none" stroke="#d4405a" stroke-width="2.5" points="
+                0,70 247,70 248,82 900,82
+              "/>
+              <!-- event dots -->
+              <g>
+                <circle cx="113" cy="58" r="4" fill="#6cb4ff"/>
+                <circle cx="246" cy="46" r="4" fill="#6cb4ff"/>
+                <circle cx="248" cy="82" r="4" fill="#d4405a"/>
+                <circle cx="406" cy="34" r="4" fill="#6cb4ff"/>
+                <circle cx="484" cy="22" r="4" fill="#6cb4ff"/>
+                <circle cx="631" cy="10" r="4" fill="#6cb4ff"/>
+                <circle cx="821" cy="2" r="4" fill="#6cb4ff"/>
+                <circle cx="855" cy="2" r="4" fill="#6cb4ff"/>
+                <circle cx="888" cy="2" r="4" fill="#ffd100"/>
+              </g>
+              <!-- Axis labels -->
+              <g fill="#7a8a82" font-family="JetBrains Mono" font-size="9">
+                <text x="4" y="135">0'</text>
+                <text x="220" y="135">20'</text>
+                <text x="440" y="135">40'</text>
+                <text x="660" y="135">60'</text>
+                <text x="870" y="135">80'</text>
+              </g>
+            </svg>
+          </div>
+          <div class="flow-legend">
+            <div class="k"><i style="background:#d4405a"></i> Dragons (7)</div>
+            <div class="k"><i style="background:#6cb4ff"></i> Bulls (47)</div>
+            <div class="k"><i style="background:#ffd100"></i> Try bonus secured 79'</div>
+          </div>
+        </div>
+
+        <div class="stats-wrap">
+          <h4>Match Stats</h4>
+          <div class="stats-grid">
+            <div class="stat-row">
+              <div class="label">Possession</div>
+              <div class="home-val">38%</div>
+              <div class="bar"><span class="h" style="width:38%"></span><span class="a" style="width:62%"></span></div>
+              <div class="away-val">62%</div>
+            </div>
+            <div class="stat-row">
+              <div class="label">Territory</div>
+              <div class="home-val">29%</div>
+              <div class="bar"><span class="h" style="width:29%"></span><span class="a" style="width:71%"></span></div>
+              <div class="away-val">71%</div>
+            </div>
+            <div class="stat-row">
+              <div class="label">Meters Carried</div>
+              <div class="home-val">312</div>
+              <div class="bar"><span class="h" style="width:34%"></span><span class="a" style="width:66%"></span></div>
+              <div class="away-val">608</div>
+            </div>
+            <div class="stat-row">
+              <div class="label">Tackles Made</div>
+              <div class="home-val">172</div>
+              <div class="bar"><span class="h" style="width:72%"></span><span class="a" style="width:28%"></span></div>
+              <div class="away-val">67</div>
+            </div>
+            <div class="stat-row">
+              <div class="label">Line Breaks</div>
+              <div class="home-val">2</div>
+              <div class="bar"><span class="h" style="width:15%"></span><span class="a" style="width:85%"></span></div>
+              <div class="away-val">11</div>
+            </div>
+            <div class="stat-row">
+              <div class="label">Turnovers Won</div>
+              <div class="home-val">4</div>
+              <div class="bar"><span class="h" style="width:40%"></span><span class="a" style="width:60%"></span></div>
+              <div class="away-val">6</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lineup bulls">
+        <h4>Bulls <span class="mono" style="color:var(--muted);font-size:10px;">BLUE</span></h4>
+        <div class="lineup-section">
+          <div class="label">Starting XV</div>
+          <div class="lineup-row"><span class="num">1</span><span class="name">Steenekamp</span><span class="mins">55'</span></div>
+          <div class="lineup-row"><span class="num">2</span><span class="name">Grobbelaar</span><span class="mins">60'</span></div>
+          <div class="lineup-row"><span class="num">3</span><span class="name">Klopper</span><span class="mins">50'</span></div>
+          <div class="lineup-row"><span class="num">4</span><span class="name">Wiese</span><span class="mins">80'</span></div>
+          <div class="lineup-row"><span class="num">5</span><span class="name">Nortje</span><span class="mins">72'</span></div>
+          <div class="lineup-row"><span class="num">6</span><span class="name">Coetzee</span><span class="mins">80'</span></div>
+          <div class="lineup-row"><span class="num">7</span><span class="name">Louw</span><span class="mins">80'</span></div>
+          <div class="lineup-row"><span class="num">8</span><span class="name">Hanekom</span><span class="mins">65'</span></div>
+          <div class="lineup-row"><span class="num">9</span><span class="name">Papier</span><span class="mins">58'</span></div>
+          <div class="lineup-row starred"><span class="num">10</span><span class="name">Pollard</span><span class="mins">73'</span></div>
+          <div class="lineup-row"><span class="num">11</span><span class="name">Moodie</span><span class="mins">80'</span></div>
+          <div class="lineup-row"><span class="num">12</span><span class="name">Vorster</span><span class="mins">72'</span></div>
+          <div class="lineup-row"><span class="num">13</span><span class="name">Gans</span><span class="mins">65'</span></div>
+          <div class="lineup-row"><span class="num">14</span><span class="name">Kriel</span><span class="mins">80'</span></div>
+          <div class="lineup-row"><span class="num">15</span><span class="name">Williams</span><span class="mins">80'</span></div>
+        </div>
+        <div class="lineup-section">
+          <div class="label">Replacements</div>
+          <div class="lineup-row"><span class="num">16</span><span class="name">van Staden</span><span class="mins">25'</span></div>
+          <div class="lineup-row"><span class="num">17</span><span class="name">Wessels</span><span class="mins">25'</span></div>
+          <div class="lineup-row"><span class="num">18</span><span class="name">Smith</span><span class="mins">30'</span></div>
+          <div class="lineup-row"><span class="num">19</span><span class="name">Vermaak</span><span class="mins">8'</span></div>
+          <div class="lineup-row"><span class="num">20</span><span class="name">Gumede</span><span class="mins">15'</span></div>
+          <div class="lineup-row"><span class="num">21</span><span class="name">de Wet</span><span class="mins">22'</span></div>
+          <div class="lineup-row"><span class="num">22</span><span class="name">Le Roux</span><span class="mins">15'</span></div>
+          <div class="lineup-row"><span class="num">23</span><span class="name">Petersen</span><span class="mins">15'</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" data-panel="lineups">
+    <div class="overview">
+      <div class="lineup dragons"><h4>Dragons — Full Squad</h4>
+        <div class="lineup-section"><div class="label">Coach</div><div class="lineup-row"><span></span><span class="name">Dai Flanagan</span><span class="mins">HC</span></div><div class="lineup-row"><span></span><span class="name">Richie Pugh</span><span class="mins">Fwd</span></div></div>
+      </div>
+      <div class="timeline"><h4>Formation</h4>
+        <div style="padding: 24px; text-align:center; color: var(--muted); font-family:'JetBrains Mono',monospace; font-size:12px;">
+          PITCH GRAPHIC · full formation<br>
+          <svg viewBox="0 0 400 520" style="width:100%; max-width: 420px; margin-top: 20px;">
+            <rect width="400" height="520" fill="#0a1a10"/>
+            <rect x="10" y="10" width="380" height="500" fill="none" stroke="rgba(255,255,255,.2)"/>
+            <line x1="10" y1="260" x2="390" y2="260" stroke="rgba(255,209,0,.5)" stroke-dasharray="4 4"/>
+            <line x1="10" y1="120" x2="390" y2="120" stroke="rgba(255,255,255,.1)"/>
+            <line x1="10" y1="400" x2="390" y2="400" stroke="rgba(255,255,255,.1)"/>
+            <g fill="#d4405a">
+              <circle cx="100" cy="80" r="14"/><circle cx="200" cy="70" r="14"/><circle cx="300" cy="80" r="14"/>
+              <circle cx="150" cy="140" r="14"/><circle cx="250" cy="140" r="14"/>
+              <circle cx="100" cy="200" r="14"/><circle cx="200" cy="210" r="14"/><circle cx="300" cy="200" r="14"/>
+            </g>
+            <g fill="#6cb4ff">
+              <circle cx="100" cy="320" r="14"/><circle cx="200" cy="310" r="14"/><circle cx="300" cy="320" r="14"/>
+              <circle cx="150" cy="380" r="14"/><circle cx="250" cy="380" r="14"/>
+              <circle cx="100" cy="440" r="14"/><circle cx="200" cy="450" r="14"/><circle cx="300" cy="440" r="14"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <div class="lineup bulls"><h4>Bulls — Full Squad</h4>
+        <div class="lineup-section"><div class="label">Coach</div><div class="lineup-row"><span></span><span class="name">Jake White</span><span class="mins">DoR</span></div><div class="lineup-row"><span></span><span class="name">Johan Ackermann</span><span class="mins">HC</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" data-panel="stats">
+    <div class="stats-wrap">
+      <h4>Full Match Statistics</h4>
+      <div class="stats-grid">
+        <div class="stat-row"><div class="label">Passes</div><div class="home-val">118</div><div class="bar"><span class="h" style="width:36%"></span><span class="a" style="width:64%"></span></div><div class="away-val">207</div></div>
+        <div class="stat-row"><div class="label">Carries</div><div class="home-val">82</div><div class="bar"><span class="h" style="width:38%"></span><span class="a" style="width:62%"></span></div><div class="away-val">133</div></div>
+        <div class="stat-row"><div class="label">Missed Tackles</div><div class="home-val">24</div><div class="bar"><span class="h" style="width:83%"></span><span class="a" style="width:17%"></span></div><div class="away-val">5</div></div>
+        <div class="stat-row"><div class="label">Penalties Conceded</div><div class="home-val">11</div><div class="bar"><span class="h" style="width:73%"></span><span class="a" style="width:27%"></span></div><div class="away-val">4</div></div>
+        <div class="stat-row"><div class="label">Lineouts Won</div><div class="home-val">9/12</div><div class="bar"><span class="h" style="width:47%"></span><span class="a" style="width:53%"></span></div><div class="away-val">10/11</div></div>
+        <div class="stat-row"><div class="label">Scrums Won</div><div class="home-val">4/5</div><div class="bar"><span class="h" style="width:50%"></span><span class="a" style="width:50%"></span></div><div class="away-val">6/6</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" data-panel="officials">
+    <div class="stats-wrap">
+      <h4>Match Officials</h4>
+      <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 10px;">
+        <div><div class="mono" style="color:var(--muted); font-size:11px; letter-spacing:.15em;">REFEREE</div><div style="font-weight:800; font-size: 20px; margin-top:6px;">Dan Jones</div><div class="mono" style="color:var(--muted); font-size:11px; margin-top:4px;">WAL · 127 tests</div></div>
+        <div><div class="mono" style="color:var(--muted); font-size:11px; letter-spacing:.15em;">ASSISTANT 1</div><div style="font-weight:800; font-size: 20px; margin-top:6px;">Chris Busby</div><div class="mono" style="color:var(--muted); font-size:11px; margin-top:4px;">IRFU · 64 tests</div></div>
+        <div><div class="mono" style="color:var(--muted); font-size:11px; letter-spacing:.15em;">ASSISTANT 2</div><div style="font-weight:800; font-size: 20px; margin-top:6px;">Adam Jones</div><div class="mono" style="color:var(--muted); font-size:11px; margin-top:4px;">WRU · 41 tests</div></div>
+        <div><div class="mono" style="color:var(--muted); font-size:11px; letter-spacing:.15em;">TMO</div><div style="font-weight:800; font-size: 20px; margin-top:6px;">Brian MacNeice</div><div class="mono" style="color:var(--muted); font-size:11px; margin-top:4px;">IRFU · 88 tests</div></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="switcher">
+  <span class="label">VERSION</span>
+  <a href="../index.html">←</a>
+  <a class="active" href="match.html">01 STADIUM</a>
+  <a href="../v2-editorial/match.html">02 PROGRAMME</a>
+  <a href="../v3-terminal/match.html">03 TERMINAL</a>
+</div>
+
+<script>
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    const tab = t.dataset.tab;
+    document.querySelectorAll('.tab').forEach(x => x.classList.toggle('active', x === t));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === tab));
+  });
+});
+</script>
+</body>
+</html>

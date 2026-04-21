@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RugbyStats — Option 1: Data Terminal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+        },
+        colors: {
+          brand: {
+            50:  '#f0f7f4',
+            100: '#d9ebe1',
+            500: '#10734a',
+            600: '#0d5f3d',
+            700: '#0a4a30',
+          }
+        }
+      }
+    }
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body { font-feature-settings: "cv02","cv03","cv04","cv11"; }
+  .tnum { font-variant-numeric: tabular-nums; }
+  .divide-y-hair > * + * { border-top: 1px solid #e5e7eb; }
+  .scroll-x::-webkit-scrollbar { height: 6px; }
+  .scroll-x::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 3px; }
+</style>
+</head>
+<body class="bg-white text-gray-900 font-sans antialiased">
+
+<!-- Status bar -->
+<div class="border-b border-gray-200 bg-gray-50">
+  <div class="mx-auto max-w-[1400px] px-6 h-7 flex items-center justify-between text-[11px] text-gray-500 tnum">
+    <div class="flex items-center gap-4">
+      <span class="flex items-center gap-1.5"><span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> Data sync OK · 04:00 UTC</span>
+      <span>Last update 09:42:18</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <span>API-Sports · ESPN · all.rugby · URC · rugbypy</span>
+      <span>RAG docs: 18,472</span>
+    </div>
+  </div>
+</div>
+
+<!-- Main nav -->
+<header class="border-b border-gray-200 bg-white">
+  <div class="mx-auto max-w-[1400px] px-6 h-14 flex items-center justify-between">
+    <div class="flex items-center gap-8">
+      <a href="#" class="flex items-center gap-2 font-semibold tracking-tight">
+        <span class="h-6 w-6 rounded-sm bg-brand-600 flex items-center justify-center text-white text-[13px]">R</span>
+        <span class="text-[15px]">RugbyStats</span>
+        <span class="text-[10px] font-medium text-gray-400 border border-gray-200 rounded px-1 py-0.5 uppercase tracking-wider">Terminal</span>
+      </a>
+      <nav class="flex items-center gap-0.5 text-[13px] font-medium">
+        <a class="px-3 py-1.5 rounded-md bg-gray-100 text-gray-900">Dashboard</a>
+        <a class="px-3 py-1.5 rounded-md text-gray-600 hover:bg-gray-50">Competitions</a>
+        <a class="px-3 py-1.5 rounded-md text-gray-600 hover:bg-gray-50">Teams</a>
+        <a class="px-3 py-1.5 rounded-md text-gray-600 hover:bg-gray-50">Players</a>
+        <a class="px-3 py-1.5 rounded-md text-gray-600 hover:bg-gray-50">Matches</a>
+        <a class="px-3 py-1.5 rounded-md text-gray-600 hover:bg-gray-50">Referees</a>
+      </nav>
+    </div>
+    <div class="flex items-center gap-2">
+      <div class="relative">
+        <input placeholder="Search teams, players, matches…" class="h-8 w-72 rounded-md border border-gray-200 bg-gray-50 pl-8 pr-16 text-[13px] focus:outline-none focus:border-brand-500 focus:bg-white placeholder:text-gray-400"/>
+        <svg class="absolute left-2.5 top-2 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <span class="absolute right-2 top-1.5 text-[10px] text-gray-400 border border-gray-200 rounded px-1 py-0.5">⌘K</span>
+      </div>
+      <button class="h-8 rounded-md bg-brand-600 text-white text-[13px] font-medium px-3 hover:bg-brand-700">Ask the Bot</button>
+    </div>
+  </div>
+</header>
+
+<!-- Live ticker -->
+<div class="border-b border-gray-200 bg-gray-50">
+  <div class="mx-auto max-w-[1400px] px-6 h-9 flex items-center gap-6 overflow-x-auto scroll-x text-[12px] tnum whitespace-nowrap">
+    <span class="flex items-center gap-1.5 font-semibold text-red-600 shrink-0"><span class="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse"></span> LIVE</span>
+    <span class="shrink-0"><span class="text-gray-500">URC · R14 · 64'</span> &nbsp; Bulls <b>21</b> – <b>14</b> Leinster</span>
+    <span class="text-gray-300">|</span>
+    <span class="shrink-0"><span class="text-gray-500">URC · R14 · 38'</span> &nbsp; Connacht <b>10</b> – <b>17</b> Sharks</span>
+    <span class="text-gray-300">|</span>
+    <span class="shrink-0"><span class="text-gray-500">Top14 · R22 · HT</span> &nbsp; Toulouse <b>15</b> – <b>12</b> Racing 92</span>
+    <span class="text-gray-300">|</span>
+    <span class="shrink-0"><span class="text-gray-500">Prem · R18 · 22'</span> &nbsp; Bath <b>7</b> – <b>3</b> Saracens</span>
+    <span class="text-gray-300">|</span>
+    <span class="shrink-0"><span class="text-gray-500">Currie · R5 · FT</span> &nbsp; WP <b>34</b> – <b>28</b> Lions</span>
+  </div>
+</div>
+
+<main class="mx-auto max-w-[1400px] px-6 py-6">
+
+  <!-- Page title row -->
+  <div class="flex items-end justify-between mb-5">
+    <div>
+      <div class="text-[11px] font-semibold text-gray-400 uppercase tracking-[0.12em]">Overview</div>
+      <h1 class="text-2xl font-semibold tracking-tight mt-0.5">Dashboard</h1>
+    </div>
+    <div class="flex items-center gap-2 text-[12px]">
+      <div class="inline-flex border border-gray-200 rounded-md overflow-hidden">
+        <button class="px-2.5 py-1 bg-gray-900 text-white">Last 7d</button>
+        <button class="px-2.5 py-1 text-gray-600 hover:bg-gray-50 border-l border-gray-200">30d</button>
+        <button class="px-2.5 py-1 text-gray-600 hover:bg-gray-50 border-l border-gray-200">Season</button>
+      </div>
+      <button class="h-7 px-2.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 flex items-center gap-1">
+        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"/></svg>
+        Export
+      </button>
+    </div>
+  </div>
+
+  <!-- KPI strip -->
+  <div class="grid grid-cols-5 gap-0 border border-gray-200 rounded-lg overflow-hidden mb-6 bg-white">
+    <div class="p-4 border-r border-gray-200">
+      <div class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Competitions</div>
+      <div class="flex items-baseline gap-2 mt-1.5">
+        <span class="text-2xl font-semibold tnum">12</span>
+        <span class="text-[11px] text-emerald-600 font-medium">+1</span>
+      </div>
+      <svg class="mt-1.5 h-6 w-full" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline fill="none" stroke="#0d5f3d" stroke-width="1.2" points="0,20 10,18 20,19 30,15 40,14 50,12 60,13 70,10 80,9 90,7 100,6"/></svg>
+    </div>
+    <div class="p-4 border-r border-gray-200">
+      <div class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Teams tracked</div>
+      <div class="flex items-baseline gap-2 mt-1.5">
+        <span class="text-2xl font-semibold tnum">287</span>
+        <span class="text-[11px] text-emerald-600 font-medium">+4</span>
+      </div>
+      <svg class="mt-1.5 h-6 w-full" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline fill="none" stroke="#0d5f3d" stroke-width="1.2" points="0,22 10,21 20,18 30,17 40,15 50,14 60,12 70,11 80,10 90,9 100,8"/></svg>
+    </div>
+    <div class="p-4 border-r border-gray-200">
+      <div class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Players</div>
+      <div class="flex items-baseline gap-2 mt-1.5">
+        <span class="text-2xl font-semibold tnum">6,412</span>
+        <span class="text-[11px] text-emerald-600 font-medium">+38</span>
+      </div>
+      <svg class="mt-1.5 h-6 w-full" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline fill="none" stroke="#0d5f3d" stroke-width="1.2" points="0,20 10,18 20,16 30,17 40,13 50,12 60,11 70,10 80,9 90,7 100,6"/></svg>
+    </div>
+    <div class="p-4 border-r border-gray-200">
+      <div class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Matches played</div>
+      <div class="flex items-baseline gap-2 mt-1.5">
+        <span class="text-2xl font-semibold tnum">1,843</span>
+        <span class="text-[11px] text-emerald-600 font-medium">+12</span>
+      </div>
+      <svg class="mt-1.5 h-6 w-full" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline fill="none" stroke="#0d5f3d" stroke-width="1.2" points="0,22 10,19 20,17 30,18 40,14 50,13 60,12 70,10 80,9 90,8 100,6"/></svg>
+    </div>
+    <div class="p-4">
+      <div class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">RAG docs</div>
+      <div class="flex items-baseline gap-2 mt-1.5">
+        <span class="text-2xl font-semibold tnum">18,472</span>
+        <span class="text-[11px] text-emerald-600 font-medium">+284</span>
+      </div>
+      <svg class="mt-1.5 h-6 w-full" viewBox="0 0 100 24" preserveAspectRatio="none"><polyline fill="none" stroke="#0d5f3d" stroke-width="1.2" points="0,23 10,20 20,18 30,16 40,14 50,13 60,11 70,10 80,8 90,6 100,5"/></svg>
+    </div>
+  </div>
+
+  <!-- 2-col: standings | sidebar -->
+  <div class="grid grid-cols-12 gap-6 mb-6">
+
+    <!-- Standings -->
+    <section class="col-span-8 border border-gray-200 rounded-lg bg-white">
+      <div class="flex items-center justify-between px-4 h-11 border-b border-gray-200">
+        <div class="flex items-center gap-3">
+          <h2 class="text-[13px] font-semibold">URC 2025/26 · Standings</h2>
+          <div class="flex items-center text-[12px]">
+            <button class="px-2 py-0.5 rounded bg-gray-100 text-gray-900 font-medium">URC</button>
+            <button class="px-2 py-0.5 text-gray-500 hover:text-gray-900">Champions Cup</button>
+            <button class="px-2 py-0.5 text-gray-500 hover:text-gray-900">Premiership</button>
+            <button class="px-2 py-0.5 text-gray-500 hover:text-gray-900">Top 14</button>
+          </div>
+        </div>
+        <a class="text-[12px] text-brand-600 hover:underline">View all →</a>
+      </div>
+      <table class="w-full text-[13px] tnum">
+        <thead>
+          <tr class="text-[10px] uppercase tracking-wider text-gray-500 border-b border-gray-200">
+            <th class="text-left font-semibold px-4 py-2 w-8">#</th>
+            <th class="text-left font-semibold py-2">Team</th>
+            <th class="text-right font-semibold py-2 px-2">P</th>
+            <th class="text-right font-semibold py-2 px-2">W</th>
+            <th class="text-right font-semibold py-2 px-2">D</th>
+            <th class="text-right font-semibold py-2 px-2">L</th>
+            <th class="text-right font-semibold py-2 px-2">PF</th>
+            <th class="text-right font-semibold py-2 px-2">PA</th>
+            <th class="text-right font-semibold py-2 px-2">+/-</th>
+            <th class="text-right font-semibold py-2 px-2">BP</th>
+            <th class="text-right font-semibold py-2 pl-2 pr-3">PTS</th>
+            <th class="text-left font-semibold py-2 pl-3 pr-4 w-28">Form</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-2 text-gray-400">1</td>
+            <td class="py-2 font-medium">Leinster</td>
+            <td class="text-right px-2">13</td>
+            <td class="text-right px-2">11</td>
+            <td class="text-right px-2">1</td>
+            <td class="text-right px-2">1</td>
+            <td class="text-right px-2">412</td>
+            <td class="text-right px-2">218</td>
+            <td class="text-right px-2 text-emerald-600">+194</td>
+            <td class="text-right px-2">7</td>
+            <td class="text-right pl-2 pr-3 font-semibold">53</td>
+            <td class="pl-3 pr-4"><span class="inline-flex gap-0.5"><span class="h-3 w-3 rounded-sm bg-emerald-500"></span><span class="h-3 w-3 rounded-sm bg-emerald-500"></span><span class="h-3 w-3 rounded-sm bg-emerald-500"></span><span class="h-3 w-3 rounded-sm bg-gray-300"></span><span class="h-3 w-3 rounded-sm bg-emerald-500"></span></span></td>
+          </tr>
+          <tr class="hover:bg-gray-50 bg-brand-50/30">
+            <td class="px-4 py-2 text-gray-400">2</td>
+            <td class="py-2 font-medium">Bulls <span class="ml-1 text-[10px] text-brand-700 font-semibold">ZA</span></td>
+            <td class="text-right px-2">13</td>
+            <td class="text-right px-2">10</td>
+            <td class="text-right px-2">0</td>
+            <td class="text-right px-2">3</td>
+            <td class="text-right px-2">384</td>
+            <td class="text-right px-2">241</td>
+            <td class="text-right px-2 text-emerald-600">+143</td>
+            <td class="text-right px-2">6</td>
+            <td class="text-right pl-2 pr-3 font-semibold">46</td>
+            <td class="pl-3 pr-4"><span class="inline-flex gap-0.5"><span class="h-3 w-3 rounded-sm bg-emerald-500"></span><span class="h-3 w-3 rounded-sm bg-red-400"></span><span class="h-3 w-3 rounded-sm bg-emerald-500"></span><span class="h-3 w-3 rounded-sm bg-emerald-500"></span><span class="h-3 w-3 rounded-sm bg-emerald-500"></span></span></td>
+          </tr>
+          <tr class="hover:bg-gray-50 bg-brand-50/30">
+            <td class="px-4 py-2 text-gray-400">3</td>
+            <td class="py-2 font-medium">Stormers <span class="ml-1 text-[10px] text-brand-700 font-semibold">ZA</span></td>
+            <td class="text-right px-2">13</td>
+            <td class="text-right px-2">9</td>
+            <td class="text-right px-2">1</td>
+            <td class="text-right px-2">3</td>
+            <td class="text-right px-2">351</td>
+            <td class="text-right px-2">252</td>
+            <td class="text-right px-2 text-emerald-600">+99</td>
+            <td class="text-right px-2">5</td>
+            <td class="text-right pl-2 pr-3 font-semibold">43</td>
+            <td class="pl-3 pr-4"><span class="inline-flex gap-0.5"><span class="h-3 w-3 rounded-sm bg-emerald-500"></span><span class="h-3 w-3 rounded-sm bg-emerald-500"></span><span class="h-3 w-3 rounded-sm bg-yellow-400"></span><span class="h-3 w-3 rounded-sm bg-emerald-500"></span><span class="h-3 w-3 rounded-sm bg-emerald-500"></span></span></td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-2 text-gray-400">4</td>
+            <td class="py-2 font-medium">Glasgow</td>
+            <td class="text-right px-2">13</td>
+            <td class="text-right px-2">9</td>
+            <td class="text-right px-2">0</td>
+            <td class="text-right px-2">4</td>
+            <td class="text-right px-2">328</td>
+            <td class="text-right px-2">261</td>
+            <td class="text-right px-2 text-emerald-600">+67</td>
+            <td class="text-right px-2">5</td>
+            <td class="text-right pl-2 pr-3 font-semibold">41</td>
+            <td class="pl-3 pr-4"><span class="inline-flex gap-0.5"><span class="h-3 w-3 rounded-sm bg-emerald-500"></span><span class="h-3 w-3 rounded-sm bg-emerald-500"></span><span class="h-3 w-3 rounded-sm bg-red-400"></span><span class="h-3 w-3 rounded-sm bg-emerald-500"></span><span class="h-3 w-3 rounded-sm bg-red-400"></span></span></td>
+          </tr>
+          <tr class="hover:bg-gray-50 bg-brand-50/30">
+            <td class="px-4 py-2 text-gray-400">5</td>
+            <td class="py-2 font-medium">Sharks <span class="ml-1 text-[10px] text-brand-700 font-semibold">ZA</span></td>
+            <td class="text-right px-2">13</td>
+            <td class="text-right px-2">8</td>
+            <td class="text-right px-2">1</td>
+            <td class="text-right px-2">4</td>
+            <td class="text-right px-2">305</td>
+            <td class="text-right px-2">268</td>
+            <td class="text-right px-2 text-emerald-600">+37</td>
+            <td class="text-right px-2">4</td>
+            <td class="text-right pl-2 pr-3 font-semibold">38</td>
+            <td class="pl-3 pr-4"><span class="inline-flex gap-0.5"><span class="h-3 w-3 rounded-sm bg-red-400"></span><span class="h-3 w-3 rounded-sm bg-emerald-500"></span><span class="h-3 w-3 rounded-sm bg-emerald-500"></span><span class="h-3 w-3 rounded-sm bg-yellow-400"></span><span class="h-3 w-3 rounded-sm bg-emerald-500"></span></span></td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-2 text-gray-400">6</td>
+            <td class="py-2 font-medium">Munster</td>
+            <td class="text-right px-2">13</td>
+            <td class="text-right px-2">7</td>
+            <td class="text-right px-2">2</td>
+            <td class="text-right px-2">4</td>
+            <td class="text-right px-2">282</td>
+            <td class="text-right px-2">271</td>
+            <td class="text-right px-2 text-emerald-600">+11</td>
+            <td class="text-right px-2">4</td>
+            <td class="text-right pl-2 pr-3 font-semibold">36</td>
+            <td class="pl-3 pr-4"><span class="inline-flex gap-0.5"><span class="h-3 w-3 rounded-sm bg-emerald-500"></span><span class="h-3 w-3 rounded-sm bg-red-400"></span><span class="h-3 w-3 rounded-sm bg-yellow-400"></span><span class="h-3 w-3 rounded-sm bg-emerald-500"></span><span class="h-3 w-3 rounded-sm bg-red-400"></span></span></td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-2 text-gray-400">7</td>
+            <td class="py-2 font-medium">Ulster</td>
+            <td class="text-right px-2">13</td>
+            <td class="text-right px-2">7</td>
+            <td class="text-right px-2">0</td>
+            <td class="text-right px-2">6</td>
+            <td class="text-right px-2">274</td>
+            <td class="text-right px-2">283</td>
+            <td class="text-right px-2 text-red-600">−9</td>
+            <td class="text-right px-2">3</td>
+            <td class="text-right pl-2 pr-3 font-semibold">31</td>
+            <td class="pl-3 pr-4"><span class="inline-flex gap-0.5"><span class="h-3 w-3 rounded-sm bg-emerald-500"></span><span class="h-3 w-3 rounded-sm bg-red-400"></span><span class="h-3 w-3 rounded-sm bg-red-400"></span><span class="h-3 w-3 rounded-sm bg-emerald-500"></span><span class="h-3 w-3 rounded-sm bg-emerald-500"></span></span></td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-2 text-gray-400">8</td>
+            <td class="py-2 font-medium">Edinburgh</td>
+            <td class="text-right px-2">13</td>
+            <td class="text-right px-2">6</td>
+            <td class="text-right px-2">1</td>
+            <td class="text-right px-2">6</td>
+            <td class="text-right px-2">248</td>
+            <td class="text-right px-2">276</td>
+            <td class="text-right px-2 text-red-600">−28</td>
+            <td class="text-right px-2">3</td>
+            <td class="text-right pl-2 pr-3 font-semibold">29</td>
+            <td class="pl-3 pr-4"><span class="inline-flex gap-0.5"><span class="h-3 w-3 rounded-sm bg-red-400"></span><span class="h-3 w-3 rounded-sm bg-emerald-500"></span><span class="h-3 w-3 rounded-sm bg-red-400"></span><span class="h-3 w-3 rounded-sm bg-yellow-400"></span><span class="h-3 w-3 rounded-sm bg-emerald-500"></span></span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="text-[11px] text-gray-500 px-4 py-2 border-t border-gray-200 flex items-center justify-between">
+        <span>Showing 8 of 16 · Data verified 09:42 UTC</span>
+        <span>BP = Bonus Points · PTS = Competition Points</span>
+      </div>
+    </section>
+
+    <!-- Sidebar: live + top scorers -->
+    <aside class="col-span-4 space-y-6">
+
+      <!-- Live -->
+      <div class="border border-gray-200 rounded-lg bg-white">
+        <div class="flex items-center justify-between px-4 h-11 border-b border-gray-200">
+          <h2 class="text-[13px] font-semibold flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse"></span>Live now</h2>
+          <span class="text-[11px] text-gray-500">2 matches</span>
+        </div>
+        <div class="divide-y-hair">
+          <div class="px-4 py-3">
+            <div class="flex items-center justify-between text-[11px] text-gray-500 mb-1.5">
+              <span>URC · R14</span>
+              <span class="text-red-600 font-semibold tnum">64'</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                <span class="text-[13px] font-medium">Bulls</span>
+              </div>
+              <span class="text-[14px] font-semibold tnum">21</span>
+            </div>
+            <div class="flex items-center justify-between mt-1">
+              <div class="flex items-center gap-2">
+                <span class="h-1.5 w-1.5 rounded-full bg-gray-300"></span>
+                <span class="text-[13px] text-gray-700">Leinster</span>
+              </div>
+              <span class="text-[14px] text-gray-600 tnum">14</span>
+            </div>
+            <div class="mt-2 text-[11px] text-gray-500 tnum">xT 2.8 · Poss 54% · Terr 61%</div>
+          </div>
+          <div class="px-4 py-3">
+            <div class="flex items-center justify-between text-[11px] text-gray-500 mb-1.5">
+              <span>URC · R14</span>
+              <span class="text-red-600 font-semibold tnum">38'</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="h-1.5 w-1.5 rounded-full bg-gray-300"></span>
+                <span class="text-[13px] text-gray-700">Connacht</span>
+              </div>
+              <span class="text-[14px] text-gray-600 tnum">10</span>
+            </div>
+            <div class="flex items-center justify-between mt-1">
+              <div class="flex items-center gap-2">
+                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                <span class="text-[13px] font-medium">Sharks</span>
+              </div>
+              <span class="text-[14px] font-semibold tnum">17</span>
+            </div>
+            <div class="mt-2 text-[11px] text-gray-500 tnum">xT 1.9 · Poss 48% · Terr 52%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top scorers -->
+      <div class="border border-gray-200 rounded-lg bg-white">
+        <div class="flex items-center justify-between px-4 h-11 border-b border-gray-200">
+          <h2 class="text-[13px] font-semibold">Top point-scorers · URC</h2>
+          <a class="text-[11px] text-brand-600 hover:underline">All →</a>
+        </div>
+        <table class="w-full text-[12px] tnum">
+          <tbody class="divide-y divide-gray-100">
+            <tr>
+              <td class="px-4 py-2 text-gray-400 w-6">1</td>
+              <td class="py-2 font-medium">H. Pollard</td>
+              <td class="py-2 text-gray-500 text-[11px]">Bulls</td>
+              <td class="py-2 pr-4 text-right font-semibold">142</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-2 text-gray-400">2</td>
+              <td class="py-2 font-medium">M. Libbok</td>
+              <td class="py-2 text-gray-500 text-[11px]">Stormers</td>
+              <td class="py-2 pr-4 text-right font-semibold">128</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-2 text-gray-400">3</td>
+              <td class="py-2 font-medium">R. Byrne</td>
+              <td class="py-2 text-gray-500 text-[11px]">Leinster</td>
+              <td class="py-2 pr-4 text-right font-semibold">121</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-2 text-gray-400">4</td>
+              <td class="py-2 font-medium">C. Hendricks</td>
+              <td class="py-2 text-gray-500 text-[11px]">Sharks</td>
+              <td class="py-2 pr-4 text-right font-semibold">98</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-2 text-gray-400">5</td>
+              <td class="py-2 font-medium">J. Carbery</td>
+              <td class="py-2 text-gray-500 text-[11px]">Munster</td>
+              <td class="py-2 pr-4 text-right font-semibold">92</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </aside>
+  </div>
+
+  <!-- Results + Fixtures row -->
+  <div class="grid grid-cols-2 gap-6 mb-6">
+    <!-- Results -->
+    <section class="border border-gray-200 rounded-lg bg-white">
+      <div class="flex items-center justify-between px-4 h-11 border-b border-gray-200">
+        <h2 class="text-[13px] font-semibold">Recent results</h2>
+        <a class="text-[11px] text-brand-600 hover:underline">All →</a>
+      </div>
+      <table class="w-full text-[12.5px] tnum">
+        <tbody class="divide-y divide-gray-100">
+          <tr class="hover:bg-gray-50">
+            <td class="pl-4 py-2 text-[11px] text-gray-500 w-20">Sat · URC</td>
+            <td class="py-2 text-right font-medium w-32 pr-2">Stormers</td>
+            <td class="py-2 text-right font-semibold w-8">28</td>
+            <td class="py-2 text-center text-gray-300 w-4">–</td>
+            <td class="py-2 text-left w-8">17</td>
+            <td class="py-2 pl-2 text-gray-600 w-32">Glasgow</td>
+            <td class="py-2 pr-4 text-right text-[11px] text-gray-400">R14</td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="pl-4 py-2 text-[11px] text-gray-500">Sat · URC</td>
+            <td class="py-2 text-right text-gray-600 pr-2">Sharks</td>
+            <td class="py-2 text-right w-8">12</td>
+            <td class="py-2 text-center text-gray-300">–</td>
+            <td class="py-2 text-left font-semibold">23</td>
+            <td class="py-2 pl-2 font-medium">Munster</td>
+            <td class="py-2 pr-4 text-right text-[11px] text-gray-400">R14</td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="pl-4 py-2 text-[11px] text-gray-500">Sat · URC</td>
+            <td class="py-2 text-right font-medium pr-2">Lions</td>
+            <td class="py-2 text-right font-semibold">34</td>
+            <td class="py-2 text-center text-gray-300">–</td>
+            <td class="py-2 text-left">21</td>
+            <td class="py-2 pl-2 text-gray-600">Zebre</td>
+            <td class="py-2 pr-4 text-right text-[11px] text-gray-400">R14</td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="pl-4 py-2 text-[11px] text-gray-500">Sat · ECC</td>
+            <td class="py-2 text-right font-medium pr-2">Toulouse</td>
+            <td class="py-2 text-right font-semibold">31</td>
+            <td class="py-2 text-center text-gray-300">–</td>
+            <td class="py-2 text-left">19</td>
+            <td class="py-2 pl-2 text-gray-600">Harlequins</td>
+            <td class="py-2 pr-4 text-right text-[11px] text-gray-400">QF</td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="pl-4 py-2 text-[11px] text-gray-500">Fri · Prem</td>
+            <td class="py-2 text-right text-gray-600 pr-2">Exeter</td>
+            <td class="py-2 text-right">14</td>
+            <td class="py-2 text-center text-gray-300">–</td>
+            <td class="py-2 text-left font-semibold">22</td>
+            <td class="py-2 pl-2 font-medium">Northampton</td>
+            <td class="py-2 pr-4 text-right text-[11px] text-gray-400">R17</td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="pl-4 py-2 text-[11px] text-gray-500">Fri · Top14</td>
+            <td class="py-2 text-right font-medium pr-2">Bordeaux</td>
+            <td class="py-2 text-right font-semibold">26</td>
+            <td class="py-2 text-center text-gray-300">–</td>
+            <td class="py-2 text-left">24</td>
+            <td class="py-2 pl-2 text-gray-600">La Rochelle</td>
+            <td class="py-2 pr-4 text-right text-[11px] text-gray-400">R21</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Fixtures -->
+    <section class="border border-gray-200 rounded-lg bg-white">
+      <div class="flex items-center justify-between px-4 h-11 border-b border-gray-200">
+        <h2 class="text-[13px] font-semibold">Upcoming fixtures</h2>
+        <a class="text-[11px] text-brand-600 hover:underline">All →</a>
+      </div>
+      <table class="w-full text-[12.5px] tnum">
+        <tbody class="divide-y divide-gray-100">
+          <tr class="hover:bg-gray-50">
+            <td class="pl-4 py-2 text-[11px] text-amber-600 font-medium w-24">Fri 19:45</td>
+            <td class="py-2 text-right font-medium pr-2">Bulls</td>
+            <td class="py-2 text-center text-gray-400 w-6">v</td>
+            <td class="py-2 pl-2">Stormers</td>
+            <td class="py-2 pr-4 text-right text-[11px] text-gray-400">URC · R15</td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="pl-4 py-2 text-[11px] text-amber-600 font-medium">Sat 15:00</td>
+            <td class="py-2 text-right font-medium pr-2">Sharks</td>
+            <td class="py-2 text-center text-gray-400">v</td>
+            <td class="py-2 pl-2">Edinburgh</td>
+            <td class="py-2 pr-4 text-right text-[11px] text-gray-400">URC · R15</td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="pl-4 py-2 text-[11px] text-amber-600 font-medium">Sat 17:15</td>
+            <td class="py-2 text-right font-medium pr-2">Lions</td>
+            <td class="py-2 text-center text-gray-400">v</td>
+            <td class="py-2 pl-2">Leinster</td>
+            <td class="py-2 pr-4 text-right text-[11px] text-gray-400">URC · R15</td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="pl-4 py-2 text-[11px] text-amber-600 font-medium">Sat 21:00</td>
+            <td class="py-2 text-right font-medium pr-2">Toulouse</td>
+            <td class="py-2 text-center text-gray-400">v</td>
+            <td class="py-2 pl-2">Leinster</td>
+            <td class="py-2 pr-4 text-right text-[11px] text-gray-400">ECC · SF</td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="pl-4 py-2 text-[11px] text-amber-600 font-medium">Sun 14:30</td>
+            <td class="py-2 text-right font-medium pr-2">Bath</td>
+            <td class="py-2 text-center text-gray-400">v</td>
+            <td class="py-2 pl-2">Saracens</td>
+            <td class="py-2 pr-4 text-right text-[11px] text-gray-400">Prem · R18</td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="pl-4 py-2 text-[11px] text-amber-600 font-medium">Sat 27 · 17:05</td>
+            <td class="py-2 text-right font-medium pr-2">Springboks</td>
+            <td class="py-2 text-center text-gray-400">v</td>
+            <td class="py-2 pl-2">All Blacks</td>
+            <td class="py-2 pr-4 text-right text-[11px] text-gray-400">RC · R1</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <!-- Competitions grid -->
+  <section class="mb-6">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-[13px] font-semibold">Competitions · data completeness</h2>
+      <a class="text-[11px] text-brand-600 hover:underline">View all →</a>
+    </div>
+    <div class="grid grid-cols-4 gap-3">
+      <a class="border border-gray-200 rounded-lg bg-white p-3 hover:border-brand-500 hover:shadow-sm transition">
+        <div class="flex items-center justify-between">
+          <h3 class="text-[13px] font-semibold">URC</h3>
+          <span class="text-[10px] text-emerald-600 font-semibold">✓ VERIFIED</span>
+        </div>
+        <p class="text-[11px] text-gray-500 mt-0.5">2025/26 · 16 teams · 144 matches</p>
+        <div class="mt-2.5 h-1 rounded-full bg-gray-100 overflow-hidden">
+          <div class="h-full bg-emerald-500" style="width:98%"></div>
+        </div>
+        <p class="text-[11px] text-gray-500 mt-1 tnum">98% complete</p>
+      </a>
+      <a class="border border-gray-200 rounded-lg bg-white p-3 hover:border-brand-500 hover:shadow-sm transition">
+        <div class="flex items-center justify-between">
+          <h3 class="text-[13px] font-semibold">EPCR Champions Cup</h3>
+          <span class="text-[10px] text-emerald-600 font-semibold">✓ VERIFIED</span>
+        </div>
+        <p class="text-[11px] text-gray-500 mt-0.5">2025/26 · 24 teams · 96 matches</p>
+        <div class="mt-2.5 h-1 rounded-full bg-gray-100 overflow-hidden">
+          <div class="h-full bg-emerald-500" style="width:96%"></div>
+        </div>
+        <p class="text-[11px] text-gray-500 mt-1 tnum">96% complete</p>
+      </a>
+      <a class="border border-gray-200 rounded-lg bg-white p-3 hover:border-brand-500 hover:shadow-sm transition">
+        <div class="flex items-center justify-between">
+          <h3 class="text-[13px] font-semibold">Rugby Championship</h3>
+          <span class="text-[10px] text-amber-600 font-semibold">PARTIAL</span>
+        </div>
+        <p class="text-[11px] text-gray-500 mt-0.5">2025 · 4 teams · 12 matches</p>
+        <div class="mt-2.5 h-1 rounded-full bg-gray-100 overflow-hidden">
+          <div class="h-full bg-amber-500" style="width:78%"></div>
+        </div>
+        <p class="text-[11px] text-gray-500 mt-1 tnum">78% complete</p>
+      </a>
+      <a class="border border-gray-200 rounded-lg bg-white p-3 hover:border-brand-500 hover:shadow-sm transition">
+        <div class="flex items-center justify-between">
+          <h3 class="text-[13px] font-semibold">Six Nations</h3>
+          <span class="text-[10px] text-emerald-600 font-semibold">✓ VERIFIED</span>
+        </div>
+        <p class="text-[11px] text-gray-500 mt-0.5">2026 · 6 teams · 15 matches</p>
+        <div class="mt-2.5 h-1 rounded-full bg-gray-100 overflow-hidden">
+          <div class="h-full bg-emerald-500" style="width:100%"></div>
+        </div>
+        <p class="text-[11px] text-gray-500 mt-1 tnum">100% complete</p>
+      </a>
+      <a class="border border-gray-200 rounded-lg bg-white p-3 hover:border-brand-500 hover:shadow-sm transition">
+        <div class="flex items-center justify-between">
+          <h3 class="text-[13px] font-semibold">Currie Cup</h3>
+          <span class="text-[10px] text-emerald-600 font-semibold">✓ VERIFIED</span>
+        </div>
+        <p class="text-[11px] text-gray-500 mt-0.5">2026 · 8 teams · 30 matches</p>
+        <div class="mt-2.5 h-1 rounded-full bg-gray-100 overflow-hidden">
+          <div class="h-full bg-emerald-500" style="width:92%"></div>
+        </div>
+        <p class="text-[11px] text-gray-500 mt-1 tnum">92% complete</p>
+      </a>
+      <a class="border border-gray-200 rounded-lg bg-white p-3 hover:border-brand-500 hover:shadow-sm transition">
+        <div class="flex items-center justify-between">
+          <h3 class="text-[13px] font-semibold">Gallagher Premiership</h3>
+          <span class="text-[10px] text-emerald-600 font-semibold">✓ VERIFIED</span>
+        </div>
+        <p class="text-[11px] text-gray-500 mt-0.5">2025/26 · 10 teams · 90 matches</p>
+        <div class="mt-2.5 h-1 rounded-full bg-gray-100 overflow-hidden">
+          <div class="h-full bg-emerald-500" style="width:94%"></div>
+        </div>
+        <p class="text-[11px] text-gray-500 mt-1 tnum">94% complete</p>
+      </a>
+      <a class="border border-gray-200 rounded-lg bg-white p-3 hover:border-brand-500 hover:shadow-sm transition">
+        <div class="flex items-center justify-between">
+          <h3 class="text-[13px] font-semibold">Top 14</h3>
+          <span class="text-[10px] text-amber-600 font-semibold">PARTIAL</span>
+        </div>
+        <p class="text-[11px] text-gray-500 mt-0.5">2025/26 · 14 teams · 182 matches</p>
+        <div class="mt-2.5 h-1 rounded-full bg-gray-100 overflow-hidden">
+          <div class="h-full bg-amber-500" style="width:82%"></div>
+        </div>
+        <p class="text-[11px] text-gray-500 mt-1 tnum">82% complete</p>
+      </a>
+      <a class="border border-gray-200 rounded-lg bg-white p-3 hover:border-brand-500 hover:shadow-sm transition">
+        <div class="flex items-center justify-between">
+          <h3 class="text-[13px] font-semibold">Super Rugby Pacific</h3>
+          <span class="text-[10px] text-red-600 font-semibold">NEEDS REVIEW</span>
+        </div>
+        <p class="text-[11px] text-gray-500 mt-0.5">2026 · 11 teams · 91 matches</p>
+        <div class="mt-2.5 h-1 rounded-full bg-gray-100 overflow-hidden">
+          <div class="h-full bg-red-500" style="width:64%"></div>
+        </div>
+        <p class="text-[11px] text-gray-500 mt-1 tnum">64% complete</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- Match card detail preview -->
+  <section class="mb-8">
+    <h2 class="text-[13px] font-semibold mb-3">Match preview · Bulls v Stormers</h2>
+    <div class="border border-gray-200 rounded-lg bg-white overflow-hidden">
+      <div class="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
+        <div>
+          <div class="text-[11px] text-gray-500">URC · Round 15 · Loftus Versfeld · Fri 19:45</div>
+          <div class="mt-2 flex items-center gap-8">
+            <div class="flex items-center gap-3">
+              <div class="h-10 w-10 rounded bg-blue-900 flex items-center justify-center text-white font-bold text-sm">BUL</div>
+              <div>
+                <div class="font-semibold text-[15px]">Bulls</div>
+                <div class="text-[11px] text-gray-500">10W-3L · +143 PD</div>
+              </div>
+            </div>
+            <div class="text-[11px] text-gray-400">vs</div>
+            <div class="flex items-center gap-3">
+              <div>
+                <div class="font-semibold text-[15px] text-right">Stormers</div>
+                <div class="text-[11px] text-gray-500 text-right">9W-3L · +99 PD</div>
+              </div>
+              <div class="h-10 w-10 rounded bg-cyan-600 flex items-center justify-center text-white font-bold text-sm">STM</div>
+            </div>
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="text-[11px] text-gray-500 uppercase tracking-wider">Win prob</div>
+          <div class="mt-1 flex items-center gap-2 text-[12px] tnum">
+            <span class="font-semibold">58%</span>
+            <div class="h-1.5 w-32 bg-gray-200 rounded-full overflow-hidden flex">
+              <div class="bg-blue-900" style="width:58%"></div>
+              <div class="bg-cyan-600" style="width:42%"></div>
+            </div>
+            <span class="font-semibold">42%</span>
+          </div>
+        </div>
+      </div>
+      <div class="grid grid-cols-4 divide-x divide-gray-200 text-[12px] tnum">
+        <div class="px-5 py-3">
+          <div class="text-[10px] uppercase tracking-wider text-gray-500">Last meeting</div>
+          <div class="mt-1 font-semibold">Bulls 24 – 17 Stormers</div>
+          <div class="text-[11px] text-gray-500">Newlands · 18 Oct 2025</div>
+        </div>
+        <div class="px-5 py-3">
+          <div class="text-[10px] uppercase tracking-wider text-gray-500">Head-to-head (L10)</div>
+          <div class="mt-1 font-semibold">Bulls 6 – 4 Stormers</div>
+          <div class="text-[11px] text-gray-500">Avg margin 8.2</div>
+        </div>
+        <div class="px-5 py-3">
+          <div class="text-[10px] uppercase tracking-wider text-gray-500">Form (L5)</div>
+          <div class="mt-1 flex items-center gap-3">
+            <span class="inline-flex gap-0.5"><span class="h-3 w-3 rounded-sm bg-emerald-500"></span><span class="h-3 w-3 rounded-sm bg-red-400"></span><span class="h-3 w-3 rounded-sm bg-emerald-500"></span><span class="h-3 w-3 rounded-sm bg-emerald-500"></span><span class="h-3 w-3 rounded-sm bg-emerald-500"></span></span>
+            <span class="text-gray-400">vs</span>
+            <span class="inline-flex gap-0.5"><span class="h-3 w-3 rounded-sm bg-emerald-500"></span><span class="h-3 w-3 rounded-sm bg-emerald-500"></span><span class="h-3 w-3 rounded-sm bg-yellow-400"></span><span class="h-3 w-3 rounded-sm bg-emerald-500"></span><span class="h-3 w-3 rounded-sm bg-emerald-500"></span></span>
+          </div>
+        </div>
+        <div class="px-5 py-3">
+          <div class="text-[10px] uppercase tracking-wider text-gray-500">Referee</div>
+          <div class="mt-1 font-semibold">Andrew Brace (IRL)</div>
+          <div class="text-[11px] text-gray-500">Avg 22 pens/match</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ask the bot -->
+  <section class="border border-gray-200 rounded-lg bg-gradient-to-br from-brand-50 to-white p-5 flex items-center justify-between">
+    <div>
+      <div class="text-[10px] font-semibold text-brand-700 uppercase tracking-wider">AI · RAG</div>
+      <h3 class="text-[15px] font-semibold mt-0.5">Query the full rugby dataset in plain English</h3>
+      <p class="text-[12.5px] text-gray-600 mt-1">"How has Pollard's kicking accuracy trended since 2023?" · "Which URC teams score most from mauls?"</p>
+    </div>
+    <button class="h-9 px-4 rounded-md bg-brand-600 text-white text-[13px] font-medium hover:bg-brand-700">Open assistant →</button>
+  </section>
+
+</main>
+
+<footer class="border-t border-gray-200 mt-8">
+  <div class="mx-auto max-w-[1400px] px-6 py-4 text-[11px] text-gray-500 flex items-center justify-between tnum">
+    <span>RugbyStats · Built on Laravel 12 + Livewire 4</span>
+    <span>v1.4.2 · Data © API-Sports, ESPN, URC, all.rugby · RAG powered by OpenAI</span>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Open Rugby · Stadium · Live Capture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared.css">
+<style>
+main{padding:24px 40px 40px; display:grid; grid-template-columns: 1.3fr 1fr; gap:24px; max-width: 1600px; margin: 0 auto;}
+@media(max-width:1100px){ main{grid-template-columns:1fr;} }
+
+/* Scoreboard */
+.sb{
+  background: linear-gradient(90deg, rgba(29,138,91,.15), var(--bg2) 40%, var(--bg2) 60%, rgba(59,130,246,.15));
+  border:1px solid var(--line); padding: 22px 28px;
+  display:grid; grid-template-columns:1fr auto 1fr; gap:20px; align-items:center;
+}
+.sb .side{display:flex; flex-direction:column; gap:4px;}
+.sb .tag{font-family:"JetBrains Mono",monospace; font-size:11px; letter-spacing:.2em; font-weight:700;}
+.sb .tag.h{color:#6cd4a4} .sb .tag.a{color:#6cb4ff; text-align:right;}
+.sb .tm{font-family:Archivo; font-weight:900; font-size:28px; letter-spacing:-.02em; text-transform:uppercase;}
+.sb .tm.a{text-align:right}
+.sb .score{
+  background: var(--bg); padding: 14px 26px; border-radius:4px;
+  text-align:center; min-width: 170px; border:1px solid var(--line);
+}
+.sb .score .n{font-family:Archivo; font-weight:900; font-size:56px; line-height:1; letter-spacing:-.04em; display:inline-block;}
+.sb .score .n.h{color:#6cd4a4}
+.sb .score .dash{color:var(--muted); margin:0 14px;}
+.sb .score .mt{font-family:"JetBrains Mono",monospace; font-size:11px; color:var(--red); letter-spacing:.15em; margin-top:6px; display:flex; align-items:center; justify-content:center; gap:6px;}
+
+/* Capturing-for team selector */
+.for-row{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:18px;}
+.for-btn{
+  padding: 16px; border:1px solid var(--line); background:var(--bg2);
+  text-align:center; font-family:Archivo; font-weight:800; letter-spacing:.12em; font-size:14px;
+  cursor:pointer; text-transform:uppercase; color:#aab4ad;
+  border-radius: 3px; transition:.15s;
+}
+.for-btn.active.h{background:var(--green); color:#fff; border-color:var(--green);}
+.for-btn.active.a{background:#1e40af; color:#fff; border-color:#1e40af;}
+
+/* Form */
+.sect{margin-top:22px; background:var(--bg2); border:1px solid var(--line); padding:18px 20px;}
+.sect .lbl{font-family:"JetBrains Mono",monospace; font-size:10px; color:var(--muted); letter-spacing:.2em; text-transform:uppercase; margin-bottom:8px;}
+.minute-row{display:grid; grid-template-columns:auto 1fr auto auto; gap:8px; align-items:center;}
+.iconbtn{
+  width:42px; height:42px; background:var(--bg); border:1px solid var(--line); border-radius:3px;
+  display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink); font-size:18px; font-weight:700;
+}
+.iconbtn:hover{background:#111c17; border-color:var(--yellow);}
+.minute-input{
+  background:var(--bg); border:1px solid var(--line); border-radius:3px; padding:12px;
+  color:var(--yellow); font-family:Archivo; font-weight:900; font-size:32px; text-align:center; letter-spacing:-.02em;
+}
+.scorer-sel{
+  width:100%; margin-top:10px; background:var(--bg); border:1px solid var(--line); border-radius:3px;
+  padding:12px 14px; color:var(--ink); font-family:Archivo; font-size:14px; cursor:pointer;
+  appearance:none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%23ffd100' stroke-width='1.5' fill='none'/></svg>");
+  background-repeat: no-repeat; background-position: right 14px center;
+}
+
+/* Action grid */
+.actions{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:8px;}
+.act{
+  aspect-ratio: 1.1 / 1; padding: 14px; cursor:pointer; border:1px solid; border-radius:3px;
+  display:flex; flex-direction:column; justify-content:space-between; transition:.12s;
+  position:relative;
+}
+.act:hover{transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.4);}
+.act .ic{width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:15px;}
+.act .nm{font-family:Archivo; font-weight:800; font-size:15px; text-transform:uppercase; letter-spacing:-.01em;}
+.act .pt{font-family:"JetBrains Mono",monospace; font-size:10px; letter-spacing:.08em;}
+.act.try{background:#0f3a24; border-color:#1d8a5b;} .act.try .ic{background:#1d8a5b;} .act.try .pt{color:#6cd4a4}
+.act.conv{background:#0e2650; border-color:#1e40af;} .act.conv .ic{background:#1e40af;} .act.conv .pt{color:#6cb4ff}
+.act.pen{background:#1f1442; border-color:#5b3cc4;} .act.pen .ic{background:#5b3cc4;} .act.pen .pt{color:#9f8cef}
+.act.drop{background:#2b1642; border-color:#7c3aed;} .act.drop .ic{background:#7c3aed;} .act.drop .pt{color:#b79cf0}
+.act.cmiss{background:var(--bg2); border-color:var(--line); color:#aab4ad;}
+.act.pmiss{background:var(--bg2); border-color:var(--line); color:#aab4ad;}
+.act.pconc{background:#3a2a0f; border-color:#b07500;} .act.pconc .ic{background:#b07500;} .act.pconc .pt{color:#ffb84d;}
+.act.yc{background:#3a3010; border-color:var(--yellow);} .act.yc .ic{background:var(--yellow); color:#0a1410;} .act.yc .pt{color:var(--yellow);}
+.act.rc{background:#4d0f14; border-color:var(--red);} .act.rc .ic{background:var(--red);} .act.rc .pt{color:#ff6b6b;}
+
+/* Events */
+.events{background:var(--bg2); border:1px solid var(--line);}
+.events-head{padding:14px 18px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center;}
+.events-head .t{font-family:Archivo; font-weight:800; font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:var(--yellow);}
+.events-head .undo{font-family:"JetBrains Mono",monospace; font-size:11px; color:var(--yellow); cursor:pointer;}
+.ev{
+  padding:12px 18px; border-bottom:1px solid rgba(255,255,255,.04);
+  display:grid; grid-template-columns: 40px 24px 1fr auto 20px; gap:10px; align-items:center;
+}
+.ev:hover{background:#111c17}
+.ev .min{font-family:"JetBrains Mono",monospace; font-size:12px; color:var(--yellow); font-weight:700;}
+.ev .icon{width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px;}
+.ev .icon.try{background:#1d8a5b}
+.ev .icon.conv{background:#1e40af}
+.ev .icon.pen{background:#5b3cc4}
+.ev .icon.miss{background:var(--bg); color:#aab4ad; border:1px solid var(--line); font-size:10px;}
+.ev .nm{font-weight:700; font-size:13px;}
+.ev .action-lbl{color:var(--muted); font-size:12px; margin-left:6px;}
+.ev .side{font-family:"JetBrains Mono",monospace; font-size:10px; letter-spacing:.15em;}
+.ev .side.h{color:#6cd4a4} .ev .side.a{color:#6cb4ff}
+.ev .x{color:var(--muted); cursor:pointer; text-align:center;}
+.ev .x:hover{color:var(--red);}
+
+/* End match */
+.end-btn{
+  width:100%; margin-top:18px; padding:18px; background:var(--red); color:#fff;
+  border:none; border-radius:3px; font-family:Archivo; font-weight:800; font-size:15px;
+  letter-spacing:.08em; text-transform:uppercase; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:10px;
+}
+.end-btn:hover{background:#c62835;}
+
+/* quick adjust */
+.quick{display:flex; gap:6px; margin-top:14px;}
+.quick .q{
+  flex:1; padding:10px; background:var(--bg); border:1px solid var(--line); border-radius:3px; text-align:center;
+  font-family:"JetBrains Mono",monospace; font-size:11px; color:#aab4ad; cursor:pointer; letter-spacing:.08em;
+}
+.quick .q:hover{color:var(--yellow); border-color:var(--yellow);}
+
+.warn-banner{
+  background: linear-gradient(90deg, rgba(230,57,70,.1), transparent 60%); border:1px solid rgba(230,57,70,.3);
+  border-left:3px solid var(--red); padding:10px 14px; margin-bottom: 16px;
+  display:flex; align-items:center; gap:10px; font-size:12px; color:#ff9a9a;
+}
+</style>
+</head>
+<body data-screen-label="01 V1 Stadium Live Capture">
+
+<header class="chrome">
+  <div class="brand"><span class="ball"></span> <span>Open Rugby</span></div>
+  <nav class="nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="competitions.html">Competitions</a>
+    <a href="teams.html">Teams</a>
+    <a href="players.html">Players</a>
+    <a href="match.html">Matches</a>
+    <a href="capture.html" class="active">Live Capture</a>
+    <a href="#">Admin</a>
+  </nav>
+  <div class="chrome-right">
+    <span>Dan <span class="admin-tag">ADMIN</span></span>
+    <span>Sign Out</span>
+    <button class="ask-btn">Ask the Bot</button>
+  </div>
+</header>
+
+<section class="page-head" style="padding: 28px 40px 16px;">
+  <div class="crumb"><a href="match.html">← Match detail</a></div>
+  <div style="display:flex; justify-content:space-between; align-items:flex-end; gap: 20px; flex-wrap:wrap;">
+    <h1 class="big">Live <span class="yellow">Capture</span></h1>
+    <div style="display:flex; align-items:center; gap:12px; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); letter-spacing:.15em; text-transform:uppercase;">
+      <span class="pulse-dot"></span><span style="color:var(--red); font-weight:700;">BROADCASTING · 12 viewers</span>
+      <span>· Auto-save ON · last 2s ago</span>
+    </div>
+  </div>
+</section>
+
+<main>
+  <!-- LEFT: Capture -->
+  <div>
+    <div class="warn-banner">
+      <span style="font-size:14px;">⚠</span>
+      <div><b>Capturing live</b> — events publish to the public match feed instantly. Use <b>Undo last</b> within 30s to roll back silently.</div>
+    </div>
+
+    <div class="sb">
+      <div class="side">
+        <span class="tag h">HOME</span>
+        <span class="tm">South Africa</span>
+      </div>
+      <div class="score">
+        <div>
+          <span class="n h">12</span><span class="dash">—</span><span class="n">0</span>
+        </div>
+        <div class="mt"><span class="pulse-dot"></span> LIVE · 5:09</div>
+      </div>
+      <div class="side" style="text-align:right;">
+        <span class="tag a">AWAY</span>
+        <span class="tm a">Romania</span>
+      </div>
+    </div>
+
+    <div class="for-row">
+      <div class="for-btn h active" data-for="h">SOU</div>
+      <div class="for-btn a" data-for="a">ROM</div>
+    </div>
+
+    <div class="sect">
+      <div class="lbl">Minute</div>
+      <div class="minute-row">
+        <button class="iconbtn" onclick="adjMin(-1)">−</button>
+        <input class="minute-input" id="minute" value="5" type="text"/>
+        <button class="iconbtn" onclick="adjMin(1)">+</button>
+        <button class="iconbtn" onclick="resetMin()" title="Sync to clock">↻</button>
+      </div>
+      <div class="quick">
+        <div class="q" onclick="setMin(0)">KO (0')</div>
+        <div class="q" onclick="setMin(40)">HT (40')</div>
+        <div class="q" onclick="setMin(41)">2H (41')</div>
+        <div class="q" onclick="setMin(80)">FT (80')</div>
+      </div>
+
+      <div class="lbl" style="margin-top: 18px;">Player <span style="color:var(--muted); text-transform:none; letter-spacing:0;">(optional)</span></div>
+      <select class="scorer-sel" id="scorer">
+        <option>— Unknown scorer —</option>
+        <optgroup label="South Africa starters">
+          <option>10 · Handré Pollard</option>
+          <option>14 · Cheslin Kolbe</option>
+          <option>12 · Damian de Allende</option>
+          <option>11 · Kurt-Lee Arendse</option>
+          <option>9 · Faf de Klerk</option>
+          <option>13 · Jesse Kriel</option>
+          <option>8 · Duane Vermeulen</option>
+          <option>7 · Pieter-Steph du Toit</option>
+          <option>6 · Siya Kolisi (C)</option>
+          <option>5 · Lood de Jager</option>
+          <option>4 · Eben Etzebeth</option>
+          <option>3 · Frans Malherbe</option>
+          <option>2 · Bongi Mbonambi</option>
+          <option>1 · Steven Kitshoff</option>
+          <option>15 · Willie le Roux</option>
+        </optgroup>
+        <optgroup label="South Africa bench">
+          <option>16 · Malcolm Marx</option>
+          <option>17 · Ox Nche</option>
+          <option>18 · Vincent Koch</option>
+          <option>19 · Marvin Orie</option>
+          <option>20 · Kwagga Smith</option>
+          <option>21 · Cobus Reinach</option>
+          <option>22 · Manie Libbok</option>
+          <option>23 · Damian Willemse</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="sect">
+      <div class="lbl">Tap to capture — scoring</div>
+      <div class="actions">
+        <div class="act try" onclick="capture('Try', 5, 'try')">
+          <div class="ic">🏉</div>
+          <div><div class="nm">Try</div><div class="pt">+5 PTS</div></div>
+        </div>
+        <div class="act conv" onclick="capture('Conversion', 2, 'conv')">
+          <div class="ic">⎯</div>
+          <div><div class="nm">Conversion</div><div class="pt">+2 PTS</div></div>
+        </div>
+        <div class="act pen" onclick="capture('Pen Kick', 3, 'pen')">
+          <div class="ic">⊙</div>
+          <div><div class="nm">Pen Kick</div><div class="pt">+3 PTS</div></div>
+        </div>
+        <div class="act drop" onclick="capture('Drop Goal', 3, 'pen')">
+          <div class="ic">◉</div>
+          <div><div class="nm">Drop Goal</div><div class="pt">+3 PTS</div></div>
+        </div>
+      </div>
+
+      <div class="lbl" style="margin-top:18px;">Tap to capture — misses & cards</div>
+      <div class="actions">
+        <div class="act cmiss" onclick="capture('Conv Missed', 0, 'miss', 'X')">
+          <div style="font-size:22px; color:#aab4ad;">✕</div>
+          <div class="nm" style="color:#aab4ad;">Conv Missed</div>
+        </div>
+        <div class="act pmiss" onclick="capture('Pen Miss', 0, 'miss', 'X')">
+          <div style="font-size:22px; color:#aab4ad;">✕</div>
+          <div class="nm" style="color:#aab4ad;">Pen Missed</div>
+        </div>
+        <div class="act pconc" onclick="capture('Penalty Conceded', 0, 'pen')">
+          <div class="ic">⚑</div>
+          <div><div class="nm">Penalty</div><div class="pt">CONCEDED</div></div>
+        </div>
+        <div class="act yc" onclick="capture('Yellow Card', 0, 'pen')">
+          <div class="ic">▮</div>
+          <div><div class="nm">Yellow</div><div class="pt">10 MIN BIN</div></div>
+        </div>
+        <div class="act rc" onclick="capture('Red Card', 0, 'pen')" style="aspect-ratio:2.3/1; grid-column: span 1;">
+          <div class="ic">▮</div>
+          <div><div class="nm">Red</div><div class="pt">DISMISSAL</div></div>
+        </div>
+      </div>
+    </div>
+
+    <button class="end-btn" onclick="if(confirm('End the match and lock the scoreline?')) alert('Match ended. Final scores & stats published.')">
+      <span class="ball" style="width:22px; height:15px;"></span>
+      End Match · Publish Final
+    </button>
+  </div>
+
+  <!-- RIGHT: Events log & context -->
+  <div>
+    <div class="events">
+      <div class="events-head">
+        <div class="t">Recent Events · <span style="color:var(--muted); font-weight:400;" id="ev-count">4</span></div>
+        <div class="undo" onclick="undoLast()">↶ Undo last</div>
+      </div>
+      <div id="ev-list">
+        <div class="ev"><span class="min">5'</span><span class="icon try">🏉</span><div><span class="nm">Cheslin Kolbe</span><span class="action-lbl">Try</span></div><span class="side h">HOME</span><span class="x">✕</span></div>
+        <div class="ev"><span class="min">4'</span><span class="icon miss">✕</span><div><span class="nm">Vasile Balan</span><span class="action-lbl">Penalty Miss</span></div><span class="side a">AWAY</span><span class="x">✕</span></div>
+        <div class="ev"><span class="min">2'</span><span class="icon conv">⎯</span><div><span class="nm">Handré Pollard</span><span class="action-lbl">Conversion</span></div><span class="side h">HOME</span><span class="x">✕</span></div>
+        <div class="ev"><span class="min">2'</span><span class="icon try">🏉</span><div><span class="nm">Kurt-Lee Arendse</span><span class="action-lbl">Try</span></div><span class="side h">HOME</span><span class="x">✕</span></div>
+        <div class="ev"><span class="min">1'</span><span class="icon conv">⎯</span><div><span class="nm">Handré Pollard</span><span class="action-lbl">Conversion</span></div><span class="side h">HOME</span><span class="x">✕</span></div>
+        <div class="ev"><span class="min">0'</span><span class="icon try">🏉</span><div><span class="nm">Willie le Roux</span><span class="action-lbl">Try</span></div><span class="side h">HOME</span><span class="x">✕</span></div>
+      </div>
+    </div>
+
+    <!-- Context: top scorers -->
+    <div class="events" style="margin-top: 16px;">
+      <div class="events-head"><div class="t">Match scorers · summary</div></div>
+      <div style="padding: 12px 18px;">
+        <div style="display:flex; justify-content:space-between; padding: 6px 0; font-family:'JetBrains Mono',monospace; font-size:12px; border-bottom:1px solid rgba(255,255,255,.04);">
+          <span style="color:#6cd4a4; font-family:Archivo; font-weight:800;">SOUTH AFRICA · 12</span><span></span>
+        </div>
+        <div style="padding:8px 0 4px; font-size:13px;">
+          <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>K. Arendse</span><span style="color:var(--yellow); font-family:'JetBrains Mono',monospace;">T</span></div>
+          <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>C. Kolbe</span><span style="color:var(--yellow); font-family:'JetBrains Mono',monospace;">T</span></div>
+          <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>H. Pollard</span><span style="color:var(--yellow); font-family:'JetBrains Mono',monospace;">C · C</span></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:8px 0 6px; font-family:'JetBrains Mono',monospace; font-size:12px; border-top:1px solid rgba(255,255,255,.04); margin-top:4px; border-bottom:1px solid rgba(255,255,255,.04);">
+          <span style="color:#6cb4ff; font-family:Archivo; font-weight:800;">ROMANIA · 0</span><span></span>
+        </div>
+        <div style="padding:8px 0 2px; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); text-align:center;">No scores yet</div>
+      </div>
+    </div>
+
+    <!-- Context: hotkey hints -->
+    <div class="events" style="margin-top: 16px;">
+      <div class="events-head"><div class="t">Keyboard shortcuts</div></div>
+      <div style="padding: 12px 18px; display:grid; grid-template-columns:1fr 1fr; gap:8px 16px; font-size: 12px;">
+        <div><kbd style="background:var(--bg); border:1px solid var(--line); padding:2px 6px; border-radius:2px; font-family:'JetBrains Mono',monospace; font-size:10px;">T</kbd> Try</div>
+        <div><kbd style="background:var(--bg); border:1px solid var(--line); padding:2px 6px; border-radius:2px; font-family:'JetBrains Mono',monospace; font-size:10px;">C</kbd> Conversion</div>
+        <div><kbd style="background:var(--bg); border:1px solid var(--line); padding:2px 6px; border-radius:2px; font-family:'JetBrains Mono',monospace; font-size:10px;">P</kbd> Penalty</div>
+        <div><kbd style="background:var(--bg); border:1px solid var(--line); padding:2px 6px; border-radius:2px; font-family:'JetBrains Mono',monospace; font-size:10px;">D</kbd> Drop goal</div>
+        <div><kbd style="background:var(--bg); border:1px solid var(--line); padding:2px 6px; border-radius:2px; font-family:'JetBrains Mono',monospace; font-size:10px;">Y / R</kbd> Card</div>
+        <div><kbd style="background:var(--bg); border:1px solid var(--line); padding:2px 6px; border-radius:2px; font-family:'JetBrains Mono',monospace; font-size:10px;">⌘Z</kbd> Undo last</div>
+        <div><kbd style="background:var(--bg); border:1px solid var(--line); padding:2px 6px; border-radius:2px; font-family:'JetBrains Mono',monospace; font-size:10px;">← / →</kbd> Swap side</div>
+        <div><kbd style="background:var(--bg); border:1px solid var(--line); padding:2px 6px; border-radius:2px; font-family:'JetBrains Mono',monospace; font-size:10px;">↑ / ↓</kbd> Minute ±1</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="switcher">
+  <span class="label">VIEW</span>
+  <a href="dashboard.html">← DESKTOP</a>
+  <a class="active" href="capture.html">CAPTURE</a>
+  <a href="capture-mobile.html">MOBILE</a>
+</div>
+
+<script>
+let currentFor = 'h';
+document.querySelectorAll('.for-btn').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    document.querySelectorAll('.for-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    currentFor = b.dataset.for;
+  });
+});
+const minEl = document.getElementById('minute');
+function adjMin(n){ const v = Math.max(0, (+minEl.value || 0) + n); minEl.value = v; }
+function setMin(n){ minEl.value = n; }
+function resetMin(){ minEl.value = 5; }
+function capture(kind, pts, icClass, icChar){
+  const min = minEl.value;
+  const scorer = document.getElementById('scorer').value.includes('—') ? 'Unknown scorer' : document.getElementById('scorer').value;
+  const list = document.getElementById('ev-list');
+  const side = currentFor==='h' ? 'HOME' : 'AWAY';
+  const row = document.createElement('div');
+  row.className = 'ev';
+  row.innerHTML = `<span class="min">${min}'</span><span class="icon ${icClass}">${icChar||(icClass==='try'?'🏉':icClass==='conv'?'⎯':'⊙')}</span><div><span class="nm">${scorer}</span><span class="action-lbl">${kind}</span></div><span class="side ${currentFor}">${side}</span><span class="x">✕</span>`;
+  list.prepend(row);
+  const c = document.getElementById('ev-count'); c.textContent = list.children.length;
+  // flash
+  row.style.background = 'rgba(255,209,0,.12)';
+  setTimeout(()=>row.style.background='', 600);
+}
+function undoLast(){
+  const list = document.getElementById('ev-list');
+  if(list.firstChild) list.removeChild(list.firstChild);
+  document.getElementById('ev-count').textContent = list.children.length;
+}
+document.addEventListener('keydown', e=>{
+  if(e.target.tagName==='INPUT' || e.target.tagName==='SELECT') return;
+  const k = e.key.toLowerCase();
+  if(k==='t') capture('Try', 5, 'try');
+  else if(k==='c') capture('Conversion', 2, 'conv');
+  else if(k==='p') capture('Pen Kick', 3, 'pen');
+  else if(k==='d') capture('Drop Goal', 3, 'pen');
+  else if(k==='y') capture('Yellow Card', 0, 'pen');
+  else if(k==='r') capture('Red Card', 0, 'pen');
+  else if(k==='arrowleft') document.querySelector('.for-btn.h').click();
+  else if(k==='arrowright') document.querySelector('.for-btn.a').click();
+  else if(k==='arrowup') adjMin(1);
+  else if(k==='arrowdown') adjMin(-1);
+  else if((e.metaKey||e.ctrlKey) && k==='z'){ e.preventDefault(); undoLast(); }
+});
+</script>
+</body>
+</html>

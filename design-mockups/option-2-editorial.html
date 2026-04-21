@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RugbyStats — Option 2: Editorial</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          serif: ['"Source Serif 4"', 'Georgia', 'ui-serif', 'serif'],
+          sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        },
+        colors: {
+          paper: '#fbfaf6',
+          ink: '#1a1a1a',
+          rule: '#e5e0d7',
+          accent: {
+            50: '#fdf2ec',
+            500: '#c84a1a',
+            600: '#a93b10',
+          }
+        }
+      }
+    }
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  body { font-feature-settings: "cv02","cv03","cv04","cv11"; }
+  .tnum { font-variant-numeric: tabular-nums; }
+  .display { font-family: 'Source Serif 4', Georgia, serif; letter-spacing: -0.01em; }
+  .rule { border-color: #e5e0d7; }
+  .smallcap { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; }
+  .drop-cap::first-letter { font-family: 'Source Serif 4', Georgia, serif; font-size: 3.2em; line-height: 0.9; float: left; margin: 0.05em 0.08em 0 0; font-weight: 600; }
+</style>
+</head>
+<body class="bg-paper text-ink font-sans antialiased">
+
+<!-- Masthead -->
+<header class="border-b rule">
+  <div class="mx-auto max-w-[1200px] px-8 py-5 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <span class="text-[28px] leading-none">🏉</span>
+      <div>
+        <div class="display text-[26px] font-semibold leading-none tracking-tight">RugbyStats</div>
+        <div class="smallcap text-gray-500 mt-1">The Intelligence of Rugby Union</div>
+      </div>
+    </div>
+    <div class="flex items-center gap-4 text-[13px] text-gray-600">
+      <span class="tnum">Sunday, 19 April 2026</span>
+      <span class="h-4 w-px bg-rule"></span>
+      <button class="smallcap text-accent-600 hover:underline">Sign in</button>
+    </div>
+  </div>
+  <nav class="border-t rule">
+    <div class="mx-auto max-w-[1200px] px-8 h-11 flex items-center justify-between">
+      <div class="flex items-center gap-6 text-[13.5px] font-medium">
+        <a class="text-ink border-b-2 border-accent-500 h-11 flex items-center">Dashboard</a>
+        <a class="text-gray-600 hover:text-ink h-11 flex items-center">Competitions</a>
+        <a class="text-gray-600 hover:text-ink h-11 flex items-center">Teams</a>
+        <a class="text-gray-600 hover:text-ink h-11 flex items-center">Players</a>
+        <a class="text-gray-600 hover:text-ink h-11 flex items-center">Matches</a>
+        <a class="text-gray-600 hover:text-ink h-11 flex items-center">Referees</a>
+        <a class="text-gray-600 hover:text-ink h-11 flex items-center">Analysis</a>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="relative">
+          <input placeholder="Search" class="h-8 w-56 rounded-none border-b rule bg-transparent pl-6 text-[13px] focus:outline-none focus:border-accent-500 placeholder:text-gray-400"/>
+          <svg class="absolute left-0 top-2 h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        </div>
+        <button class="smallcap text-accent-600 hover:text-accent-500">Ask the Bot →</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main class="mx-auto max-w-[1200px] px-8 py-10">
+
+  <!-- Hero band -->
+  <div class="grid grid-cols-12 gap-10 pb-10 border-b rule mb-10">
+    <!-- Lead story -->
+    <article class="col-span-8">
+      <div class="smallcap text-accent-600">Live now · United Rugby Championship</div>
+      <h1 class="display text-[52px] leading-[1.05] font-semibold mt-3 tracking-tight">Bulls edge Leinster at Loftus as URC title race tightens</h1>
+      <p class="text-[16px] text-gray-700 mt-4 leading-relaxed max-w-3xl drop-cap">
+        Twenty minutes from time, the Bulls hold a seven-point lead over a Leinster side who came
+        to Pretoria unbeaten in six. A Pollard penalty and a 54th-minute Kriel try have swung the
+        contest; possession has flipped to the hosts (54%) and the visitors look increasingly
+        ragged at the breakdown.
+      </p>
+      <!-- Scoreboard row -->
+      <div class="mt-8 border-y rule py-5 grid grid-cols-[1fr_auto_1fr] items-center gap-8">
+        <div class="text-right">
+          <div class="display text-[32px] font-semibold leading-none">Bulls</div>
+          <div class="smallcap text-gray-500 mt-2">Pretoria</div>
+        </div>
+        <div class="text-center">
+          <div class="display text-[64px] font-semibold leading-none tnum">21 <span class="text-gray-300">–</span> 14</div>
+          <div class="smallcap text-accent-600 mt-3">Live · 64'</div>
+        </div>
+        <div class="text-left">
+          <div class="display text-[32px] font-semibold leading-none">Leinster</div>
+          <div class="smallcap text-gray-500 mt-2">Dublin</div>
+        </div>
+      </div>
+      <div class="grid grid-cols-4 gap-6 mt-6 text-[13px]">
+        <div>
+          <div class="smallcap text-gray-500">Possession</div>
+          <div class="display text-[22px] font-semibold mt-1 tnum">54% <span class="text-gray-400 text-[14px]">/ 46%</span></div>
+        </div>
+        <div>
+          <div class="smallcap text-gray-500">Territory</div>
+          <div class="display text-[22px] font-semibold mt-1 tnum">61% <span class="text-gray-400 text-[14px]">/ 39%</span></div>
+        </div>
+        <div>
+          <div class="smallcap text-gray-500">Expected tries</div>
+          <div class="display text-[22px] font-semibold mt-1 tnum">2.8 <span class="text-gray-400 text-[14px]">/ 1.9</span></div>
+        </div>
+        <div>
+          <div class="smallcap text-gray-500">Metres made</div>
+          <div class="display text-[22px] font-semibold mt-1 tnum">412 <span class="text-gray-400 text-[14px]">/ 298</span></div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Sidebar features -->
+    <aside class="col-span-4 border-l rule pl-8 space-y-8">
+      <section>
+        <div class="smallcap text-gray-500 pb-2 border-b rule">Also live</div>
+        <div class="mt-3 space-y-3 text-[14px]">
+          <a class="block">
+            <div class="smallcap text-gray-500">URC · 38'</div>
+            <div class="flex items-baseline justify-between mt-1">
+              <span>Connacht</span><span class="tnum font-medium">10</span>
+            </div>
+            <div class="flex items-baseline justify-between">
+              <span class="font-semibold">Sharks</span><span class="tnum font-semibold">17</span>
+            </div>
+          </a>
+          <a class="block pt-3 border-t rule">
+            <div class="smallcap text-gray-500">Top 14 · HT</div>
+            <div class="flex items-baseline justify-between mt-1">
+              <span class="font-semibold">Toulouse</span><span class="tnum font-semibold">15</span>
+            </div>
+            <div class="flex items-baseline justify-between">
+              <span>Racing 92</span><span class="tnum">12</span>
+            </div>
+          </a>
+          <a class="block pt-3 border-t rule">
+            <div class="smallcap text-gray-500">Prem · 22'</div>
+            <div class="flex items-baseline justify-between mt-1">
+              <span class="font-semibold">Bath</span><span class="tnum font-semibold">7</span>
+            </div>
+            <div class="flex items-baseline justify-between">
+              <span>Saracens</span><span class="tnum">3</span>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section>
+        <div class="smallcap text-gray-500 pb-2 border-b rule">Analysis</div>
+        <a class="block mt-3">
+          <h3 class="display text-[18px] font-semibold leading-snug">Why the Stormers' lineout has become the URC's most-watched set-piece</h3>
+          <p class="text-[13px] text-gray-600 mt-1.5 leading-relaxed">Libbok's variations off the top are opening 4.2 metres per phase — a league high.</p>
+          <div class="smallcap text-gray-500 mt-2">Tactical · 6 min read</div>
+        </a>
+        <a class="block mt-4 pt-4 border-t rule">
+          <h3 class="display text-[18px] font-semibold leading-snug">The Kolisi question: what the Sharks captain's form says about the Boks</h3>
+          <p class="text-[13px] text-gray-600 mt-1.5 leading-relaxed">Tackle success is up; jackals are down. The numbers tell a mixed story ahead of July.</p>
+          <div class="smallcap text-gray-500 mt-2">Profile · 8 min read</div>
+        </a>
+      </section>
+    </aside>
+  </div>
+
+  <!-- Numbers at a glance -->
+  <section class="mb-12">
+    <div class="flex items-baseline justify-between mb-6">
+      <h2 class="display text-[28px] font-semibold tracking-tight">By the numbers</h2>
+      <span class="smallcap text-gray-500 tnum">Season 2025 / 26 · through round 14</span>
+    </div>
+    <div class="grid grid-cols-5 border-t border-b rule divide-x divide-rule">
+      <div class="px-6 py-6">
+        <div class="display text-[40px] font-semibold leading-none tnum">12</div>
+        <div class="smallcap text-gray-500 mt-3">Competitions</div>
+        <div class="text-[12px] text-gray-600 mt-1">+1 added this season</div>
+      </div>
+      <div class="px-6 py-6">
+        <div class="display text-[40px] font-semibold leading-none tnum">287</div>
+        <div class="smallcap text-gray-500 mt-3">Teams</div>
+        <div class="text-[12px] text-gray-600 mt-1">Across 8 countries</div>
+      </div>
+      <div class="px-6 py-6">
+        <div class="display text-[40px] font-semibold leading-none tnum">6,412</div>
+        <div class="smallcap text-gray-500 mt-3">Players</div>
+        <div class="text-[12px] text-gray-600 mt-1">All positions tracked</div>
+      </div>
+      <div class="px-6 py-6">
+        <div class="display text-[40px] font-semibold leading-none tnum">1,843</div>
+        <div class="smallcap text-gray-500 mt-3">Matches played</div>
+        <div class="text-[12px] text-gray-600 mt-1">+12 last weekend</div>
+      </div>
+      <div class="px-6 py-6">
+        <div class="display text-[40px] font-semibold leading-none tnum">18k<span class="text-[22px] text-gray-500">+</span></div>
+        <div class="smallcap text-gray-500 mt-3">AI-indexed briefs</div>
+        <div class="text-[12px] text-gray-600 mt-1">Ask the assistant →</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Standings as editorial table -->
+  <section class="mb-14">
+    <div class="flex items-baseline justify-between mb-4">
+      <h2 class="display text-[28px] font-semibold tracking-tight">The URC ladder</h2>
+      <div class="flex items-center gap-4 text-[13px]">
+        <button class="smallcap text-ink border-b border-ink pb-0.5">URC</button>
+        <button class="smallcap text-gray-500 hover:text-ink">Champions Cup</button>
+        <button class="smallcap text-gray-500 hover:text-ink">Premiership</button>
+        <button class="smallcap text-gray-500 hover:text-ink">Six Nations</button>
+      </div>
+    </div>
+    <p class="text-[15px] text-gray-700 max-w-2xl leading-relaxed mb-5">
+      Four South African sides now sit in the top half of the table for the first time since the
+      URC expanded in 2021. The Bulls and Stormers remain on track for a home quarter-final.
+    </p>
+    <div class="border-t-2 border-ink">
+      <table class="w-full text-[14px] tnum">
+        <thead>
+          <tr class="border-b rule">
+            <th class="text-left smallcap text-gray-500 py-2 pr-4 w-8">#</th>
+            <th class="text-left smallcap text-gray-500 py-2">Club</th>
+            <th class="text-right smallcap text-gray-500 py-2 px-3">P</th>
+            <th class="text-right smallcap text-gray-500 py-2 px-3">W</th>
+            <th class="text-right smallcap text-gray-500 py-2 px-3">L</th>
+            <th class="text-right smallcap text-gray-500 py-2 px-3">Pts for</th>
+            <th class="text-right smallcap text-gray-500 py-2 px-3">Pts ag.</th>
+            <th class="text-right smallcap text-gray-500 py-2 px-3">Diff</th>
+            <th class="text-right smallcap text-gray-500 py-2 pl-3 pr-2">Points</th>
+            <th class="text-left smallcap text-gray-500 py-2 pl-4 w-24">Form</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b rule">
+            <td class="py-3 pr-4 text-gray-400">1</td>
+            <td class="py-3"><span class="display font-semibold text-[16px]">Leinster</span> <span class="text-gray-500 text-[12px]">· Dublin</span></td>
+            <td class="text-right px-3">13</td><td class="text-right px-3">11</td><td class="text-right px-3">1</td>
+            <td class="text-right px-3">412</td><td class="text-right px-3">218</td>
+            <td class="text-right px-3 text-emerald-700">+194</td>
+            <td class="text-right pl-3 pr-2 font-semibold display text-[16px]">53</td>
+            <td class="pl-4"><span class="inline-flex gap-0.5"><span class="h-2 w-2 rounded-full bg-emerald-600"></span><span class="h-2 w-2 rounded-full bg-emerald-600"></span><span class="h-2 w-2 rounded-full bg-emerald-600"></span><span class="h-2 w-2 rounded-full bg-gray-300"></span><span class="h-2 w-2 rounded-full bg-emerald-600"></span></span></td>
+          </tr>
+          <tr class="border-b rule bg-accent-50/40">
+            <td class="py-3 pr-4 text-gray-400">2</td>
+            <td class="py-3"><span class="display font-semibold text-[16px]">Bulls</span> <span class="text-gray-500 text-[12px]">· Pretoria</span></td>
+            <td class="text-right px-3">13</td><td class="text-right px-3">10</td><td class="text-right px-3">3</td>
+            <td class="text-right px-3">384</td><td class="text-right px-3">241</td>
+            <td class="text-right px-3 text-emerald-700">+143</td>
+            <td class="text-right pl-3 pr-2 font-semibold display text-[16px]">46</td>
+            <td class="pl-4"><span class="inline-flex gap-0.5"><span class="h-2 w-2 rounded-full bg-emerald-600"></span><span class="h-2 w-2 rounded-full bg-accent-500"></span><span class="h-2 w-2 rounded-full bg-emerald-600"></span><span class="h-2 w-2 rounded-full bg-emerald-600"></span><span class="h-2 w-2 rounded-full bg-emerald-600"></span></span></td>
+          </tr>
+          <tr class="border-b rule bg-accent-50/40">
+            <td class="py-3 pr-4 text-gray-400">3</td>
+            <td class="py-3"><span class="display font-semibold text-[16px]">Stormers</span> <span class="text-gray-500 text-[12px]">· Cape Town</span></td>
+            <td class="text-right px-3">13</td><td class="text-right px-3">9</td><td class="text-right px-3">3</td>
+            <td class="text-right px-3">351</td><td class="text-right px-3">252</td>
+            <td class="text-right px-3 text-emerald-700">+99</td>
+            <td class="text-right pl-3 pr-2 font-semibold display text-[16px]">43</td>
+            <td class="pl-4"><span class="inline-flex gap-0.5"><span class="h-2 w-2 rounded-full bg-emerald-600"></span><span class="h-2 w-2 rounded-full bg-emerald-600"></span><span class="h-2 w-2 rounded-full bg-amber-500"></span><span class="h-2 w-2 rounded-full bg-emerald-600"></span><span class="h-2 w-2 rounded-full bg-emerald-600"></span></span></td>
+          </tr>
+          <tr class="border-b rule">
+            <td class="py-3 pr-4 text-gray-400">4</td>
+            <td class="py-3"><span class="display font-semibold text-[16px]">Glasgow Warriors</span></td>
+            <td class="text-right px-3">13</td><td class="text-right px-3">9</td><td class="text-right px-3">4</td>
+            <td class="text-right px-3">328</td><td class="text-right px-3">261</td>
+            <td class="text-right px-3 text-emerald-700">+67</td>
+            <td class="text-right pl-3 pr-2 font-semibold display text-[16px]">41</td>
+            <td class="pl-4"><span class="inline-flex gap-0.5"><span class="h-2 w-2 rounded-full bg-emerald-600"></span><span class="h-2 w-2 rounded-full bg-emerald-600"></span><span class="h-2 w-2 rounded-full bg-accent-500"></span><span class="h-2 w-2 rounded-full bg-emerald-600"></span><span class="h-2 w-2 rounded-full bg-accent-500"></span></span></td>
+          </tr>
+          <tr class="border-b rule bg-accent-50/40">
+            <td class="py-3 pr-4 text-gray-400">5</td>
+            <td class="py-3"><span class="display font-semibold text-[16px]">Sharks</span> <span class="text-gray-500 text-[12px]">· Durban</span></td>
+            <td class="text-right px-3">13</td><td class="text-right px-3">8</td><td class="text-right px-3">4</td>
+            <td class="text-right px-3">305</td><td class="text-right px-3">268</td>
+            <td class="text-right px-3 text-emerald-700">+37</td>
+            <td class="text-right pl-3 pr-2 font-semibold display text-[16px]">38</td>
+            <td class="pl-4"><span class="inline-flex gap-0.5"><span class="h-2 w-2 rounded-full bg-accent-500"></span><span class="h-2 w-2 rounded-full bg-emerald-600"></span><span class="h-2 w-2 rounded-full bg-emerald-600"></span><span class="h-2 w-2 rounded-full bg-amber-500"></span><span class="h-2 w-2 rounded-full bg-emerald-600"></span></span></td>
+          </tr>
+          <tr class="border-b rule">
+            <td class="py-3 pr-4 text-gray-400">6</td>
+            <td class="py-3"><span class="display font-semibold text-[16px]">Munster</span></td>
+            <td class="text-right px-3">13</td><td class="text-right px-3">7</td><td class="text-right px-3">4</td>
+            <td class="text-right px-3">282</td><td class="text-right px-3">271</td>
+            <td class="text-right px-3 text-emerald-700">+11</td>
+            <td class="text-right pl-3 pr-2 font-semibold display text-[16px]">36</td>
+            <td class="pl-4"><span class="inline-flex gap-0.5"><span class="h-2 w-2 rounded-full bg-emerald-600"></span><span class="h-2 w-2 rounded-full bg-accent-500"></span><span class="h-2 w-2 rounded-full bg-amber-500"></span><span class="h-2 w-2 rounded-full bg-emerald-600"></span><span class="h-2 w-2 rounded-full bg-accent-500"></span></span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Results & Fixtures as editorial columns -->
+  <section class="grid grid-cols-2 gap-12 mb-14 pb-12 border-b rule">
+    <div>
+      <h2 class="display text-[24px] font-semibold tracking-tight mb-4">This weekend's results</h2>
+      <div class="space-y-4">
+        <article class="pb-4 border-b rule">
+          <div class="smallcap text-gray-500">URC · Round 14 · Saturday</div>
+          <div class="display text-[20px] font-semibold mt-1 flex items-baseline justify-between">
+            <span>Stormers <span class="tnum">28</span> &nbsp; Glasgow <span class="tnum text-gray-500">17</span></span>
+          </div>
+          <p class="text-[13px] text-gray-600 mt-1.5">Libbok with 13 from the tee; Willemse man of the match.</p>
+        </article>
+        <article class="pb-4 border-b rule">
+          <div class="smallcap text-gray-500">URC · Round 14 · Saturday</div>
+          <div class="display text-[20px] font-semibold mt-1">Sharks <span class="tnum text-gray-500">12</span> &nbsp; Munster <span class="tnum">23</span></div>
+          <p class="text-[13px] text-gray-600 mt-1.5">Sharks' four-match winning run ended at Kings Park.</p>
+        </article>
+        <article class="pb-4 border-b rule">
+          <div class="smallcap text-gray-500">URC · Round 14 · Saturday</div>
+          <div class="display text-[20px] font-semibold mt-1">Lions <span class="tnum">34</span> &nbsp; Zebre <span class="tnum text-gray-500">21</span></div>
+          <p class="text-[13px] text-gray-600 mt-1.5">Six tries at Ellis Park; Hendricks hat-trick.</p>
+        </article>
+        <article>
+          <div class="smallcap text-gray-500">Champions Cup · QF</div>
+          <div class="display text-[20px] font-semibold mt-1">Toulouse <span class="tnum">31</span> &nbsp; Harlequins <span class="tnum text-gray-500">19</span></div>
+          <p class="text-[13px] text-gray-600 mt-1.5">Dupont pulls the strings in second-half surge.</p>
+        </article>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="display text-[24px] font-semibold tracking-tight mb-4">The week ahead</h2>
+      <div class="space-y-4">
+        <article class="pb-4 border-b rule">
+          <div class="flex items-center justify-between">
+            <div class="smallcap text-gray-500">URC · Round 15</div>
+            <div class="smallcap text-accent-600 tnum">Fri · 19:45</div>
+          </div>
+          <div class="display text-[20px] font-semibold mt-1">Bulls v Stormers</div>
+          <p class="text-[13px] text-gray-600 mt-1.5">Loftus Versfeld · the Jukskei derby. Bulls win probability 58%.</p>
+        </article>
+        <article class="pb-4 border-b rule">
+          <div class="flex items-center justify-between">
+            <div class="smallcap text-gray-500">Champions Cup · SF</div>
+            <div class="smallcap text-accent-600 tnum">Sat · 21:00</div>
+          </div>
+          <div class="display text-[20px] font-semibold mt-1">Toulouse v Leinster</div>
+          <p class="text-[13px] text-gray-600 mt-1.5">A third meeting in three seasons; Toulouse have won the last two.</p>
+        </article>
+        <article class="pb-4 border-b rule">
+          <div class="flex items-center justify-between">
+            <div class="smallcap text-gray-500">Premiership · Round 18</div>
+            <div class="smallcap text-accent-600 tnum">Sun · 14:30</div>
+          </div>
+          <div class="display text-[20px] font-semibold mt-1">Bath v Saracens</div>
+          <p class="text-[13px] text-gray-600 mt-1.5">Top-of-the-table six-pointer at the Rec.</p>
+        </article>
+        <article>
+          <div class="flex items-center justify-between">
+            <div class="smallcap text-gray-500">Rugby Championship · R1</div>
+            <div class="smallcap text-accent-600 tnum">Sat 27 · 17:05</div>
+          </div>
+          <div class="display text-[20px] font-semibold mt-1">Springboks v All Blacks</div>
+          <p class="text-[13px] text-gray-600 mt-1.5">The season's marquee opener. Erasmus names squad Tuesday.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Competitions directory -->
+  <section class="mb-14">
+    <h2 class="display text-[28px] font-semibold tracking-tight mb-2">Competition directory</h2>
+    <p class="text-[14px] text-gray-600 max-w-2xl mb-6">Every major competition we track, with live coverage status and current season progress.</p>
+    <div class="grid grid-cols-3 gap-x-10 gap-y-5">
+      <article class="pb-5 border-b rule">
+        <div class="flex items-center justify-between">
+          <h3 class="display text-[18px] font-semibold">United Rugby Championship</h3>
+          <span class="smallcap text-emerald-700">Verified</span>
+        </div>
+        <div class="text-[13px] text-gray-600 mt-1 tnum">16 clubs · 144 matches · 98% complete</div>
+      </article>
+      <article class="pb-5 border-b rule">
+        <div class="flex items-center justify-between">
+          <h3 class="display text-[18px] font-semibold">Champions Cup</h3>
+          <span class="smallcap text-emerald-700">Verified</span>
+        </div>
+        <div class="text-[13px] text-gray-600 mt-1 tnum">24 clubs · 96 matches · 96% complete</div>
+      </article>
+      <article class="pb-5 border-b rule">
+        <div class="flex items-center justify-between">
+          <h3 class="display text-[18px] font-semibold">Rugby Championship</h3>
+          <span class="smallcap text-amber-600">Partial</span>
+        </div>
+        <div class="text-[13px] text-gray-600 mt-1 tnum">4 nations · 12 Tests · 78% complete</div>
+      </article>
+      <article class="pb-5 border-b rule">
+        <div class="flex items-center justify-between">
+          <h3 class="display text-[18px] font-semibold">Six Nations</h3>
+          <span class="smallcap text-emerald-700">Verified</span>
+        </div>
+        <div class="text-[13px] text-gray-600 mt-1 tnum">6 nations · 15 Tests · 100% complete</div>
+      </article>
+      <article class="pb-5 border-b rule">
+        <div class="flex items-center justify-between">
+          <h3 class="display text-[18px] font-semibold">Currie Cup</h3>
+          <span class="smallcap text-emerald-700">Verified</span>
+        </div>
+        <div class="text-[13px] text-gray-600 mt-1 tnum">8 unions · 30 matches · 92% complete</div>
+      </article>
+      <article class="pb-5 border-b rule">
+        <div class="flex items-center justify-between">
+          <h3 class="display text-[18px] font-semibold">Gallagher Premiership</h3>
+          <span class="smallcap text-emerald-700">Verified</span>
+        </div>
+        <div class="text-[13px] text-gray-600 mt-1 tnum">10 clubs · 90 matches · 94% complete</div>
+      </article>
+      <article class="pb-5 border-b rule">
+        <div class="flex items-center justify-between">
+          <h3 class="display text-[18px] font-semibold">Top 14</h3>
+          <span class="smallcap text-amber-600">Partial</span>
+        </div>
+        <div class="text-[13px] text-gray-600 mt-1 tnum">14 clubs · 182 matches · 82% complete</div>
+      </article>
+      <article class="pb-5 border-b rule">
+        <div class="flex items-center justify-between">
+          <h3 class="display text-[18px] font-semibold">Super Rugby Pacific</h3>
+          <span class="smallcap text-red-700">Needs review</span>
+        </div>
+        <div class="text-[13px] text-gray-600 mt-1 tnum">11 clubs · 91 matches · 64% complete</div>
+      </article>
+      <article class="pb-5 border-b rule">
+        <div class="flex items-center justify-between">
+          <h3 class="display text-[18px] font-semibold">Challenge Cup</h3>
+          <span class="smallcap text-emerald-700">Verified</span>
+        </div>
+        <div class="text-[13px] text-gray-600 mt-1 tnum">18 clubs · 72 matches · 89% complete</div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Assistant CTA -->
+  <section class="bg-ink text-white px-10 py-12 rounded-sm">
+    <div class="max-w-3xl">
+      <div class="smallcap text-accent-500">The Rugby Assistant</div>
+      <h2 class="display text-[34px] font-semibold leading-tight mt-3">Ask anything. In plain English. Backed by every match in our archive.</h2>
+      <p class="text-[15px] text-gray-300 mt-4 leading-relaxed">
+        "Compare Handre Pollard's goal-kicking accuracy under pressure since 2021." &nbsp; "Which
+        URC teams score most from lineout mauls this season?" &nbsp; "Show me every Springbok
+        starting XV since the 2023 World Cup."
+      </p>
+      <div class="mt-6 flex items-center gap-4">
+        <button class="h-10 px-5 bg-accent-500 text-white font-medium text-[14px] hover:bg-accent-600">Start a conversation →</button>
+        <button class="h-10 px-5 border border-gray-600 text-gray-300 font-medium text-[14px] hover:bg-gray-800">Browse sample questions</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="border-t rule mt-14">
+  <div class="mx-auto max-w-[1200px] px-8 py-6 flex items-center justify-between text-[12.5px] text-gray-500">
+    <span>© RugbyStats 2026 · Data © API-Sports, ESPN, URC, all.rugby</span>
+    <span class="smallcap">About · Methodology · Contact</span>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Open Rugby · Stadium · Bulls</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_shared.css">
+<style>
+main{ padding: 32px 40px 80px;}
+.team-hero{
+  padding: 40px 40px 32px; border-bottom: 1px solid var(--line); position: relative; overflow: hidden;
+  background: linear-gradient(90deg, rgba(26,77,122,.35) 0%, rgba(26,77,122,.1) 40%, transparent 60%), var(--bg);
+}
+.team-hero .crest{
+  width: 140px; height: 140px; border-radius: 50%;
+  background: #1a4d7a; display:flex; align-items:center; justify-content:center;
+  color: #fff; font-family: Archivo; font-weight: 900; font-size: 48px; letter-spacing:-.02em;
+  box-shadow: inset 0 -10px 20px rgba(0,0,0,.35);
+  flex-shrink: 0;
+}
+.team-hero .top-row{ display:flex; gap: 32px; align-items:flex-end; flex-wrap:wrap;}
+.team-hero h1{ font-family: Archivo; font-weight: 900; font-size: clamp(48px, 6vw, 80px); margin:0; line-height:.9; letter-spacing:-.03em; text-transform: uppercase;}
+.team-hero h1 .accent{ color: var(--yellow);}
+.team-hero .sub-meta{ display:flex; gap: 18px; margin-top: 10px; font-family:"JetBrains Mono",monospace; font-size:12px; color: var(--muted); letter-spacing:.08em; text-transform: uppercase;}
+
+.next-card{
+  background: var(--bg2); border: 1px solid var(--line); border-left: 3px solid var(--yellow);
+  padding: 16px 20px; display:flex; gap: 24px; align-items:center; margin-top: 24px;
+}
+.next-card .tag{ font-family:"JetBrains Mono",monospace; font-size:11px; color:var(--yellow); letter-spacing:.15em;}
+.next-card .big-opp{ font-family: Archivo; font-weight: 900; font-size: 24px; text-transform: uppercase; letter-spacing:-.01em;}
+.next-card .kick{ margin-left:auto; font-family:"JetBrains Mono",monospace; font-size:13px; color:#aab4ad;}
+
+.split{ display:grid; grid-template-columns: 2fr 1fr; gap: 24px;}
+@media(max-width: 1100px){ .split{ grid-template-columns: 1fr;}}
+.roster-grid{ display:grid; grid-template-columns: repeat(2, 1fr); gap: 2px;}
+.player-row{
+  background: var(--bg2); padding: 12px 16px; display:grid;
+  grid-template-columns: 30px 1fr auto 60px; gap: 12px; align-items: center; cursor: pointer;
+  transition: background .15s;
+}
+.player-row:hover{ background: #111c17;}
+.player-row .num{ font-family:"JetBrains Mono",monospace; font-size:11px; color: var(--muted);}
+.player-row .nm{ font-weight: 700; font-size: 14px;}
+.player-row .pos{ font-family:"JetBrains Mono",monospace; font-size: 10px; color: var(--muted); letter-spacing:.1em;}
+.player-row .apps{ font-family: Archivo; font-weight: 900; font-size: 16px; color: var(--yellow); text-align: right;}
+.starter{ border-left: 2px solid var(--yellow);}
+.sec-title{ font-family: Archivo; font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing:.1em; color: var(--yellow); padding: 12px 0;}
+.season-row{
+  background: var(--bg2); padding: 14px 18px; display:grid;
+  grid-template-columns: 120px 1fr 1fr 1fr 1fr; gap: 14px; border-bottom: 1px solid rgba(255,255,255,.04);
+  font-size: 13px; align-items: center;
+}
+.season-row .s{ font-family:"JetBrains Mono",monospace; color: var(--yellow);}
+.season-row .cell{ font-family:"JetBrains Mono",monospace; font-size: 11px; color: var(--muted); letter-spacing:.08em; text-transform: uppercase;}
+.season-row .cell b{ font-family: Archivo; color: var(--ink); font-size: 16px; font-weight: 800; display:block; letter-spacing:-.01em;}
+</style>
+</head>
+<body data-screen-label="01 V1 Stadium Team Detail">
+
+<header class="chrome">
+  <div class="brand"><span class="ball"></span> <span>Open Rugby</span></div>
+  <nav class="nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="competitions.html">Competitions</a>
+    <a href="teams.html" class="active">Teams</a>
+    <a href="players.html">Players</a>
+    <a href="match.html">Matches</a>
+    <a href="capture.html">Live Capture</a>
+    <a href="#">Admin</a>
+  </nav>
+  <div class="chrome-right">
+    <span>Dan <span class="admin-tag">ADMIN</span></span>
+    <span>Sign Out</span>
+    <button class="ask-btn">Ask the Bot</button>
+  </div>
+</header>
+
+<section class="team-hero">
+  <div class="crumb">← <a href="teams.html">Teams</a> · <a href="competition.html">URC</a></div>
+  <div class="top-row">
+    <div class="crest">BU</div>
+    <div style="flex:1">
+      <h1>Blue <span class="accent">Bulls</span></h1>
+      <div class="sub-meta">
+        <span>Pretoria · South Africa</span>
+        <span style="color:var(--yellow)">URC #8</span>
+        <span>Founded 1938</span>
+        <span>Loftus Versfeld · 51,762</span>
+        <span style="color:#6cd4a4">✓ Verified</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="next-card">
+    <div>
+      <div class="tag">NEXT MATCH · FRI 24 APR · 18:45</div>
+      <div class="big-opp">vs Connacht · R16</div>
+    </div>
+    <div class="kick">Loftus Versfeld, Pretoria · Kick-off in 3 days 02h</div>
+  </div>
+
+  <div class="stat-row ticker">
+    <div class="stat"><span class="lbl">Played</span><span class="n">14</span></div>
+    <div class="stat"><span class="lbl">Won</span><span class="n" style="color:#6cd4a4">8</span><span class="delta">vs 6 lost</span></div>
+    <div class="stat hot"><span class="lbl">Points</span><span class="n">40</span><span class="delta">+5 bonus</span></div>
+    <div class="stat"><span class="lbl">PF / PA</span><span class="n" style="font-size:28px">397 / 340</span><span class="delta" style="color:#6cd4a4">+57 diff</span></div>
+    <div class="stat"><span class="lbl">Form L5</span><span class="n" style="font-size:20px; line-height:1.2; margin-top:12px;"><span style="color:#6cd4a4">W W</span> <span style="color:#ff6b6b">L</span> <span style="color:#6cd4a4">W W</span></span></div>
+  </div>
+</section>
+
+<main>
+  <div class="tabs">
+    <div class="tab active" data-tab="squad">Squad</div>
+    <div class="tab" data-tab="fixtures">Fixtures & Results</div>
+    <div class="tab" data-tab="history">Season History</div>
+    <div class="tab" data-tab="staff">Staff</div>
+  </div>
+
+  <div class="tab-panel active" data-panel="squad">
+    <div class="section-head">
+      <div class="section-title"><span class="bar"></span> Starting XV · Last Match</div>
+      <a class="section-link" href="match.html">View last match →</a>
+    </div>
+    <div class="roster-grid">
+      <a class="player-row starter" href="player.html"><span class="num">1</span><div><div class="nm">Steenekamp</div></div><span class="pos">Loosehead</span><span class="apps">142</span></a>
+      <a class="player-row starter" href="player.html"><span class="num">2</span><div><div class="nm">Grobbelaar</div></div><span class="pos">Hooker</span><span class="apps">128</span></a>
+      <a class="player-row starter" href="player.html"><span class="num">3</span><div><div class="nm">Klopper</div></div><span class="pos">Tighthead</span><span class="apps">87</span></a>
+      <a class="player-row starter" href="player.html"><span class="num">4</span><div><div class="nm">Wiese</div></div><span class="pos">Lock</span><span class="apps">76</span></a>
+      <a class="player-row starter" href="player.html"><span class="num">5</span><div><div class="nm">Nortje</div></div><span class="pos">Lock</span><span class="apps">53</span></a>
+      <a class="player-row starter" href="player.html"><span class="num">6</span><div><div class="nm">Coetzee (C)</div></div><span class="pos">Flanker</span><span class="apps">189</span></a>
+      <a class="player-row starter" href="player.html"><span class="num">7</span><div><div class="nm">Louw</div></div><span class="pos">Flanker</span><span class="apps">112</span></a>
+      <a class="player-row starter" href="player.html"><span class="num">8</span><div><div class="nm">Hanekom</div></div><span class="pos">No. 8</span><span class="apps">95</span></a>
+      <a class="player-row starter" href="player.html"><span class="num">9</span><div><div class="nm">Papier</div></div><span class="pos">Scrum-half</span><span class="apps">167</span></a>
+      <a class="player-row starter" href="player.html"><span class="num">10</span><div><div class="nm">Pollard</div></div><span class="pos">Fly-half</span><span class="apps">154</span></a>
+      <a class="player-row starter" href="player.html"><span class="num">11</span><div><div class="nm">Moodie</div></div><span class="pos">Wing</span><span class="apps">68</span></a>
+      <a class="player-row starter" href="player.html"><span class="num">12</span><div><div class="nm">Vorster</div></div><span class="pos">Centre</span><span class="apps">82</span></a>
+      <a class="player-row starter" href="player.html"><span class="num">13</span><div><div class="nm">Gans</div></div><span class="pos">Centre</span><span class="apps">71</span></a>
+      <a class="player-row starter" href="player.html"><span class="num">14</span><div><div class="nm">Kriel</div></div><span class="pos">Wing</span><span class="apps">98</span></a>
+      <a class="player-row starter" href="player.html"><span class="num">15</span><div><div class="nm">Williams</div></div><span class="pos">Fullback</span><span class="apps">121</span></a>
+    </div>
+    <div class="sec-title">Replacements</div>
+    <div class="roster-grid">
+      <a class="player-row" href="player.html"><span class="num">16</span><div><div class="nm">van Staden</div></div><span class="pos">Back row</span><span class="apps">54</span></a>
+      <a class="player-row" href="player.html"><span class="num">17</span><div><div class="nm">Wessels</div></div><span class="pos">Prop</span><span class="apps">37</span></a>
+      <a class="player-row" href="player.html"><span class="num">18</span><div><div class="nm">Smith</div></div><span class="pos">Prop</span><span class="apps">45</span></a>
+      <a class="player-row" href="player.html"><span class="num">19</span><div><div class="nm">Vermaak</div></div><span class="pos">Lock</span><span class="apps">28</span></a>
+      <a class="player-row" href="player.html"><span class="num">20</span><div><div class="nm">Gumede</div></div><span class="pos">Back row</span><span class="apps">22</span></a>
+      <a class="player-row" href="player.html"><span class="num">21</span><div><div class="nm">de Wet</div></div><span class="pos">Scrum-half</span><span class="apps">41</span></a>
+      <a class="player-row" href="player.html"><span class="num">22</span><div><div class="nm">Le Roux</div></div><span class="pos">Fly-half</span><span class="apps">63</span></a>
+      <a class="player-row" href="player.html"><span class="num">23</span><div><div class="nm">Petersen</div></div><span class="pos">Wing</span><span class="apps">89</span></a>
+    </div>
+  </div>
+
+  <div class="tab-panel" data-panel="fixtures">
+    <div class="tbl-wrap">
+      <div style="padding:14px 18px; border-bottom: 1px solid var(--line); display:grid; grid-template-columns: 90px 1fr auto 1fr 80px; gap:14px; align-items:center; background: linear-gradient(90deg, rgba(255,209,0,.1), transparent);">
+        <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--yellow);">24 APR</span>
+        <span style="font-weight:700">Bulls</span>
+        <span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);">V</span>
+        <span style="text-align:right; font-weight:700">Connacht</span>
+        <span style="font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); text-align:right;">18:45 · Loftus</span>
+      </div>
+      <div style="padding:14px 18px; border-bottom: 1px solid rgba(255,255,255,.04); display:grid; grid-template-columns: 90px 1fr 80px 1fr 80px; gap:14px; align-items:center;">
+        <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);">17 APR</span>
+        <span style="font-weight:700">Dragons (A)</span>
+        <span style="font-family:Archivo; font-weight:900; font-size:18px; text-align:center;">7<span style="color:var(--muted)"> — </span><span style="color:var(--yellow)">47</span></span>
+        <span style="text-align:right; font-weight:700">Bulls</span>
+        <span style="color:#6cd4a4; font-weight:700; text-align:right;">W</span>
+      </div>
+      <div style="padding:14px 18px; border-bottom: 1px solid rgba(255,255,255,.04); display:grid; grid-template-columns: 90px 1fr 80px 1fr 80px; gap:14px; align-items:center;">
+        <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);">11 APR</span>
+        <span style="font-weight:700">Bulls</span>
+        <span style="font-family:Archivo; font-weight:900; font-size:18px; text-align:center;"><span style="color:var(--yellow)">34</span><span style="color:var(--muted)"> — </span>31</span>
+        <span style="text-align:right; font-weight:700">Munster (H)</span>
+        <span style="color:#6cd4a4; font-weight:700; text-align:right;">W</span>
+      </div>
+      <div style="padding:14px 18px; border-bottom: 1px solid rgba(255,255,255,.04); display:grid; grid-template-columns: 90px 1fr 80px 1fr 80px; gap:14px; align-items:center;">
+        <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);">04 APR</span>
+        <span style="font-weight:700">Glasgow Warriors (A)</span>
+        <span style="font-family:Archivo; font-weight:900; font-size:18px; text-align:center;">26<span style="color:var(--muted)"> — </span>21</span>
+        <span style="text-align:right; font-weight:700">Bulls</span>
+        <span style="color:#ff6b6b; font-weight:700; text-align:right;">L</span>
+      </div>
+      <div style="padding:14px 18px; border-bottom: 1px solid rgba(255,255,255,.04); display:grid; grid-template-columns: 90px 1fr 80px 1fr 80px; gap:14px; align-items:center;">
+        <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);">28 MAR</span>
+        <span style="font-weight:700">Bulls</span>
+        <span style="font-family:Archivo; font-weight:900; font-size:18px; text-align:center;"><span style="color:var(--yellow)">40</span><span style="color:var(--muted)"> — </span>7</span>
+        <span style="text-align:right; font-weight:700">Cardiff (H)</span>
+        <span style="color:#6cd4a4; font-weight:700; text-align:right;">W</span>
+      </div>
+      <div style="padding:14px 18px; display:grid; grid-template-columns: 90px 1fr 80px 1fr 80px; gap:14px; align-items:center;">
+        <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);">14 MAR</span>
+        <span style="font-weight:700">Bulls</span>
+        <span style="font-family:Archivo; font-weight:900; font-size:18px; text-align:center;">19<span style="color:var(--muted)"> — </span>32</span>
+        <span style="text-align:right; font-weight:700">Stormers (H)</span>
+        <span style="color:#ff6b6b; font-weight:700; text-align:right;">L</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" data-panel="history">
+    <div class="tbl-wrap">
+      <div class="season-row" style="background:rgba(255,209,0,.04); border-left:3px solid var(--yellow);"><span class="s">2025–26</span><span class="cell">P<b>14</b></span><span class="cell">W<b>8</b></span><span class="cell">PTS<b>40</b></span><span class="cell">POS<b>#8</b></span></div>
+      <div class="season-row"><span class="s">2024–25</span><span class="cell">P<b>18</b></span><span class="cell">W<b>12</b></span><span class="cell">PTS<b>58</b></span><span class="cell">POS<b>#3 · SF</b></span></div>
+      <div class="season-row"><span class="s">2023–24</span><span class="cell">P<b>18</b></span><span class="cell">W<b>14</b></span><span class="cell">PTS<b>64</b></span><span class="cell">POS<b>#1 · Final</b></span></div>
+      <div class="season-row"><span class="s">2022–23</span><span class="cell">P<b>18</b></span><span class="cell">W<b>10</b></span><span class="cell">PTS<b>51</b></span><span class="cell">POS<b>#5 · QF</b></span></div>
+      <div class="season-row"><span class="s">2021–22</span><span class="cell">P<b>18</b></span><span class="cell">W<b>11</b></span><span class="cell">PTS<b>54</b></span><span class="cell">POS<b>#2 · Final</b></span></div>
+    </div>
+  </div>
+
+  <div class="tab-panel" data-panel="staff">
+    <div class="split">
+      <div class="tbl-wrap">
+        <div style="padding:14px 18px; border-bottom:1px solid var(--line); font-family:Archivo; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--yellow); font-size:13px;">Coaching Staff</div>
+        <div class="season-row" style="grid-template-columns: 1fr 1fr;"><span style="font-weight:700">Jake White</span><span class="cell">Head Coach</span></div>
+        <div class="season-row" style="grid-template-columns: 1fr 1fr;"><span style="font-weight:700">Chris Rossouw</span><span class="cell">Defence</span></div>
+        <div class="season-row" style="grid-template-columns: 1fr 1fr;"><span style="font-weight:700">Wikus van Heerden</span><span class="cell">Forwards</span></div>
+        <div class="season-row" style="grid-template-columns: 1fr 1fr;"><span style="font-weight:700">Russell Winter</span><span class="cell">Attack</span></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="switcher">
+  <span class="label">VERSION</span>
+  <a href="../index.html">←</a>
+  <a class="active" href="dashboard.html">01 STADIUM</a>
+  <a href="../v2-editorial/dashboard.html">02 PROGRAMME</a>
+  <a href="../v3-terminal/dashboard.html">03 TERMINAL</a>
+</div>
+
+<script>
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    const tab = t.dataset.tab;
+    document.querySelectorAll('.tabs .tab').forEach(x => x.classList.toggle('active', x === t));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === tab));
+  });
+});
+</script>
+</body>
+</html>
