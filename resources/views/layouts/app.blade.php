@@ -4,13 +4,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title ?? 'Open Rugby' }}</title>
-    {{-- Theme init — runs before render to prevent flash of wrong theme --}}
+    {{-- Theme init — runs before render to prevent flash of wrong theme.
+         Defaults to dark (Stadium design is broadcast-first). User toggle
+         is persisted in localStorage and wins over the default. --}}
     <script>
         (function () {
             try {
                 var stored = localStorage.getItem('theme');
-                var prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-                document.documentElement.dataset.theme = stored || (prefersLight ? 'light' : 'dark');
+                document.documentElement.dataset.theme = stored || 'dark';
             } catch (e) {
                 document.documentElement.dataset.theme = 'dark';
             }
