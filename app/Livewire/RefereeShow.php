@@ -3,7 +3,6 @@
 namespace App\Livewire;
 
 use App\Models\Referee;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class RefereeShow extends Component
@@ -11,6 +10,7 @@ class RefereeShow extends Component
     public Referee $referee;
 
     public string $activeTab = 'matches';
+
     public ?string $expandedTeam = null;
 
     public function mount(Referee $referee)
@@ -91,6 +91,6 @@ class RefereeShow extends Component
             'teamStats' => $teamStats,
             'totalMatches' => $appointments->pluck('match_id')->unique()->count(),
             'asReferee' => $roleBreakdown->get('referee', 0),
-        ])->layout('layouts.app', ['title' => $this->referee->full_name]);
+        ])->layout('layouts.app', ['title' => $this->referee->full_name, 'fullBleed' => true]);
     }
 }

@@ -1,202 +1,195 @@
 <div>
-    <div class="mb-6">
-        <a href="{{ route('referees.index') }}" class="text-sm text-gray-400 hover:text-white transition">&larr; Referees</a>
-        <h1 class="text-2xl font-bold text-white mt-2">{{ $referee->first_name }} {{ $referee->last_name }}</h1>
-        <p class="text-gray-400">
-            {{ $referee->nationality ?? 'Unknown nationality' }}
-            @if($referee->tier) &middot; {{ str($referee->tier)->replace('_', ' ')->title() }} @endif
-        </p>
-    </div>
+    {{-- ═══ Stadium Hero ═══ --}}
+    <section class="detail-hero">
+        <div class="crumb">← <a href="{{ route('referees.index') }}">Referees</a></div>
+        @php
+            // Split the name at the last space for two-line yellow-accent title
+            $fullName = $referee->first_name.' '.$referee->last_name;
+            $nameWords = explode(' ', $fullName);
+            $firstPart = count($nameWords) > 1 ? implode(' ', array_slice($nameWords, 0, -1)) : $fullName;
+            $lastWord = count($nameWords) > 1 ? end($nameWords) : '';
+        @endphp
+        <h1>
+            {{ $firstPart }}@if($lastWord)<br><span class="yellow">{{ $lastWord }}</span>@endif
+        </h1>
+        <div class="sub-meta">
+            <span>{{ $referee->nationality ?? 'Unknown nationality' }}</span>
+            @if($referee->tier)
+                <span class="yellow" style="color: var(--color-brand-yellow);">{{ str($referee->tier)->replace('_', ' ')->upper() }}</span>
+            @endif
+            <span>{{ $totalMatches }} {{ Str::plural('appointment', $totalMatches) }}</span>
+        </div>
 
-    {{-- Stats Bar --}}
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-        <div class="rounded-xl bg-gray-900 border border-gray-800 p-4 text-center">
-            <p class="text-2xl font-bold text-white">{{ $totalMatches }}</p>
-            <p class="text-xs text-gray-500 mt-1">Total Matches</p>
-        </div>
-        <div class="rounded-xl bg-gray-900 border border-gray-800 p-4 text-center">
-            <p class="text-2xl font-bold text-emerald-400">{{ $asReferee }}</p>
-            <p class="text-xs text-gray-500 mt-1">As Referee</p>
-        </div>
-        @foreach($roleBreakdown->except('referee') as $role => $count)
-            <div class="rounded-xl bg-gray-900 border border-gray-800 p-4 text-center">
-                <p class="text-2xl font-bold text-white">{{ $count }}</p>
-                <p class="text-xs text-gray-500 mt-1">{{ str($role)->replace('_', ' ')->title() }}</p>
+        {{-- Role ticker --}}
+        <div class="ticker" style="margin-top: 24px;">
+            <div class="tick hot">
+                <span class="tick-label">As Referee</span>
+                <span class="tick-n">{{ $asReferee }}</span>
+                <span class="tick-delta">{{ $totalMatches > 0 ? round(($asReferee / $totalMatches) * 100) : 0 }}% of total</span>
             </div>
-        @endforeach
-    </div>
+            @foreach($roleBreakdown->except('referee') as $role => $count)
+                <div class="tick">
+                    <span class="tick-label">{{ str($role)->replace('_', ' ')->title() }}</span>
+                    <span class="tick-n">{{ $count }}</span>
+                </div>
+            @endforeach
+            @if($roleBreakdown->except('referee')->isEmpty())
+                <div class="tick">
+                    <span class="tick-label">Total</span>
+                    <span class="tick-n">{{ $totalMatches }}</span>
+                </div>
+            @endif
+        </div>
+    </section>
 
-    {{-- Tab Navigation --}}
-    <div class="flex gap-1 mb-6 border-b border-gray-800">
-        @foreach([
-            'matches' => 'Match History',
-            'team-stats' => 'Team Stats',
-        ] as $key => $label)
-            <button
-                wire:click="setTab('{{ $key }}')"
-                @class([
-                    'px-4 py-2.5 text-sm font-medium transition border-b-2 -mb-px',
-                    'border-emerald-400 text-emerald-400' => $activeTab === $key,
-                    'border-transparent text-gray-400 hover:text-white hover:border-gray-600' => $activeTab !== $key,
-                ])
-            >
-                {{ $label }}
-            </button>
-        @endforeach
-    </div>
+    {{-- Tabs --}}
+    <nav class="detail-tabs">
+        <button wire:click="setTab('matches')" @class(['is-active' => $activeTab === 'matches'])>Match History</button>
+        <button wire:click="setTab('team-stats')" @class(['is-active' => $activeTab === 'team-stats'])>Team Stats</button>
+    </nav>
 
-    {{-- ═══ MATCH HISTORY TAB ═══ --}}
-    @if($activeTab === 'matches')
-        <div class="rounded-xl bg-gray-900 border border-gray-800 divide-y divide-gray-800">
-            @forelse($appointments as $appointment)
-                @php
-                    $match = $appointment->match;
-                    $home = $match->matchTeams->firstWhere('side', 'home');
-                    $away = $match->matchTeams->firstWhere('side', 'away');
-                @endphp
-                <a href="{{ route('matches.show', $match) }}" class="flex items-center justify-between px-4 py-3 hover:bg-gray-800/50 transition block">
-                    <div class="flex-1">
-                        <div class="text-xs text-gray-500 mb-1">
-                            {{ $match->season?->competition?->name }}
-                            @if($match->round) &middot; R{{ $match->round }} @endif
-                            <span @class([
-                                'ml-2 rounded-full px-2 py-0.5 text-xs font-medium',
-                                'bg-emerald-600/15 text-emerald-400' => $appointment->role === 'referee',
-                                'bg-gray-800 text-gray-400' => $appointment->role !== 'referee',
-                            ])>
-                                {{ str($appointment->role)->replace('_', ' ')->title() }}
-                            </span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span class="font-medium {{ $home?->is_winner ? 'text-white' : 'text-gray-400' }}">
-                                {{ $home?->team->name ?? 'TBD' }}
-                            </span>
-                            <span class="rounded bg-gray-800 px-2 py-0.5 text-sm font-mono font-bold text-emerald-400">
-                                {{ $home?->score ?? '-' }} - {{ $away?->score ?? '-' }}
-                            </span>
-                            <span class="font-medium {{ $away?->is_winner ? 'text-white' : 'text-gray-400' }}">
-                                {{ $away?->team->name ?? 'TBD' }}
-                            </span>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-xs text-gray-500">{{ $match->kickoff?->format('d M Y') }}</div>
-                        @if($match->venue)
-                            <div class="text-xs text-gray-600">{{ $match->venue->name }}</div>
-                        @endif
-                    </div>
-                </a>
-            @empty
-                <div class="px-4 py-8 text-center text-gray-500">
+    <div class="page-body">
+
+        {{-- ═══ MATCH HISTORY TAB ═══ --}}
+        @if($activeTab === 'matches')
+            @if($appointments->isNotEmpty())
+                <div style="display: flex; flex-direction: column; gap: 2px;">
+                    @foreach($appointments as $appointment)
+                        @php
+                            $match = $appointment->match;
+                            $home = $match->matchTeams->firstWhere('side', 'home');
+                            $away = $match->matchTeams->firstWhere('side', 'away');
+                            $hasScore = $home?->score !== null && $away?->score !== null;
+                            $homeWin = $hasScore && $home->score > $away->score;
+                            $awayWin = $hasScore && $away->score > $home->score;
+                            $isLive = $match->status === 'live';
+                        @endphp
+                        <a href="{{ route('matches.show', $match) }}" @class(['fx-row', 'is-live' => $isLive])>
+                            <div class="fx-date @if($match->kickoff?->isPast() && ! $isLive) past @endif">
+                                @if($isLive)
+                                    <span class="pulse-dot" style="width: 6px; height: 6px; margin-right: 4px;"></span> LIVE
+                                @elseif($match->kickoff)
+                                    {{ strtoupper($match->kickoff->format('j M Y')) }}
+                                @else
+                                    TBD
+                                @endif
+                            </div>
+                            <div class="fx-home">{{ $home?->team->name ?? 'TBD' }}</div>
+                            <div class="fx-score">
+                                @if($hasScore)
+                                    <span @class(['fx-winner' => $homeWin])>{{ $home->score }}</span>
+                                    <span class="dash">—</span>
+                                    <span @class(['fx-winner' => $awayWin])>{{ $away->score }}</span>
+                                @else
+                                    <span class="dash">V</span>
+                                @endif
+                            </div>
+                            <div class="fx-away">{{ $away?->team->name ?? 'TBD' }}</div>
+                            <div class="fx-meta">
+                                {{ $match->season?->competition?->name ?? '' }}
+                                @if($appointment->role !== 'referee')
+                                    <br><span style="color: var(--color-brand-yellow); font-size: 9px; letter-spacing: .15em;">{{ str($appointment->role)->replace('_', ' ')->upper() }}</span>
+                                @endif
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+            @else
+                <div class="widget" style="padding: 40px; text-align: center; color: var(--color-muted);">
                     No match appointments found.
                 </div>
-            @endforelse
-        </div>
-    @endif
+            @endif
+        @endif
 
-    {{-- ═══ TEAM STATS TAB ═══ --}}
-    @if($activeTab === 'team-stats')
-        @if($teamStats->isNotEmpty())
-            <p class="text-sm text-gray-500 mb-4">Win/loss record for teams in matches where {{ $referee->first_name }} {{ $referee->last_name }} was the referee.</p>
-            <div class="rounded-xl bg-gray-900 border border-gray-800 overflow-hidden">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="text-left text-xs text-gray-500 uppercase tracking-wider border-b border-gray-800">
-                            <th class="px-4 py-3">Team</th>
-                            <th class="px-4 py-3 text-center">Matches</th>
-                            <th class="px-4 py-3 text-center">W</th>
-                            <th class="px-4 py-3 text-center">L</th>
-                            <th class="px-4 py-3 text-center">D</th>
-                            <th class="px-4 py-3 text-center">Win %</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-800">
-                        @foreach($teamStats as $teamId => $stat)
-                            @php
-                                $winPct = $stat['matches'] > 0
-                                    ? round(($stat['wins'] / $stat['matches']) * 100)
-                                    : 0;
-                                $isExpanded = $expandedTeam === $teamId;
-                                // Get matches where this ref officiated this team (as main referee)
-                                $teamMatches = $isExpanded
-                                    ? $appointments->where('role', 'referee')->filter(fn ($a) => $a->match->matchTeams->contains('team_id', $teamId))
-                                    : collect();
-                            @endphp
-                            <tr wire:click="toggleTeam('{{ $teamId }}')" class="hover:bg-gray-800/50 transition cursor-pointer">
-                                <td class="px-4 py-3">
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-gray-500 text-xs">{{ $isExpanded ? '▼' : '▶' }}</span>
-                                        <span class="font-medium text-white hover:text-emerald-400 transition">
-                                            {{ $stat['team']->name }}
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="px-4 py-3 text-center text-gray-400">{{ $stat['matches'] }}</td>
-                                <td class="px-4 py-3 text-center text-emerald-400">{{ $stat['wins'] }}</td>
-                                <td class="px-4 py-3 text-center text-red-400">{{ $stat['losses'] }}</td>
-                                <td class="px-4 py-3 text-center text-gray-400">{{ $stat['draws'] }}</td>
-                                <td class="px-4 py-3 text-center">
-                                    <span @class([
-                                        'font-medium',
-                                        'text-emerald-400' => $winPct >= 60,
-                                        'text-yellow-400' => $winPct >= 40 && $winPct < 60,
-                                        'text-red-400' => $winPct < 40,
-                                    ])>
-                                        {{ $winPct }}%
-                                    </span>
-                                </td>
+        {{-- ═══ TEAM STATS TAB ═══ --}}
+        @if($activeTab === 'team-stats')
+            @if($teamStats->isNotEmpty())
+                <p style="font-family: var(--font-mono); font-size: 11px; color: var(--color-muted); letter-spacing: .08em; text-transform: uppercase; margin: 0 0 14px;">
+                    Win/loss record for teams in matches {{ $referee->first_name }} {{ $referee->last_name }} refereed.
+                </p>
+                <div class="std-wrap">
+                    <table class="std">
+                        <thead>
+                            <tr>
+                                <th class="is-left">Team</th>
+                                <th>Matches</th>
+                                <th>W</th>
+                                <th>L</th>
+                                <th>D</th>
+                                <th>Win %</th>
                             </tr>
-                            @if($isExpanded && $teamMatches->isNotEmpty())
-                                <tr>
-                                    <td colspan="6" class="px-6 py-3 bg-gray-950/50">
-                                        <div class="space-y-2">
-                                            @foreach($teamMatches->sortByDesc(fn ($a) => $a->match->kickoff) as $appointment)
-                                                @php
-                                                    $match = $appointment->match;
-                                                    $home = $match->matchTeams->firstWhere('side', 'home');
-                                                    $away = $match->matchTeams->firstWhere('side', 'away');
-                                                    $thisTeam = $match->matchTeams->firstWhere('team_id', $teamId);
-                                                    $opponent = $match->matchTeams->firstWhere(fn ($mt) => $mt->team_id !== $teamId);
-                                                    $result = null;
-                                                    if ($thisTeam && $opponent && $thisTeam->score !== null && $opponent->score !== null) {
-                                                        $result = $thisTeam->score > $opponent->score ? 'W'
-                                                            : ($thisTeam->score < $opponent->score ? 'L' : 'D');
-                                                    }
-                                                @endphp
-                                                <a href="{{ route('matches.show', $match) }}" class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-800/60 transition text-sm">
-                                                    <div class="flex items-center gap-3">
+                        </thead>
+                        <tbody>
+                            @foreach($teamStats as $teamId => $stat)
+                                @php
+                                    $winPct = $stat['matches'] > 0 ? round(($stat['wins'] / $stat['matches']) * 100) : 0;
+                                    $isExpanded = $expandedTeam === $teamId;
+                                    $teamMatches = $isExpanded
+                                        ? $appointments->where('role', 'referee')->filter(fn ($a) => $a->match->matchTeams->contains('team_id', $teamId))
+                                        : collect();
+                                    $winPctColor = $winPct >= 60 ? 'var(--color-home-bright)' : ($winPct >= 40 ? 'var(--color-brand-yellow)' : 'var(--color-live)');
+                                @endphp
+                                <tr wire:click="toggleTeam('{{ $teamId }}')" style="cursor: pointer;">
+                                    <td class="is-left team-name">
+                                        <span style="color: var(--color-muted); margin-right: 6px; font-size: 10px;">{{ $isExpanded ? '▼' : '▶' }}</span>
+                                        {{ $stat['team']->name }}
+                                    </td>
+                                    <td>{{ $stat['matches'] }}</td>
+                                    <td class="win">{{ $stat['wins'] }}</td>
+                                    <td class="loss">{{ $stat['losses'] }}</td>
+                                    <td>{{ $stat['draws'] }}</td>
+                                    <td style="color: {{ $winPctColor }}; font-weight: 700;">{{ $winPct }}%</td>
+                                </tr>
+                                @if($isExpanded && $teamMatches->isNotEmpty())
+                                    <tr>
+                                        <td colspan="6" style="padding: 12px 14px; background: rgba(255, 209, 0, .02);">
+                                            <div style="display: flex; flex-direction: column; gap: 2px;">
+                                                @foreach($teamMatches->sortByDesc(fn ($a) => $a->match->kickoff) as $appointment)
+                                                    @php
+                                                        $match = $appointment->match;
+                                                        $home = $match->matchTeams->firstWhere('side', 'home');
+                                                        $away = $match->matchTeams->firstWhere('side', 'away');
+                                                        $thisTeam = $match->matchTeams->firstWhere('team_id', $teamId);
+                                                        $opponent = $match->matchTeams->firstWhere(fn ($mt) => $mt->team_id !== $teamId);
+                                                        $result = null;
+                                                        if ($thisTeam && $opponent && $thisTeam->score !== null && $opponent->score !== null) {
+                                                            $result = $thisTeam->score > $opponent->score ? 'W'
+                                                                : ($thisTeam->score < $opponent->score ? 'L' : 'D');
+                                                        }
+                                                        $resultColor = match ($result) {
+                                                            'W' => 'var(--color-home)',
+                                                            'L' => 'var(--color-live)',
+                                                            'D' => 'var(--color-muted)',
+                                                            default => 'transparent',
+                                                        };
+                                                    @endphp
+                                                    <a href="{{ route('matches.show', $match) }}" style="display: flex; align-items: center; gap: 12px; padding: 8px 12px; background: var(--color-bg-2); color: var(--color-ink); text-decoration: none; font-size: 12px;">
                                                         @if($result)
-                                                            <span @class([
-                                                                'rounded px-1.5 py-0.5 text-xs font-bold',
-                                                                'bg-emerald-600/20 text-emerald-400' => $result === 'W',
-                                                                'bg-red-600/20 text-red-400' => $result === 'L',
-                                                                'bg-gray-600/20 text-gray-400' => $result === 'D',
-                                                            ])>{{ $result }}</span>
+                                                            <span style="display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; background: {{ $resultColor }}; color: #fff; font-family: var(--font-display); font-weight: 900; font-size: 11px;">{{ $result }}</span>
                                                         @endif
-                                                        <span class="text-gray-300">
+                                                        <span style="flex: 1;">
                                                             {{ $home?->team?->name ?? 'TBD' }}
-                                                            <span class="font-mono text-gray-500 mx-1">{{ $home?->score ?? '-' }}-{{ $away?->score ?? '-' }}</span>
+                                                            <span style="font-family: var(--font-mono); color: var(--color-muted); margin: 0 4px;">{{ $home?->score ?? '-' }}–{{ $away?->score ?? '-' }}</span>
                                                             {{ $away?->team?->name ?? 'TBD' }}
                                                         </span>
-                                                    </div>
-                                                    <div class="text-xs text-gray-500">
-                                                        {{ $match->season?->competition?->name }}
-                                                        &middot; {{ $match->kickoff?->format('d M Y') }}
-                                                    </div>
-                                                </a>
-                                            @endforeach
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endif
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        @else
-            <div class="rounded-xl bg-gray-900 border border-gray-800 p-6 text-center text-gray-500">
-                No matches as main referee yet — team stats are calculated from matches where this official was the referee.
-            </div>
+                                                        <span style="font-family: var(--font-mono); font-size: 10px; color: var(--color-muted); letter-spacing: .08em;">
+                                                            {{ $match->kickoff?->format('d M Y') }}
+                                                        </span>
+                                                    </a>
+                                                @endforeach
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endif
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <div class="widget" style="padding: 40px; text-align: center; color: var(--color-muted);">
+                    No matches as main referee yet — team stats are calculated from matches where this official was the referee.
+                </div>
+            @endif
         @endif
-    @endif
+    </div>
 </div>
