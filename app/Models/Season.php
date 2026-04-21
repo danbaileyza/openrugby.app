@@ -29,6 +29,27 @@ class Season extends Model
         'completeness_audit' => 'array',
     ];
 
+    /**
+     * Enforce the "only one current season per competition" invariant.
+     * When a season is saved with is_current=true, unflag every sibling
+     * season on the same competition so we never end up with duplicates.
+     * (MySQL has no partial unique indexes, so the guard lives here.)
+     */
+    protected static function booted(): void
+    {
+        static::saving(function (self $season) {
+            if (! $season->is_current || ! $season->competition_id) {
+                return;
+            }
+            // Don't trigger on every update — only when the flag is being flipped on
+            // or when it was already true but we want to enforce uniqueness defensively.
+            static::where('competition_id', $season->competition_id)
+                ->where('is_current', true)
+                ->when($season->exists, fn ($q) => $q->where('id', '!=', $season->id))
+                ->update(['is_current' => false]);
+        });
+    }
+
     public function competition(): BelongsTo
     {
         return $this->belongsTo(Competition::class);
