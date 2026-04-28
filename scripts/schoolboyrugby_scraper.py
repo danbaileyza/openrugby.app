@@ -180,25 +180,41 @@ def main():
         posts = get_all_post_urls()
         print(f"Found {len(posts)} weekly roundup posts")
 
-    all_matches = []
-    for url, title in posts:
-        print(f"Scraping: {title.strip()[:80]}")
-        _, matches = parse_post(url)
+        # Pre-filter by year — post titles include the year, no need to fetch
+        # 2024 posts when the user asked for 2026. Keeps unfiltered runs intact.
         if args.year:
-            matches = [m for m in matches if m["date"].startswith(str(args.year))]
-        all_matches.extend(matches)
-        print(f"  +{len(matches)} matches")
-        time.sleep(5)  # be polite — avoids 429 rate limits
+            year_str = str(args.year)
+            posts = [(u, t) for (u, t) in posts if year_str in t]
+            print(f"Kept {len(posts)} posts for {args.year}")
 
     scope = f"p{args.post}" if args.post else (f"y{args.year}" if args.year else "all")
     out = Path(__file__).parent.parent / "storage" / "app" / f"schoolboyrugby_{scope}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
-    with open(out, "w") as f:
-        json.dump({
-            "source": "schoolboyrugby.co.za",
-            "scraped_at": datetime.utcnow().isoformat() + "Z",
-            "matches": all_matches,
-        }, f, indent=2)
+
+    def write_output(matches):
+        with open(out, "w") as f:
+            json.dump({
+                "source": "schoolboyrugby.co.za",
+                "scraped_at": datetime.utcnow().isoformat() + "Z",
+                "matches": matches,
+            }, f, indent=2)
+
+    all_matches = []
+    try:
+        for url, title in posts:
+            print(f"Scraping: {title.strip()[:80]}")
+            _, matches = parse_post(url)
+            if args.year:
+                matches = [m for m in matches if m["date"].startswith(str(args.year))]
+            all_matches.extend(matches)
+            print(f"  +{len(matches)} matches")
+            # Persist after each post so Ctrl+C still leaves a useful JSON.
+            write_output(all_matches)
+            time.sleep(5)  # be polite — avoids 429 rate limits
+    except KeyboardInterrupt:
+        print(f"\nInterrupted — saved {len(all_matches)} matches so far.")
+
+    write_output(all_matches)
     print(f"\nOutput: {out} ({len(all_matches)} matches)")
 
 
