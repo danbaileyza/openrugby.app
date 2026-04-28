@@ -36,3 +36,9 @@ Schedule::command('rugby:sync-schools --source=schoolrugby')
 Schedule::command('rugby:sync-schools --source=schoolboyrugby --skip-scrape')
     ->dailyAt('05:45')
     ->withoutOverlapping();
+
+// Sunday-evening top-up — most weekend results post Sunday afternoon, so
+// pulling again at 21:00 UTC catches them same-day instead of Monday morning.
+Schedule::command('rugby:sync-schools --source=schoolrugby')
+    ->weeklyOn(0, '21:00')
+    ->withoutOverlapping();
