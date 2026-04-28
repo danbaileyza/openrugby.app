@@ -42,3 +42,10 @@ Schedule::command('rugby:sync-schools --source=schoolboyrugby --skip-scrape')
 Schedule::command('rugby:sync-schools --source=schoolrugby')
     ->weeklyOn(0, '21:00')
     ->withoutOverlapping();
+
+// Weekly: backfill schoolrugby external_ids on schools we discovered via
+// schoolboyrugby (short names). Uses the committed directory JSON when
+// schoolrugby.co.za blocks the prod IP.
+Schedule::command('rugby:link-school-ids')
+    ->weeklyOn(1, '03:00')
+    ->withoutOverlapping();
