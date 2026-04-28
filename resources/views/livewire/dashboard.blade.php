@@ -54,6 +54,38 @@
     <div class="stadium-main">
         {{-- Left column: action feed + competitions --}}
         <div>
+            @auth
+                @if($favouriteTeams->isNotEmpty())
+                    <div class="section-head">
+                        <div class="section-title">Your Teams</div>
+                        <a class="section-link" href="{{ route('matches.index', ['favouritesOnly' => 1]) }}">My matches →</a>
+                    </div>
+                    @if($favouriteFixtures->isNotEmpty())
+                        <div class="fixture-list" style="margin-bottom: 28px;">
+                            @foreach($favouriteFixtures as $match)
+                                @php
+                                    $home = $match->matchTeams->firstWhere('side', 'home');
+                                    $away = $match->matchTeams->firstWhere('side', 'away');
+                                @endphp
+                                <a href="{{ route('matches.show', $match) }}" class="fixture" wire:navigate>
+                                    <div>
+                                        <div class="f-time">{{ strtoupper($match->kickoff->format('D j M')) }} · {{ $match->kickoff->format('H:i') }}</div>
+                                        <div class="f-comp">{{ $match->season->competition->name }}@if($match->round) · R{{ $match->round }}@endif</div>
+                                    </div>
+                                    <div class="f-home">{{ $home?->team->name ?? 'TBD' }}</div>
+                                    <div class="f-vs">V</div>
+                                    <div class="f-away">{{ $away?->team->name ?? 'TBD' }}</div>
+                                </a>
+                            @endforeach
+                        </div>
+                    @else
+                        <div style="padding: 18px 24px; background: var(--color-bg-2); margin-bottom: 28px; color: var(--color-muted); font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em;">
+                            No upcoming fixtures for your favourite teams.
+                        </div>
+                    @endif
+                @endif
+            @endauth
+
             <div class="section-head">
                 <div class="section-title">The Action</div>
                 <a class="section-link" href="{{ route('matches.index') }}">All matches →</a>

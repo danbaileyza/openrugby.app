@@ -22,13 +22,18 @@
                     @endif
                 </div>
             </div>
-            @if($competition->seasons->count() > 1)
-                <select wire:model.live="selectedSeason" style="background: var(--color-bg-2); border: 1px solid var(--color-brand-yellow); color: var(--color-brand-yellow); padding: 8px 14px; border-radius: var(--r-sm); font-family: var(--font-mono); font-size: 12px; cursor: pointer;">
-                    @foreach($competition->seasons as $s)
-                        <option value="{{ $s->id }}">{{ $s->label }}@if($s->is_current) (Current)@endif</option>
-                    @endforeach
-                </select>
-            @endif
+            <div style="display: flex; gap: 10px; align-items: center;">
+                @auth
+                    <livewire:favourite-button type="competition" :id="$competition->id" :key="'fav-comp-'.$competition->id" />
+                @endauth
+                @if($competition->seasons->count() > 1)
+                    <select wire:model.live="selectedSeason" style="background: var(--color-bg-2); border: 1px solid var(--color-brand-yellow); color: var(--color-brand-yellow); padding: 8px 14px; border-radius: var(--r-sm); font-family: var(--font-mono); font-size: 12px; cursor: pointer;">
+                        @foreach($competition->seasons as $s)
+                            <option value="{{ $s->id }}">{{ $s->label }}@if($s->is_current) (Current)@endif</option>
+                        @endforeach
+                    </select>
+                @endif
+            </div>
         </div>
 
         @if($currentSeason)

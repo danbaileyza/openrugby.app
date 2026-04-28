@@ -20,6 +20,16 @@
                 <option value="postponed">Postponed</option>
             </select>
         </div>
+
+        @auth
+            <div class="stadium-chips" style="margin-top: 14px;">
+                <button type="button"
+                    wire:click="$toggle('favouritesOnly')"
+                    @class(['chip', 'is-active' => $favouritesOnly])>
+                    ★ Favourites only
+                </button>
+            </div>
+        @endauth
     </section>
 
     {{-- ═══ Body ═══ --}}

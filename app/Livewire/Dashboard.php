@@ -90,6 +90,23 @@ class Dashboard extends Component
                 ->get();
         }
 
+        // Logged-in users see their favourite teams' next 5 fixtures.
+        $favouriteFixtures = collect();
+        $favouriteTeams = collect();
+        if (auth()->check()) {
+            $favouriteTeams = auth()->user()->favouriteTeams()->limit(8)->get();
+            $favTeamIds = $favouriteTeams->pluck('id');
+            if ($favTeamIds->isNotEmpty()) {
+                $favouriteFixtures = RugbyMatch::with(['matchTeams.team', 'season.competition'])
+                    ->whereHas('matchTeams', fn ($q) => $q->whereIn('team_id', $favTeamIds))
+                    ->where('kickoff', '>=', now())
+                    ->where('status', '!=', 'ft')
+                    ->orderBy('kickoff')
+                    ->limit(5)
+                    ->get();
+            }
+        }
+
         return view('livewire.dashboard', [
             'stats' => [
                 'competitions' => Competition::whereHas('seasons.matches')->count(),
@@ -105,6 +122,8 @@ class Dashboard extends Component
             'featuredSeason' => $featuredSeason,
             'standings' => $standings,
             'topScorers' => $topScorers,
+            'favouriteTeams' => $favouriteTeams,
+            'favouriteFixtures' => $favouriteFixtures,
         ])->layout('layouts.app', ['title' => 'Dashboard', 'fullBleed' => true]);
     }
 }

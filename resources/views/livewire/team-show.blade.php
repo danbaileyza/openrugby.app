@@ -26,6 +26,9 @@
                     @if($team->founded_year)<span>Est. {{ $team->founded_year }}</span>@endif
                 </div>
             </div>
+            @auth
+                <livewire:favourite-button type="team" :id="$team->id" :key="'fav-team-'.$team->id" />
+            @endauth
         </div>
 
         {{-- Ticker: record --}}

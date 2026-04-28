@@ -13,6 +13,7 @@ class MatchList extends Component
 
     public string $status = '';
     public string $competition = '';
+    public bool $favouritesOnly = false;
 
     public function render()
     {
@@ -23,6 +24,21 @@ class MatchList extends Component
         }
         if ($this->competition) {
             $query->whereHas('season.competition', fn ($q) => $q->where('id', $this->competition));
+        }
+
+        // Favourites filter — show matches involving any of the user's
+        // favourite teams (or in their favourite competitions).
+        if ($this->favouritesOnly && auth()->check()) {
+            $favTeamIds = auth()->user()->favouriteTeams()->pluck('teams.id');
+            $favCompIds = auth()->user()->favouriteCompetitions()->pluck('competitions.id');
+            $query->where(function ($q) use ($favTeamIds, $favCompIds) {
+                if ($favTeamIds->isNotEmpty()) {
+                    $q->orWhereHas('matchTeams', fn ($q) => $q->whereIn('team_id', $favTeamIds));
+                }
+                if ($favCompIds->isNotEmpty()) {
+                    $q->orWhereHas('season.competition', fn ($q) => $q->whereIn('id', $favCompIds));
+                }
+            });
         }
 
         // Live → upcoming (soonest first) → past (most recent first).
