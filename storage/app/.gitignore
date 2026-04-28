@@ -1,2 +1,5 @@
 *
 !.gitignore
+# Tracked scraper outputs — committed so prod doesn't need to scrape
+# from sources that block its datacenter IP.
+!schoolboyrugby_y*.json

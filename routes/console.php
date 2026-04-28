@@ -25,7 +25,14 @@ Schedule::command('rugby:refresh --details --recompute --audit')
     ->dailyAt('07:00')
     ->withoutOverlapping();
 
-// SA schools — scrape + import once a day. Plain-HTTP scraper, safe on prod.
-Schedule::command('rugby:sync-schools')
+// SA schools — split into two entries so each source can use the right
+// strategy on prod:
+//   - schoolrugby.co.za: scrape live (server is allowed)
+//   - schoolboyrugby.co.za: re-import the committed JSON (server's IP is
+//     blocked by their WAF; we ship updated JSON via the repo from dev)
+Schedule::command('rugby:sync-schools --source=schoolrugby')
     ->dailyAt('05:30')
+    ->withoutOverlapping();
+Schedule::command('rugby:sync-schools --source=schoolboyrugby --skip-scrape')
+    ->dailyAt('05:45')
     ->withoutOverlapping();
