@@ -7,29 +7,55 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Process;
 
 /**
- * Wraps schoolrugby_scraper.py + rugby:import-school-rugby into a single
- * cron-friendly entry. The scraper hits a plain HTTP API (no Playwright),
- * so this safely runs on prod nightly. Importer is idempotent — adds new
- * matches, updates scores on existing ones.
+ * Wraps both SA schools scrapers + the importer into one cron entry.
  *
- * School IDs are pulled from teams already in the DB (external_source =
- * schoolrugby.co.za). Add a school via the admin UI or one-off scrape and
- * it gets picked up automatically on the next run.
+ * Two sources cover different gaps:
+ *   - schoolrugby.co.za  → per-school feeds, score-focused, but each
+ *                          school's recent-history page is short.
+ *   - schoolboyrugby.co.za → weekly roundup posts with full results
+ *                            tables (and upcoming fixtures previewed).
+ *
+ * Both scrapers are plain-HTTP (no Playwright), safe to run on prod.
+ * Importer is idempotent — adds new matches, updates scores on
+ * existing ones (promotes scheduled → ft when scores arrive).
  */
 class SyncSchoolsCommand extends Command
 {
     protected $signature = 'rugby:sync-schools
                             {--year= : Year to scrape (default: current)}
-                            {--skip-scrape : Reuse the existing JSON, only re-import}';
+                            {--skip-scrape : Reuse the existing JSONs, only re-import}
+                            {--source= : Limit to one source: schoolrugby | schoolboyrugby}';
 
-    protected $description = 'Scrape SA schools rugby results and import into the DB';
+    protected $description = 'Scrape SA schools rugby (both sources) and import into the DB';
 
     public function handle(): int
     {
         $year = $this->option('year') ?: (string) now()->year;
+        $only = $this->option('source');
+        $skipScrape = (bool) $this->option('skip-scrape');
 
-        // Pull tracked school IDs straight from the DB so the list is always
-        // in sync with what we already have rosters for.
+        $exit = self::SUCCESS;
+
+        if (in_array($only, [null, 'schoolrugby'], true)) {
+            $exit |= $this->syncSchoolrugby($year, $skipScrape);
+        }
+
+        if (in_array($only, [null, 'schoolboyrugby'], true)) {
+            $exit |= $this->syncSchoolboyrugby($year, $skipScrape);
+        }
+
+        return $exit === self::SUCCESS ? self::SUCCESS : self::FAILURE;
+    }
+
+    /**
+     * schoolrugby.co.za — per-school feeds. We scrape the IDs we already
+     * have rosters for so the list stays self-maintaining.
+     */
+    private function syncSchoolrugby(string $year, bool $skipScrape): int
+    {
+        $this->newLine();
+        $this->info('━━━ schoolrugby.co.za ━━━');
+
         $schoolIds = Team::where('external_source', 'schoolrugby.co.za')
             ->whereNotNull('external_id')
             ->pluck('external_id')
@@ -37,16 +63,12 @@ class SyncSchoolsCommand extends Command
             ->values();
 
         if ($schoolIds->isEmpty()) {
-            $this->error('No tracked schools in the DB (external_source = schoolrugby.co.za).');
+            $this->warn('No tracked schools — skipping schoolrugby.co.za.');
 
-            return self::FAILURE;
+            return self::SUCCESS;
         }
 
-        // The scraper hardcodes the school count into the filename, which
-        // moves every time we discover new schools. For the scrape step we
-        // know the exact count up front; for --skip-scrape we glob and use
-        // the most recent matching file so a previous run's output is reusable.
-        if (! $this->option('skip-scrape')) {
+        if (! $skipScrape) {
             $this->info("Scraping {$schoolIds->count()} schools for {$year}...");
 
             $script = base_path('scripts/schoolrugby_scraper.py');
@@ -63,28 +85,63 @@ class SyncSchoolsCommand extends Command
             }
 
             $this->line(trim($result->output()));
-
             $jsonPath = storage_path("app/schoolrugby_schools-{$schoolIds->count()}_{$year}.json");
         } else {
             $candidates = glob(storage_path("app/schoolrugby_schools-*_{$year}.json")) ?: [];
             if (empty($candidates)) {
-                $this->error("No previous scrape JSON found for {$year}. Run without --skip-scrape first.");
+                $this->warn("No previous schoolrugby JSON for {$year} — skipping.");
 
-                return self::FAILURE;
+                return self::SUCCESS;
             }
-            // Pick the most recently modified — usually the largest school count too.
             usort($candidates, fn ($a, $b) => filemtime($b) <=> filemtime($a));
             $jsonPath = $candidates[0];
-        }
-
-        if (! is_file($jsonPath)) {
-            $this->error("JSON not found: {$jsonPath}");
-
-            return self::FAILURE;
         }
 
         $this->info("Importing {$jsonPath}...");
 
         return $this->call('rugby:import-school-rugby', ['--path' => $jsonPath]);
+    }
+
+    /**
+     * schoolboyrugby.co.za — weekly roundup posts. --fixtures lets us
+     * also seed scheduled matches from the previews so per-school
+     * "next match" lookups work.
+     */
+    private function syncSchoolboyrugby(string $year, bool $skipScrape): int
+    {
+        $this->newLine();
+        $this->info('━━━ schoolboyrugby.co.za ━━━');
+
+        $jsonPath = storage_path("app/schoolboyrugby_y{$year}.json");
+
+        if (! $skipScrape) {
+            $this->info("Scraping weekly roundups for {$year}...");
+
+            $script = base_path('scripts/schoolboyrugby_scraper.py');
+            $result = Process::timeout(1800)->run([
+                'python3', $script, '--year', $year,
+            ]);
+
+            if (! $result->successful()) {
+                $this->error('Scraper failed: '.trim($result->errorOutput() ?: $result->output()));
+
+                return self::FAILURE;
+            }
+
+            $this->line(trim($result->output()));
+        }
+
+        if (! is_file($jsonPath)) {
+            $this->warn("No schoolboyrugby JSON at {$jsonPath} — skipping.");
+
+            return self::SUCCESS;
+        }
+
+        $this->info("Importing {$jsonPath} (with --fixtures)...");
+
+        return $this->call('rugby:import-school-rugby', [
+            '--path' => $jsonPath,
+            '--fixtures' => true,
+        ]);
     }
 }
