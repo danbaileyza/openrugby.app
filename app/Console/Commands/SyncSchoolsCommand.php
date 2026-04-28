@@ -42,8 +42,10 @@ class SyncSchoolsCommand extends Command
             return self::FAILURE;
         }
 
-        $jsonPath = storage_path("app/schoolrugby_schools-{$schoolIds->count()}_{$year}.json");
-
+        // The scraper hardcodes the school count into the filename, which
+        // moves every time we discover new schools. For the scrape step we
+        // know the exact count up front; for --skip-scrape we glob and use
+        // the most recent matching file so a previous run's output is reusable.
         if (! $this->option('skip-scrape')) {
             $this->info("Scraping {$schoolIds->count()} schools for {$year}...");
 
@@ -61,6 +63,18 @@ class SyncSchoolsCommand extends Command
             }
 
             $this->line(trim($result->output()));
+
+            $jsonPath = storage_path("app/schoolrugby_schools-{$schoolIds->count()}_{$year}.json");
+        } else {
+            $candidates = glob(storage_path("app/schoolrugby_schools-*_{$year}.json")) ?: [];
+            if (empty($candidates)) {
+                $this->error("No previous scrape JSON found for {$year}. Run without --skip-scrape first.");
+
+                return self::FAILURE;
+            }
+            // Pick the most recently modified — usually the largest school count too.
+            usort($candidates, fn ($a, $b) => filemtime($b) <=> filemtime($a));
+            $jsonPath = $candidates[0];
         }
 
         if (! is_file($jsonPath)) {
