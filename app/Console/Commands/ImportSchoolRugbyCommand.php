@@ -133,8 +133,28 @@ class ImportSchoolRugbyCommand extends Command
             if ($team) return $team;
         }
 
+        // Exact name match.
         $team = Team::where('name', $name)->where('type', 'school')->first();
         if ($team) {
+            if ($externalId && ! $team->external_id) {
+                $team->update(['external_id' => (string) $externalId]);
+            }
+            return $team;
+        }
+
+        // Fuzzy match — schoolboyrugby.co.za uses short names ("Brackenfell")
+        // while schoolrugby.co.za uses full names ("Brackenfell High School"),
+        // both for the same team. Try substring both directions and accept
+        // only when exactly one school matches (avoids ambiguous merges).
+        $candidates = Team::where('type', 'school')
+            ->where(function ($q) use ($name) {
+                $q->where('name', 'like', "%{$name}%")
+                    ->orWhereRaw('? LIKE CONCAT("%", name, "%")', [$name]);
+            })
+            ->limit(2)
+            ->get();
+        if ($candidates->count() === 1) {
+            $team = $candidates->first();
             if ($externalId && ! $team->external_id) {
                 $team->update(['external_id' => (string) $externalId]);
             }
