@@ -108,10 +108,10 @@
                     Win/loss record for teams in matches {{ $referee->first_name }} {{ $referee->last_name }} refereed.
                 </p>
                 <div class="std-wrap">
-                    <table class="std">
+                    <table class="std" style="max-width: 720px;">
                         <thead>
                             <tr>
-                                <th class="is-left">Team</th>
+                                <th class="is-left" style="width: 100%;">Team</th>
                                 <th>Matches</th>
                                 <th>W</th>
                                 <th>L</th>

@@ -5,6 +5,7 @@ use App\Livewire\Admin\Competitions\Index as CompetitionAdminIndex;
 use App\Livewire\Admin\Fixtures\Form as FixtureForm;
 use App\Livewire\Admin\Fixtures\Index as FixtureAdminIndex;
 use App\Livewire\Admin\Index as AdminIndex;
+use App\Livewire\Admin\MissingScores;
 use App\Livewire\Admin\Players\Form as PlayerAdminForm;
 use App\Livewire\Admin\Referees\Form as RefereeAdminForm;
 use App\Livewire\Admin\Referees\Index as RefereeAdminIndex;
@@ -97,6 +98,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/fixtures', FixtureAdminIndex::class)->name('fixtures.index');
     Route::get('/fixtures/create', FixtureForm::class)->name('fixtures.create');
     Route::get('/fixtures/{match}/edit', FixtureForm::class)->name('fixtures.edit');
+
+    // Missing-scores queue
+    Route::get('/missing-scores', MissingScores::class)->name('missing-scores');
 
     // Users
     Route::get('/users', UserAdminIndex::class)->name('users.index');

@@ -47,5 +47,9 @@
             <div class="text-base font-semibold text-white">Users</div>
             <p class="text-sm text-gray-400 mt-1">Invite team users and link them to teams.</p>
         </a>
+        <a href="{{ route('admin.missing-scores') }}" class="rounded-xl bg-gray-900 border border-gray-800 p-5 hover:border-emerald-500/40 transition block">
+            <div class="text-base font-semibold text-white">Missing scores</div>
+            <p class="text-sm text-gray-400 mt-1">Scheduled matches still missing scores. Inline edit, fast cleanup.</p>
+        </a>
     </div>
 </div>
