@@ -34,17 +34,26 @@ class SyncSchoolsCommand extends Command
         $only = $this->option('source');
         $skipScrape = (bool) $this->option('skip-scrape');
 
-        $exit = self::SUCCESS;
+        // When run unattended (cron) we don't want one source's failure to
+        // break the other. Single-source manual runs propagate the exit code.
+        $tolerant = $only === null;
+
+        $codes = [];
 
         if (in_array($only, [null, 'schoolrugby'], true)) {
-            $exit |= $this->syncSchoolrugby($year, $skipScrape);
+            $codes[] = $this->syncSchoolrugby($year, $skipScrape);
         }
 
         if (in_array($only, [null, 'schoolboyrugby'], true)) {
-            $exit |= $this->syncSchoolboyrugby($year, $skipScrape);
+            $codes[] = $this->syncSchoolboyrugby($year, $skipScrape);
         }
 
-        return $exit === self::SUCCESS ? self::SUCCESS : self::FAILURE;
+        if ($tolerant) {
+            // At least one source must have succeeded for the run to count.
+            return in_array(self::SUCCESS, $codes, true) ? self::SUCCESS : self::FAILURE;
+        }
+
+        return collect($codes)->every(fn ($c) => $c === self::SUCCESS) ? self::SUCCESS : self::FAILURE;
     }
 
     /**
