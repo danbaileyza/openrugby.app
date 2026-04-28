@@ -83,7 +83,7 @@ class RefreshCompetitionCommand extends Command
         if ($doRecompute) {
             $this->newLine();
             $this->info('Running dedup + recompute...');
-            $this->call('rugby:deduplicate-matches', ['--dry-run' => true]);
+            $this->call('rugby:deduplicate-matches', ['--force' => true]);
             $this->call('rugby:compute-standings', ['--all-seasons' => true]);
             $this->call('rugby:compute-player-stats', ['--all-seasons' => true]);
         }

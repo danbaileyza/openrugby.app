@@ -59,15 +59,17 @@ class Dashboard extends Component
             ->filter(fn ($c) => $c->seasons->isNotEmpty());
 
         // Pick a featured competition for the right-column standings + scorers widgets.
-        // Prefer URC if it has a current season; otherwise the most-current professional
-        // competition with standings enabled.
+        // Require persisted standings so the widget does not disappear behind an empty
+        // current season. Prefer current URC standings, then other current standings,
+        // then the latest season with any standings rows.
         $featuredSeason = Season::with('competition')
             ->whereHas('competition', fn ($q) => $q->where('has_standings', true))
-            ->where('is_current', true)
+            ->whereHas('standings')
             ->when(
                 Competition::where('code', 'urc')->exists(),
                 fn ($q) => $q->orderByRaw("CASE WHEN (SELECT code FROM competitions WHERE competitions.id = seasons.competition_id) = 'urc' THEN 0 ELSE 1 END")
             )
+            ->orderByDesc('is_current')
             ->orderByDesc('start_date')
             ->first();
 

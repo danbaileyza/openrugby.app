@@ -15,9 +15,11 @@ use Illuminate\Support\Facades\DB;
 
 class DeduplicateMatchesCommand extends Command
 {
-    protected $signature = 'rugby:deduplicate-matches {--dry-run : Show duplicates without deleting}';
+    protected $signature = 'rugby:deduplicate-matches
+                            {--dry-run : Show duplicates without deleting}
+                            {--force : Remove duplicates without confirmation}';
 
-    protected $description = 'Find and remove duplicate matches (same kickoff + teams)';
+    protected $description = 'Find and remove duplicate matches (same season, kickoff date + teams)';
 
     public function handle(): int
     {
@@ -38,8 +40,10 @@ class DeduplicateMatchesCommand extends Command
                 continue;
             }
 
-            // Key: date + home team + away team
+            // Key: season + date + home team + away team. Keeping this season-scoped
+            // avoids deleting legitimate same-day fixtures in another competition.
             $key = implode('|', [
+                $match->season_id,
                 $match->kickoff?->format('Y-m-d'),
                 $home->team_id,
                 $away->team_id,
@@ -102,7 +106,7 @@ class DeduplicateMatchesCommand extends Command
             return 0;
         }
 
-        if (! $this->confirm("Remove {$duplicates->count()} duplicate matches?")) {
+        if (! $this->option('force') && ! $this->confirm("Remove {$duplicates->count()} duplicate matches?")) {
             return 0;
         }
 
@@ -115,6 +119,7 @@ class DeduplicateMatchesCommand extends Command
                 // Copy missing metadata from the removed match
                 $this->enrichFromDuplicate($keep, $remove);
 
+                $this->mergeMatchTeamRows($keep, $remove);
                 $this->mergeMatchChildren($keep->id, $remove->id);
                 MatchTeam::where('match_id', $remove->id)->delete();
                 RugbyMatch::where('id', $remove->id)->delete();
@@ -128,10 +133,6 @@ class DeduplicateMatchesCommand extends Command
     }
 
     /**
-     * Pick the richer of two duplicate matches to keep.
-     * Prefers: more child records > has round number > earlier insertion.
-     */
-    /**
      * Copy missing metadata fields from the duplicate into the kept match.
      */
     protected function enrichFromDuplicate(RugbyMatch $keep, RugbyMatch $remove): void
@@ -142,6 +143,10 @@ class DeduplicateMatchesCommand extends Command
             if ($keep->{$field} === null && $remove->{$field} !== null) {
                 $updates[$field] = $remove->{$field};
             }
+        }
+
+        if ($keep->status !== 'ft' && $remove->status === 'ft') {
+            $updates['status'] = 'ft';
         }
 
         if (! empty($updates)) {
@@ -189,6 +194,54 @@ class DeduplicateMatchesCommand extends Command
         $this->mergeConstrainedChildRows(MatchOfficial::class, $keepId, $removeId, ['referee_id', 'role']);
         $this->mergeConstrainedChildRows(MatchStat::class, $keepId, $removeId, ['team_id', 'stat_key']);
         $this->mergeConstrainedChildRows(PlayerMatchStat::class, $keepId, $removeId, ['player_id', 'stat_key']);
+    }
+
+    protected function mergeMatchTeamRows(RugbyMatch $keep, RugbyMatch $remove): void
+    {
+        $keepTeams = MatchTeam::where('match_id', $keep->id)->get()->keyBy('side');
+        $removeTeams = MatchTeam::where('match_id', $remove->id)->get()->keyBy('side');
+
+        $keepHasScoreline = $this->hasScoreline($keepTeams);
+        $removeHasScoreline = $this->hasScoreline($removeTeams);
+
+        foreach (['home', 'away'] as $side) {
+            /** @var MatchTeam|null $keepTeam */
+            $keepTeam = $keepTeams->get($side);
+            /** @var MatchTeam|null $removeTeam */
+            $removeTeam = $removeTeams->get($side);
+
+            if (! $keepTeam || ! $removeTeam) {
+                continue;
+            }
+
+            $updates = [];
+            foreach (['score', 'ht_score', 'tries', 'conversions', 'penalties_kicked', 'drop_goals', 'bonus_points', 'is_winner'] as $field) {
+                $keepValue = $keepTeam->{$field};
+                $removeValue = $removeTeam->{$field};
+
+                if ($removeValue === null) {
+                    continue;
+                }
+
+                if ($keepValue === null || (! $keepHasScoreline && $removeHasScoreline && in_array($field, ['score', 'ht_score', 'bonus_points', 'is_winner'], true))) {
+                    $updates[$field] = $removeValue;
+                }
+            }
+
+            if (! empty($updates)) {
+                $keepTeam->update($updates);
+            }
+        }
+    }
+
+    /**
+     * @param \Illuminate\Support\Collection<string, MatchTeam> $teams
+     */
+    protected function hasScoreline($teams): bool
+    {
+        return $teams->count() === 2
+            && $teams->every(fn (MatchTeam $team): bool => $team->score !== null)
+            && $teams->contains(fn (MatchTeam $team): bool => (int) $team->score > 0);
     }
 
     /**
