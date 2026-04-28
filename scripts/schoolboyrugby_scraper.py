@@ -98,16 +98,23 @@ def parse_post(url):
             cells = [strip_tags(c) for c in cells]
             if len(cells) < 5:
                 continue
-            date_field = cells[0]
-            if not re.match(r"\w{3}\.\d{1,2}\w{3}", date_field):
+            # Find the date column — older posts had it at index 0, newer ones
+            # add an empty leading cell so it sits at index 1. Scan for the
+            # date-shaped pattern instead of assuming a fixed offset.
+            date_idx = next(
+                (i for i, c in enumerate(cells)
+                 if re.match(r"\w{3}\.\d{1,2}\w{3}", c)),
+                None,
+            )
+            if date_idx is None or date_idx + 4 >= len(cells):
                 continue
-            # Detect expected layout
-            home_region = cells[1]
-            home_team = cells[2]
-            score = cells[3]
-            away_team = cells[4]
-            away_region = cells[5] if len(cells) > 5 else ""
-            notes = cells[6] if len(cells) > 6 else ""
+            date_field = cells[date_idx]
+            home_region = cells[date_idx + 1]
+            home_team = cells[date_idx + 2]
+            score = cells[date_idx + 3]
+            away_team = cells[date_idx + 4]
+            away_region = cells[date_idx + 5] if len(cells) > date_idx + 5 else ""
+            notes = cells[date_idx + 6] if len(cells) > date_idx + 6 else ""
 
             score_m = re.match(r"(\d+)\s*[-–]\s*(\d+)", score)
             if score_m:
