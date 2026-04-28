@@ -24,3 +24,8 @@ Schedule::command('rugby:sync-live --all --import-missing --lineups')
 Schedule::command('rugby:refresh --details --recompute --audit')
     ->dailyAt('07:00')
     ->withoutOverlapping();
+
+// SA schools — scrape + import once a day. Plain-HTTP scraper, safe on prod.
+Schedule::command('rugby:sync-schools')
+    ->dailyAt('05:30')
+    ->withoutOverlapping();
