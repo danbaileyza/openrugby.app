@@ -26,20 +26,30 @@ sys.stdout.reconfigure(line_buffering=True)
 MONTHS = {"Jan":1,"Feb":2,"Mar":3,"Apr":4,"May":5,"Jun":6,"Jul":7,"Aug":8,"Sep":9,"Oct":10,"Nov":11,"Dec":12}
 
 
-HEADERS = {
+import gzip
+
+# WAF-friendly headers: real browsers always accept gzip and send a Referer.
+# Sending `Accept-Encoding: identity` was tripping LiteSpeed's bot detector,
+# which returned 403 on individual post pages while the index still worked.
+BASE_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "Accept-Language": "en-US,en;q=0.9",
-    "Accept-Encoding": "identity",
+    "Accept-Encoding": "gzip, deflate",
+    "Connection": "keep-alive",
 }
 
 
-def fetch(url, retries=5):
+def fetch(url, retries=5, referer="https://schoolboyrugby.co.za/?cat=23"):
+    headers = {**BASE_HEADERS, "Referer": referer}
     for attempt in range(retries):
         try:
-            req = Request(url, headers=HEADERS)
+            req = Request(url, headers=headers)
             with urlopen(req, timeout=30) as resp:
-                return resp.read().decode("utf-8", errors="replace")
+                raw = resp.read()
+                if resp.headers.get("Content-Encoding") == "gzip":
+                    raw = gzip.decompress(raw)
+                return raw.decode("utf-8", errors="replace")
         except Exception as e:
             msg = str(e)
             wait = 60 + attempt * 30 if ("429" in msg or "406" in msg) else 3 + attempt * 2
