@@ -33,10 +33,8 @@ class CleanupEmptySeasonsCommand extends Command
         $query = Season::query()
             ->doesntHave('matches')
             ->doesntHave('standings')
-            ->doesntHave('teamSeasons')
-            ->whereNotIn('id', function ($q) {
-                $q->select('season_id')->from('player_season_stats');
-            })
+            ->doesntHave('teams')
+            ->doesntHave('playerSeasonStats')
             ->with('competition');
 
         if ($compCode) {
