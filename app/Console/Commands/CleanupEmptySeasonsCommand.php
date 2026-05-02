@@ -21,6 +21,7 @@ class CleanupEmptySeasonsCommand extends Command
 {
     protected $signature = 'rugby:cleanup-empty-seasons
                             {--force : Actually delete (default is dry-run)}
+                            {--no-confirm : Skip the confirmation prompt (for cron / scripts)}
                             {--competition= : Limit to one competition code}';
 
     protected $description = 'Delete seasons that have no matches, standings, team-seasons, or player stats';
@@ -73,7 +74,7 @@ class CleanupEmptySeasonsCommand extends Command
             return self::SUCCESS;
         }
 
-        if (! $this->confirm("Delete {$empties->count()} season(s)?", false)) {
+        if (! $this->option('no-confirm') && ! $this->confirm("Delete {$empties->count()} season(s)?", false)) {
             $this->warn('Aborted.');
 
             return self::SUCCESS;

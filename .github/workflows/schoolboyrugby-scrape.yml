@@ -1,0 +1,44 @@
+name: Refresh schoolboyrugby data
+
+# Why this exists: schoolboyrugby.co.za blocks Forge's prod IP, so the
+# nightly cron there can't scrape that source. GitHub Actions runners
+# come from a different IP range, so we scrape here and commit the JSON.
+# Prod's daily 05:45 UTC sync-schools --skip-scrape then re-imports it.
+
+on:
+  schedule:
+    # Sunday 22:00 UTC — most weekend results have posted by then.
+    - cron: '0 22 * * 0'
+    # Monday 09:00 UTC — top-up for any late edits/additions.
+    - cron: '0 9 * * 1'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Scrape schoolboyrugby for the current year
+        run: python3 scripts/schoolboyrugby_scraper.py --year $(date -u +%Y)
+
+      - name: Commit if changed
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --local user.email "actions@users.noreply.github.com"
+          git config --local user.name "schools-bot"
+          git add storage/app/schoolboyrugby_y*.json
+          if git diff --staged --quiet; then
+            echo "No new schoolboyrugby data to commit."
+            exit 0
+          fi
+          git commit -m "chore(data): refresh schoolboyrugby JSON [skip ci]"
+          git push origin HEAD:main
