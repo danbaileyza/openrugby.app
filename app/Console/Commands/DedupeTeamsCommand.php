@@ -26,12 +26,14 @@ class DedupeTeamsCommand extends Command
 
     /** All tables with a team_id we need to repoint. */
     private array $teamRefs = [
-        'team_seasons',
+        'team_season',
         'player_contracts',
         'match_teams',
         'match_events',
         'match_lineups',
         'match_stats',
+        'match_officials',
+        'player_match_stats',
         'standings',
         'team_user',
     ];
