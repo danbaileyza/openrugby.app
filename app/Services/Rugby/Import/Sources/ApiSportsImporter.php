@@ -191,6 +191,26 @@ class ApiSportsImporter extends BaseImporter
             $startDate = $seasonData['start'] ?? "{$yearStr}-01-01";
             $endDate = $seasonData['end'] ?? "{$yearStr}-12-31";
 
+            // Don't create a duplicate single-year row if an existing span-year
+            // season already covers this date range — e.g. ESPN gave us
+            // "2025-26" for URC running Sep 2025 → Jun 2026; API-Sports calling
+            // it "2025" or "2026" should map onto that, not spawn a sibling.
+            $existingSpan = Season::where('competition_id', $competition->id)
+                ->where('label', 'like', '%-%')
+                ->where('start_date', '<=', $endDate)
+                ->where('end_date', '>=', $startDate)
+                ->first();
+
+            if ($existingSpan) {
+                // Sync the is_current flag onto the canonical span-year season
+                // (the saving hook unflags siblings within the competition).
+                if ($isCurrent && ! $existingSpan->is_current) {
+                    $existingSpan->is_current = true;
+                    $existingSpan->save();
+                }
+                continue;
+            }
+
             Season::updateOrCreate(
                 [
                     'competition_id' => $competition->id,
