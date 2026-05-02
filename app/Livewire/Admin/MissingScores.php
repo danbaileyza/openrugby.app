@@ -76,6 +76,15 @@ class MissingScores extends Component
         $this->dispatch('score-saved', matchId: $matchId);
     }
 
+    public function postpone(string $matchId): void
+    {
+        $match = RugbyMatch::find($matchId);
+        if ($match) {
+            $match->update(['status' => 'postponed']);
+            $this->dispatch('match-postponed', matchId: $matchId);
+        }
+    }
+
     public function render()
     {
         $cutoff = now()->subDays($this->days);

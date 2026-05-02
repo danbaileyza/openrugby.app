@@ -51,6 +51,7 @@
                     </div>
                     <div class="m-actions">
                         <button type="button" class="m-save" wire:click="save('{{ $match->id }}')">Save</button>
+                        <button type="button" class="m-view" wire:click="postpone('{{ $match->id }}')" wire:confirm="Mark this match as postponed?" title="Mark postponed">Postpone</button>
                         <a href="{{ route('matches.show', $match) }}" class="m-view" wire:navigate>View</a>
                     </div>
                 </div>

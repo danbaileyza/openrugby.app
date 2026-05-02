@@ -49,3 +49,10 @@ Schedule::command('rugby:sync-schools --source=schoolrugby')
 Schedule::command('rugby:link-school-ids')
     ->weeklyOn(1, '03:00')
     ->withoutOverlapping();
+
+// Nightly: postpone scheduled fixtures that clearly never happened (the
+// teams played different opponents within ±1 day). Stops stale fixtures
+// from cluttering the missing-scores admin queue forever.
+Schedule::command('rugby:resolve-stale-fixtures')
+    ->dailyAt('06:00')
+    ->withoutOverlapping();
