@@ -30,6 +30,8 @@ class FavouriteButton extends Component
     {
         $user = auth()->user();
         if (! $user) {
+            // Bounce to login with a friendly intent so the user lands back here.
+            session()->flash('login_intent', 'favourite');
             $this->redirect(route('login'), navigate: false);
 
             return;

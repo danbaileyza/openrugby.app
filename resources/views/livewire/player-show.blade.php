@@ -19,11 +19,9 @@
                 @if($player->nationality)<span>{{ $player->nationality }}</span>@endif
                 <span style="background: {{ $player->is_active ? 'var(--color-home)' : '#555' }}; color: #fff; padding: 3px 8px; font-size: 10px; letter-spacing: .15em; border-radius: var(--r-xs);">{{ $player->is_active ? 'ACTIVE' : 'RETIRED' }}</span>
             </div>
-            @auth
-                <div style="margin-top: 14px;">
-                    <livewire:favourite-button type="player" :id="$player->id" :key="'fav-player-'.$player->id" />
-                </div>
-            @endauth
+            <div style="margin-top: 14px;">
+                <livewire:favourite-button type="player" :id="$player->id" :key="'fav-player-'.$player->id" />
+            </div>
         </div>
         <div class="big-stat">
             <div class="lbl">Career Points</div>

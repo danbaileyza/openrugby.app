@@ -1,4 +1,9 @@
 <div class="mx-auto max-w-sm">
+    @if(session('login_intent') === 'favourite')
+        <div class="mb-4 rounded-md bg-yellow-500/10 border border-yellow-500/30 p-3 text-xs text-yellow-200" style="font-family: var(--font-mono); letter-spacing: .04em;">
+            ★ Sign in to favourite teams, players, and competitions — they'll show up on your dashboard.
+        </div>
+    @endif
     <div class="rounded-xl bg-gray-900 border border-gray-800 p-6">
         <h1 class="text-xl font-bold text-white mb-1">Sign In</h1>
         <p class="text-sm text-gray-400 mb-6">Admins and team users only.</p>

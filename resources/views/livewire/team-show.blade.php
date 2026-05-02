@@ -38,9 +38,7 @@
                     </div>
                 @endif
             </div>
-            @auth
-                <livewire:favourite-button type="team" :id="$team->id" :key="'fav-team-'.$team->id" />
-            @endauth
+            <livewire:favourite-button type="team" :id="$team->id" :key="'fav-team-'.$team->id" />
         </div>
 
         {{-- Ticker: record --}}
