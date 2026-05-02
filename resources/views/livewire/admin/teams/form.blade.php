@@ -34,6 +34,7 @@
                         <option value="franchise">Franchise</option>
                         <option value="provincial">Provincial</option>
                         <option value="invitational">Invitational</option>
+                        <option value="school">School</option>
                     </select>
                     @error('type') <p class="mt-1 text-xs text-red-400">{{ $message }}</p> @enderror
                 </div>
@@ -60,6 +61,17 @@
                     <input type="text" wire:model="secondary_color" placeholder="#1f2937" class="w-full rounded-md bg-gray-800 border border-gray-700 px-3 py-2 text-sm text-white placeholder-gray-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 font-mono">
                     @error('secondary_color') <p class="mt-1 text-xs text-red-400">{{ $message }}</p> @enderror
                 </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Parent team <span class="text-gray-600 normal-case">(optional — for sub-squads)</span></label>
+                <select wire:model="parent_team_id" class="w-full rounded-md bg-gray-800 border border-gray-700 px-3 py-2 text-sm text-white focus:border-emerald-500 focus:outline-none">
+                    <option value="">— None (top-level team) —</option>
+                    @foreach($parentCandidates as $p)
+                        <option value="{{ $p->id }}">{{ $p->name }}</option>
+                    @endforeach
+                </select>
+                @error('parent_team_id') <p class="mt-1 text-xs text-red-400">{{ $message }}</p> @enderror
             </div>
         </div>
 

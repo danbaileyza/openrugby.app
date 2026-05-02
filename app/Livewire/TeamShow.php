@@ -14,6 +14,7 @@ class TeamShow extends Component
     public function mount(Team $team)
     {
         $this->team = $team;
+        $this->team->load(['parentTeam', 'subTeams']);
     }
 
     public function render()

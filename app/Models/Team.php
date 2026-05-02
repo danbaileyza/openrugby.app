@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -19,11 +20,29 @@ class Team extends Model
         'name', 'slug', 'short_name', 'country', 'type',
         'logo_url', 'primary_color', 'secondary_color',
         'founded_year', 'external_id', 'external_source',
+        'parent_team_id',
     ];
 
     public function slugSource(): string
     {
         return (string) $this->name;
+    }
+
+    /**
+     * Parent team — for sub-squads (2nd XV, U16A, etc.) that belong to a
+     * larger school but track stats separately.
+     */
+    public function parentTeam(): BelongsTo
+    {
+        return $this->belongsTo(Team::class, 'parent_team_id');
+    }
+
+    /**
+     * Sub-squads under this team. Empty for most teams.
+     */
+    public function subTeams(): HasMany
+    {
+        return $this->hasMany(Team::class, 'parent_team_id')->orderBy('name');
     }
 
     public function seasons(): BelongsToMany

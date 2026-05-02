@@ -26,6 +26,9 @@ class Form extends Component
 
     public array $season_ids = [];
 
+    /** Optional parent — for sub-squads (2nd XV, U16A, etc.) */
+    public ?string $parent_team_id = null;
+
     public function mount(): void
     {
         if ($this->team && $this->team->exists) {
@@ -37,6 +40,7 @@ class Form extends Component
             $this->primary_color = $this->team->primary_color;
             $this->secondary_color = $this->team->secondary_color;
             $this->season_ids = $this->team->seasons()->pluck('seasons.id')->toArray();
+            $this->parent_team_id = $this->team->parent_team_id;
         }
     }
 
@@ -46,12 +50,13 @@ class Form extends Component
             'name' => 'required|string|max:255',
             'short_name' => 'nullable|string|max:16',
             'country' => 'required|string|max:64',
-            'type' => 'required|in:club,national,franchise,provincial,invitational',
+            'type' => 'required|in:club,national,franchise,provincial,invitational,school',
             'founded_year' => 'nullable|digits:4',
             'primary_color' => 'nullable|string|max:16',
             'secondary_color' => 'nullable|string|max:16',
             'season_ids' => 'array',
             'season_ids.*' => 'uuid|exists:seasons,id',
+            'parent_team_id' => 'nullable|uuid|exists:teams,id',
         ];
     }
 
@@ -83,8 +88,18 @@ class Form extends Component
             ->limit(200)
             ->get();
 
+        // Possible parents: top-level teams (no parent themselves), excluding self
+        // when editing. Capped because the dropdown gets long otherwise.
+        $parentCandidates = Team::query()
+            ->whereNull('parent_team_id')
+            ->when($this->team?->id, fn ($q, $id) => $q->where('id', '!=', $id))
+            ->orderBy('name')
+            ->limit(500)
+            ->get(['id', 'name']);
+
         return view('livewire.admin.teams.form', [
             'seasons' => $seasons,
+            'parentCandidates' => $parentCandidates,
         ])->layout('layouts.app', ['title' => $this->team ? 'Edit Team' : 'New Team']);
     }
 }

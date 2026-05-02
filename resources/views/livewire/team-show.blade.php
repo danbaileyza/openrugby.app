@@ -24,7 +24,19 @@
                     @if($team->country_display)<span>{{ $team->country_display }}</span>@endif
                     <span>{{ ucfirst($team->type) }}</span>
                     @if($team->founded_year)<span>Est. {{ $team->founded_year }}</span>@endif
+                    @if($team->parentTeam)
+                        <span>Sub-squad of <a href="{{ route('teams.show', $team->parentTeam) }}" style="color: var(--color-brand-yellow);" wire:navigate>{{ $team->parentTeam->name }}</a></span>
+                    @endif
                 </div>
+                @if($team->subTeams->isNotEmpty())
+                    <div style="margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap;">
+                        <span style="font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--color-muted); align-self: center;">Sub-teams:</span>
+                        @foreach($team->subTeams as $sub)
+                            <a href="{{ route('teams.show', $sub) }}" wire:navigate
+                               style="font-family: var(--font-mono); font-size: 10px; letter-spacing: .06em; padding: 4px 8px; background: var(--color-bg-3); color: var(--color-ink-dim); text-decoration: none; border-radius: var(--r-xs); border: 1px solid var(--color-line);">{{ $sub->name }}</a>
+                        @endforeach
+                    </div>
+                @endif
             </div>
             @auth
                 <livewire:favourite-button type="team" :id="$team->id" :key="'fav-team-'.$team->id" />

@@ -32,8 +32,6 @@ class DedupeTeamsCommand extends Command
         'match_events',
         'match_lineups',
         'match_stats',
-        'match_officials',
-        'player_match_stats',
         'standings',
         'team_user',
     ];
